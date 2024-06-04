@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>TamaExpress Documentation</title>
+  <link rel="icon" href="_media/favicon.ico">
+  <meta name="keywords" content="doc,docs,documentation,gitbook,creator,generator,github,jekyll,github-pages">
+  <meta name="description" content="A magical documentation generator.">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css" title="vue">
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/dark.css" title="dark" disabled>
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/buble.css" title="buble" disabled>
+  <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/pure.css" title="pure" disabled>
+  <style>
+    nav.app-nav li ul {
+      min-width: 100px;
+    }
+    .cs__footer{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">Loading ...</div>
+</body>
+<script>
+  window.$docsify = {
+    alias: {
+      '.*?/changelog': 'https://raw.githubusercontent.com/QingWei-Li/docsify/master/CHANGELOG',
+      '/.*/_navbar.md': '/_navbar.md'
+    },
+    auto2top: true,
+    coverpage: true,
+    executeScript: true,
+    loadSidebar: true,
+    loadNavbar: true,
+    mergeNavbar: true,
+    maxLevel: 4,
+    subMaxLevel: 2,
+    codesponsor: 'sddsdW',
+    ga: 'UA-106147152-XAC',
+    name: 'TamaExpress',
+    search: {
+      noData: {
+        '/de-de/': 'Keine Ergebnisse!',
+        '/zh-cn/': '没有结果!',
+        '/': 'No results!'
+      },
+      paths: 'auto',
+      placeholder: {
+        '/de-de/': 'Suche',
+        '/zh-cn/': '搜索',
+        '/': 'Search'
+      }
+    },
+    formatUpdated: '{MM}/{DD} {HH}:{mm}',
+  }
+</script>
+<script src="../lib/docsify.js"></script>
+<script src="../lib/plugins/search.js"></script>
+<script src="../lib/plugins/codesponsor.js"></script>
+<script src="../lib/plugins/ga.min.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-bash.min.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-markdown.min.js"></script>
+<script src="//unpkg.com/prismjs/components/prism-nginx.min.js"></script>
+</html>

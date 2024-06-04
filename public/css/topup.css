@@ -1,0 +1,1435 @@
+.design-process-section .text-align-center {
+    line-height: 25px;
+}
+.design-process-content {
+    border: 1px solid #e9e9e9;
+    position: relative;
+    padding: 20px 25px 30px 30px;
+    margin-bottom: 100px;
+}
+.design-process-content img {
+    /*position: absolute;*/
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    max-height: 100%;
+}
+.design-process-content h3 {
+    margin-bottom: 16px;
+}
+.design-process-content p {
+    line-height: 26px;
+    margin-bottom: 12px;
+}
+.process-model {
+    list-style: none;
+    padding: 0;
+    position: relative;
+    max-width: 600px;
+    margin: 20px auto 26px;
+    border: none;
+    z-index: 0;
+}
+.process-model li::after {
+    background: #e5e5e5 none repeat scroll 0 0;
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 4px;
+    margin: 0 auto;
+    position: absolute;
+    right: -50px;
+    top: 33px;
+    width: 100%;
+    z-index: -1;
+}
+.process-model li.visited::after {
+    background: #8e4294;
+}
+.process-model li:last-child::after {
+    width: 0;
+}
+.process-model li {
+    display: inline-block;
+    width: 24%;
+    text-align: center;
+    float: none;
+}
+.nav-tabs.process-model > li.active > a, .nav-tabs.process-model > li.active > a:hover, .nav-tabs.process-model > li.active > a:focus, .process-model li a:hover, .process-model li a:focus {
+    border: none;
+    background: transparent;
+
+}
+.process-model li a {
+    padding: 0;
+    border: none;
+    color: #606060;
+}
+.process-model li.active,
+.process-model li.visited {
+    color: #8e4294;
+}
+.process-model li.active a,
+.process-model li.active a:hover,
+.process-model li.active a:focus,
+.process-model li.visited a,
+.process-model li.visited a:hover,
+.process-model li.visited a:focus {
+    color: #8e4294;
+}
+.process-model li.active p,
+.process-model li.visited p {
+    font-weight: 600;
+}
+.process-model li i {
+    display: block;
+    height: 68px;
+    width: 68px;
+    text-align: center;
+    margin: 0 auto;
+    background: #f5f6f7;
+    border: 2px solid #e5e5e5;
+    line-height: 65px;
+    font-size: 30px;
+    border-radius: 50%;
+}
+.process-model li.active i, .process-model li.visited i  {
+    background: #fff;
+    border-color: #8e4294;
+}
+.process-model li p {
+    font-size: 14px;
+    margin-top: 11px;
+}
+.process-model.contact-us-tab li.visited a, .process-model.contact-us-tab li.visited p {
+    color: #606060!important;
+    font-weight: normal
+}
+.process-model.contact-us-tab li::after  {
+    display: none;
+}
+.process-model.contact-us-tab li.visited i {
+    border-color: #e5e5e5;
+}
+
+
+
+@media screen and (max-width: 560px) {
+    .more-icon-preocess.process-model li span {
+        font-size: 23px;
+        height: 50px;
+        line-height: 46px;
+        width: 50px;
+    }
+    .more-icon-preocess.process-model li::after {
+        top: 24px;
+    }
+}
+@media screen and (max-width: 380px) {
+    .process-model.more-icon-preocess li {
+        width: 16%;
+    }
+    .more-icon-preocess.process-model li span {
+        font-size: 16px;
+        height: 35px;
+        line-height: 32px;
+        width: 35px;
+    }
+    .more-icon-preocess.process-model li p {
+        font-size: 8px;
+    }
+    .more-icon-preocess.process-model li::after {
+        top: 18px;
+    }
+    .process-model.more-icon-preocess {
+        text-align: center;
+    }
+}
+.hide {
+    display: none;
+}
+
+.intl-tel-input {
+    /*display: table-cell;*/
+}
+
+.intl-tel-input .selected-flag {
+    z-index: 4;
+}
+
+.intl-tel-input .country-list {
+    z-index: 5;
+}
+
+.input-group .intl-tel-input .form-control {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 0;
+}
+
+.disabled {
+    opacity: 0.7;
+    cursor: none;
+}
+
+.disabled:hover {
+    cursor: none;
+}
+
+.error {
+    color: #fa0411;
+}
+
+.product-lists {
+    padding: 0;
+    list-style: none;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin: 0 -3% 0 0;
+}
+
+.product-lists .denomination {
+    margin: 0;
+    padding: 0 15px 0 0;
+    width: 100%;
+    max-width: 100%;
+    float: left;
+}
+
+.product-lists .denomination a {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    padding: 0;
+    display: block;
+    text-decoration: none;
+}
+
+.product-lists .denomination a .panel {
+    margin-bottom: 0;
+    padding-left: 10px;
+    position: relative;
+}
+
+.product-lists .denomination a > div:before {
+    position: absolute;
+    content: "";
+    height: 100%;
+    background: #8e4294;
+    width: 10px;
+    top: 0;
+    left: 0px;
+    transition: all .3s;
+}
+
+.product-lists .denomination a > div .data {
+    padding: 15px 25px 8px;
+    min-height: 46px;
+    color: #303038;
+    width: 100%;
+    font-size: 13px;
+    margin: auto;
+}
+
+.price {
+    padding: 0;
+    width: 33.33333%;
+    float: left;
+}
+
+.price > h3 {
+    margin-top: 0;
+    display: inline-block;
+    color: #43434e;
+    font-weight: 500;
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.receive-amount {
+    width: 33.33333%;
+    padding: 0;
+    display: inline-block;
+    margin: 0 auto;
+    text-align: center;
+    float: left;
+}
+
+.validity {
+    width: 33.33333%;
+    padding-right: 35px;
+    text-align: right;
+    float: left;
+}
+
+.more-info-toggle {
+    background-image: none;
+    color: #000;
+    text-align: center;
+    background-size: 16px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    margin: 10px;
+    top: 0;
+    right: 0;
+    opacity: .3;
+    z-index: 1000;
+}
+
+.more-info {
+    text-align: center;
+    padding-top: 12px;
+}
+
+.panel .active-icon {
+    border-color: transparent transparent #00b259 transparent;
+    display: block;
+    border-style: solid;
+    border-width: 0 0 36px 36px;
+    border-color: transparent transparent #0064c3 transparent;
+    position: absolute;
+    z-index: 2;
+    width: 0;
+    height: 0;
+    right: -1px;
+    bottom: -1px;
+    color: #fff;
+    display: none;
+}
+
+.active-icon .fa {
+    position: absolute;
+    right: 3px;
+    bottom: -31px;
+}
+
+.product-lists li.denomination.active .panel .active-icon {
+    border-color: transparent transparent #8e4294 transparent;
+    display: block;
+    border-style: solid;
+    border-width: 0 0 36px 36px;
+}
+
+.product-lists li.denomination .panel:after {
+    position: absolute;
+    content: "";
+    z-index: 1;
+    border: 3px solid transparent;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    right: -1px;
+    transition: all .3s;
+}
+
+.product-lists li.denomination.active .panel:after {
+    border: 3px solid #8e4294;
+}
+
+.product-lists li.denomination.active .panel:before {
+    width: 0;
+}
+
+.more-info {
+    padding-top: 8px;
+    margin-top: 5px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    width: 100%;
+    float: left;
+    clear: left
+}
+
+.more-info p {
+    margin-bottom: 5px;
+    margin: 0;
+}
+
+.provider-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.provider-list .provider {
+    padding-left: 0;
+}
+
+.provider a {
+    background-color: transparent;
+    padding: 0;
+    display: block;
+    text-decoration: none;
+}
+
+.provider a .panel {
+    vertical-align: middle;
+    display: inline-flex;
+    margin-bottom: 0;
+    height: 74px;
+    border-radius: 0;
+    width: 100%;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+
+.provider .logo {
+    float: left;
+    margin: auto 12px;
+}
+
+.provider .logo > img {
+    height: 45px;
+    width: 50px;
+}
+
+.provider .title {
+    color: #43434e;
+    font-size: 16px;
+    font-weight: 500;
+    margin: auto 0;
+}
+.prvider-list li.provider .active a.panel{
+    border: 1px solid #8e4294;
+}
+
+.panel-default {
+    border-color: #ddd;
+}
+
+.grid-product-lists {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    margin: 0 -3% 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.grid-product-lists .denominated-product {
+    padding-left: 0;
+    width: 50%;
+    float: left;
+}
+
+.grid-product-lists .denominated-product a {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    padding: 0;
+    display: block;
+    text-decoration: none;
+}
+
+.grid-product-lists li.active .panel {
+    border: 1px solid transparent;
+}
+
+.grid-product-lists .panel {
+    border-radius: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0;
+    border: 1px solid #ddd;
+}
+
+.grid-product-lists li .activatable-item {
+    padding-left: 10px;
+    position: relative;
+    vertical-align: middle;
+    border-radius: 0;
+}
+
+.grid-product-lists .panel {
+    border-radius: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 0;
+    border: 1px solid #ddd;
+}
+
+.grid-product-lists li.product-type-topup .activatable-item:before {
+    background: #8e4294;
+}
+
+.grid-product-lists.active .panel:before {
+    width: 0;
+}
+
+.grid-product-lists li.product-type-topup .activatable-item:before {
+    background: #8e4294;
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 10px;
+    top: 0;
+    left: 0;
+    transition: all .3s;
+}
+
+.denominated-product .data {
+    color: #303038;
+    padding: 15px 12px;
+    width: 100%;
+    font-size: 13px;
+    margin: auto;
+    min-height: 75px;
+}
+
+.denominated-product h3 {
+    color: #43434e;
+    font-weight: 800;
+    margin: 0 0 6px;
+    font-size: 16px;
+}
+
+.denominated-product .strong-mobile {
+    font-weight: 800;
+}
+
+.denominated-product .light-mobile {
+    font-weight: 400;
+}
+
+.grid-product-lists li.product-type-topup.active .panel .active-icon {
+    display: block;
+    border-style: solid;
+    border-width: 0 0 36px 36px;
+    border-color: transparent transparent #8e4294 transparent;
+}
+
+.grid-product-lists li .activatable-item .active-icon {
+    display: none;
+    position: absolute;
+    z-index: 2;
+    width: 0;
+    height: 0;
+    right: -1px;
+    bottom: -1px;
+    color: #fff;
+}
+
+.grid-product-lists li .activatable-item .active-icon .fa {
+    position: absolute;
+    right: 3px;
+    bottom: -31px;
+}
+
+.grid-product-lists .price {
+    /*padding: 0;*/
+    width: 100%;
+    float: left;
+}
+
+.grid-product-lists .receive-amount {
+    padding: 0;
+    width: 100%;
+    float: left;
+    margin: 0;
+    text-align: initial;
+}
+.grid-product-lists li .activatable-item:after {
+    position: absolute;
+    content: "";
+    z-index: 1;
+    border: 3px solid transparent;
+    top: -1px;
+    bottom: -1px;
+    left: -1px;
+    right: -1px;
+    transition: all .3s;
+}
+.grid-product-lists li.product-type-topup.active .panel:after {
+    border: 3px solid #8e4294;
+}
+
+.grid-product-lists .denominated-product {
+    position: relative;
+    min-height: 1px;
+    /*padding-left: 15px;*/
+    padding-right: 15px;
+    margin-bottom: 15px;
+    min-width: 120px;
+    max-width: 233.04px;
+}
+
+
+.load {
+    position: relative;
+    margin: 50px auto;
+    width: 100px;
+    height: 80px;
+}
+
+.gear {
+    position: absolute;
+    /*z-index: -10;*/
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 5s infinite;
+    animation: spin 5s infinite;
+}
+
+.two {
+    left: 40px;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin-reverse 5s infinite;
+    animation: spin-reverse 5s infinite;
+}
+
+.three {
+    top: 45px;
+    left: -10px;
+    width: 60px;
+    height: 60px;
+}
+
+@-webkit-keyframes spin {
+    50% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    50% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
+@-webkit-keyframes spin-reverse {
+    50% {
+        -webkit-transform: rotate(-360deg);
+        transform: rotate(-360deg);
+    }
+}
+@keyframes spin-reverse {
+    50% {
+        -webkit-transform: rotate(-360deg);
+        transform: rotate(-360deg);
+    }
+}
+.lil-circle {
+    position: absolute;
+    border-radius: 50%;
+    box-shadow: inset 0 0 10px 2px gray, 0 0 50px white;
+    width: 100px;
+    height: 100px;
+    opacity: .65;
+}
+
+.blur-circle {
+    position: absolute;
+    top: -19px;
+    left: -19px;
+}
+
+.text {
+    color: lightgray;
+    font-size: 18px;
+    font-family: 'Open Sans', sans-serif;
+    text-align: center;
+}
+
+.panel-active{
+    border: 1px solid;
+}
+.loading {
+    background-color: #ffffff;
+    background-image: url("http://loadinggif.com/images/image-selection/3.gif");
+    background-size: 25px 25px;
+    background-position:right center;
+    background-repeat: no-repeat;
+}
+.loadergif {
+    color: #fff;
+    position: fixed;
+    box-sizing: border-box;
+    left: -9999px;
+    top: -9999px;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    z-index: 999999
+}
+
+.loadergif:after,
+.loadergif:before {
+    box-sizing: border-box;
+    display: none
+}
+
+.loadergif.is-active {
+    background-color: rgba(0, 0, 0, .85);
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0
+}
+
+.loadergif.is-active:after,
+.loadergif.is-active:before {
+    display: block
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0)
+    }
+    to {
+        transform: rotate(359deg)
+    }
+}
+
+@keyframes blink {
+    0% {
+        opacity: .5
+    }
+    to {
+        opacity: 1
+    }
+}
+
+.loadergif[data-text]:before {
+    position: fixed;
+    left: 0;
+    top: 50%;
+    color: currentColor;
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+    width: 100%;
+    font-size: 14px
+}
+
+.loadergif[data-text=""]:before {
+    content: "Loading"
+}
+
+.loadergif[data-text]:not([data-text=""]):before {
+    content: attr(data-text)
+}
+
+.loadergif[data-text][data-blink]:before {
+    animation: blink 1s linear infinite alternate
+}
+
+.loadergif-default[data-text]:before {
+    top: calc(50% - 63px)
+}
+
+.loadergif-default:after {
+    content: "";
+    position: fixed;
+    width: 48px;
+    height: 48px;
+    border: 8px solid #fff;
+    border-left-color: transparent;
+    border-radius: 50%;
+    top: calc(50% - 24px);
+    left: calc(50% - 24px);
+    animation: rotation 1s linear infinite
+}
+
+.loadergif-default[data-half]:after {
+    border-right-color: transparent
+}
+
+.loadergif-default[data-inverse]:after {
+    animation-direction: reverse
+}
+
+.loadergif-double:after,
+.loadergif-double:before {
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    border: 8px solid;
+    animation: rotation 1s linear infinite
+}
+
+.loadergif-double:after {
+    width: 48px;
+    height: 48px;
+    border-color: #fff;
+    border-left-color: transparent;
+    top: calc(50% - 24px);
+    left: calc(50% - 24px)
+}
+
+.loadergif-double:before {
+    width: 64px;
+    height: 64px;
+    border-color: #eb974e;
+    border-right-color: transparent;
+    animation-duration: 2s;
+    top: calc(50% - 32px);
+    left: calc(50% - 32px)
+}
+
+.loadergif-bar[data-text]:before {
+    top: calc(50% - 40px);
+    color: #fff
+}
+
+.loadergif-bar:after {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(-45deg, #4183d7 25%, #52b3d9 0, #52b3d9 50%, #4183d7 0, #4183d7 75%, #52b3d9 0, #52b3d9);
+    background-size: 20px 20px;
+    box-shadow: inset 0 10px 0 hsla(0, 0%, 100%, .2), 0 0 0 5px rgba(0, 0, 0, .2);
+    animation: moveBar 1.5s linear infinite reverse
+}
+
+.loadergif-bar[data-rounded]:after {
+    border-radius: 15px
+}
+
+.loadergif-bar[data-inverse]:after {
+    animation-direction: normal
+}
+
+@keyframes moveBar {
+    0% {
+        background-position: 0 0
+    }
+    to {
+        background-position: 20px 20px
+    }
+}
+
+.loadergif-bar-ping-pong:before {
+    width: 200px;
+    background-color: #000
+}
+
+.loadergif-bar-ping-pong:after,
+.loadergif-bar-ping-pong:before {
+    content: "";
+    height: 20px;
+    position: absolute;
+    top: calc(50% - 10px);
+    left: calc(50% - 100px)
+}
+
+.loadergif-bar-ping-pong:after {
+    width: 50px;
+    background-color: #f19;
+    animation: moveBarPingPong .5s linear infinite alternate
+}
+
+.loadergif-bar-ping-pong[data-rounded]:before {
+    border-radius: 10px
+}
+
+.loadergif-bar-ping-pong[data-rounded]:after {
+    border-radius: 50%;
+    width: 20px;
+    animation-name: moveBarPingPongRounded
+}
+
+@keyframes moveBarPingPong {
+    0% {
+        left: calc(50% - 100px)
+    }
+    to {
+        left: calc(50% - -50px)
+    }
+}
+
+@keyframes moveBarPingPongRounded {
+    0% {
+        left: calc(50% - 100px)
+    }
+    to {
+        left: calc(50% - -80px)
+    }
+}
+
+@keyframes corners {
+    6% {
+        width: 60px;
+        height: 15px
+    }
+    25% {
+        width: 15px;
+        height: 15px;
+        left: calc(100% - 15px);
+        top: 0
+    }
+    31% {
+        height: 60px
+    }
+    50% {
+        height: 15px;
+        top: calc(100% - 15px);
+        left: calc(100% - 15px)
+    }
+    56% {
+        width: 60px
+    }
+    75% {
+        width: 15px;
+        left: 0;
+        top: calc(100% - 15px)
+    }
+    81% {
+        height: 60px
+    }
+}
+
+.loadergif-border[data-text]:before {
+    color: #fff
+}
+
+.loadergif-border:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 15px;
+    height: 15px;
+    background-color: #ff0;
+    animation: corners 3s ease both infinite
+}
+
+.loadergif-ball:before {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    top: 50%;
+    left: 50%;
+    margin: -25px 0 0 -25px;
+    background-color: #fff;
+    border-radius: 50%;
+    z-index: 1;
+    animation: kickBall 1s infinite alternate ease-in both
+}
+
+.loadergif-ball[data-shadow]:before {
+    box-shadow: inset -5px -5px 10px 0 rgba(0, 0, 0, .5)
+}
+
+.loadergif-ball:after {
+    content: "";
+    position: absolute;
+    background-color: rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    width: 45px;
+    height: 20px;
+    top: calc(50% + 10px);
+    left: 50%;
+    margin: 0 0 0 -22.5px;
+    z-index: 0;
+    animation: shadow 1s infinite alternate ease-out both
+}
+
+@keyframes shadow {
+    0% {
+        background-color: transparent;
+        transform: scale(0)
+    }
+    40% {
+        background-color: transparent;
+        transform: scale(0)
+    }
+    95% {
+        background-color: rgba(0, 0, 0, .75);
+        transform: scale(1)
+    }
+    to {
+        background-color: rgba(0, 0, 0, .75);
+        transform: scale(1)
+    }
+}
+
+@keyframes kickBall {
+    0% {
+        transform: translateY(-80px) scaleX(.95)
+    }
+    90% {
+        border-radius: 50%
+    }
+    to {
+        transform: translateY(0) scaleX(1);
+        border-radius: 50% 50% 20% 20%
+    }
+}
+
+.loadergif-smartphone:after {
+    content: "";
+    color: #fff;
+    font-size: 12px;
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+    line-height: 120px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    width: 70px;
+    height: 130px;
+    margin: -65px 0 0 -35px;
+    border: 5px solid #fd0;
+    border-radius: 10px;
+    box-shadow: inset 0 5px 0 0 #fd0;
+    background: radial-gradient(circle at 50% 90%, rgba(0, 0, 0, .5) 6px, transparent 0), linear-gradient(0deg, #fd0 22px, transparent 0), linear-gradient(0deg, rgba(0, 0, 0, .5) 22px, rgba(0, 0, 0, .5));
+    animation: shake 2s cubic-bezier(.36, .07, .19, .97) both infinite
+}
+
+.loadergif-smartphone[data-screen=""]:after {
+    content: "Loading"
+}
+
+.loadergif-smartphone:not([data-screen=""]):after {
+    content: attr(data-screen)
+}
+
+@keyframes shake {
+    5% {
+        transform: translate3d(-1px, 0, 0)
+    }
+    10% {
+        transform: translate3d(1px, 0, 0)
+    }
+    15% {
+        transform: translate3d(-1px, 0, 0)
+    }
+    20% {
+        transform: translate3d(1px, 0, 0)
+    }
+    25% {
+        transform: translate3d(-1px, 0, 0)
+    }
+    30% {
+        transform: translate3d(1px, 0, 0)
+    }
+    35% {
+        transform: translate3d(-1px, 0, 0)
+    }
+    40% {
+        transform: translate3d(1px, 0, 0)
+    }
+    45% {
+        transform: translate3d(-1px, 0, 0)
+    }
+    50% {
+        transform: translate3d(1px, 0, 0)
+    }
+    55% {
+        transform: translate3d(-1px, 0, 0)
+    }
+}
+
+.loadergif-clock:before {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: -60px 0 0 -60px;
+    background: linear-gradient(180deg, transparent 50%, #f5f5f5 0), linear-gradient(90deg, transparent 55px, #2ecc71 0, #2ecc71 65px, transparent 0), linear-gradient(180deg, #f5f5f5 50%, #f5f5f5 0);
+    box-shadow: inset 0 0 0 10px #f5f5f5, 0 0 0 5px #555, 0 0 0 10px #7b7b7b;
+    animation: rotation infinite 2s linear
+}
+
+.loadergif-clock:after,
+.loadergif-clock:before {
+    content: "";
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    overflow: hidden
+}
+
+.loadergif-clock:after {
+    width: 60px;
+    height: 40px;
+    margin: -20px 0 0 -15px;
+    border-radius: 20px 0 0 20px;
+    background: radial-gradient(circle at 14px 20px, #25a25a 10px, transparent 0), radial-gradient(circle at 14px 20px, #1b7943 14px, transparent 0), linear-gradient(180deg, transparent 15px, #2ecc71 0, #2ecc71 25px, transparent 0);
+    animation: rotation infinite 24s linear;
+    transform-origin: 15px center
+}
+
+.loadergif-curtain:after,
+.loadergif-curtain:before {
+    position: fixed;
+    width: 100%;
+    top: 50%;
+    margin-top: -35px;
+    font-size: 70px;
+    text-align: center;
+    font-family: Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    line-height: 1.2;
+    content: "Loading"
+}
+
+.loadergif-curtain:before {
+    color: #666
+}
+
+.loadergif-curtain:after {
+    color: #fff;
+    height: 0;
+    animation: curtain 1s linear infinite alternate both
+}
+
+.loadergif-curtain[data-curtain-text]:not([data-curtain-text=""]):after,
+.loadergif-curtain[data-curtain-text]:not([data-curtain-text=""]):before {
+    content: attr(data-curtain-text)
+}
+
+.loadergif-curtain[data-brazilian]:before {
+    color: #f1c40f
+}
+
+.loadergif-curtain[data-brazilian]:after {
+    color: #2ecc71
+}
+
+.loadergif-curtain[data-colorful]:before {
+    animation: maskColorful 2s linear infinite alternate both
+}
+
+.loadergif-curtain[data-colorful]:after {
+    animation: curtain 1s linear infinite alternate both, maskColorful-front 2s 1s linear infinite alternate both;
+    color: #000
+}
+
+@keyframes maskColorful {
+    0% {
+        color: #3498db
+    }
+    49.5% {
+        color: #3498db
+    }
+    50.5% {
+        color: #e74c3c
+    }
+    to {
+        color: #e74c3c
+    }
+}
+
+@keyframes maskColorful-front {
+    0% {
+        color: #2ecc71
+    }
+    49.5% {
+        color: #2ecc71
+    }
+    50.5% {
+        color: #f1c40f
+    }
+    to {
+        color: #f1c40f
+    }
+}
+
+@keyframes curtain {
+    0% {
+        height: 0
+    }
+    to {
+        height: 84px
+    }
+}
+
+.loadergif-music:after,
+.loadergif-music:before {
+    content: "";
+    position: fixed;
+    width: 240px;
+    height: 240px;
+    top: 50%;
+    left: 50%;
+    margin: -120px 0 0 -120px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 240px;
+    color: #fff;
+    font-size: 40px;
+    font-family: Helvetica, Arial, sans-serif;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, .5);
+    letter-spacing: -1px
+}
+
+.loadergif-music:after {
+    backface-visibility: hidden
+}
+
+.loadergif-music[data-hey-oh]:after,
+.loadergif-music[data-hey-oh]:before {
+    box-shadow: 0 0 0 10px
+}
+
+.loadergif-music[data-hey-oh]:before {
+    background-color: #fff;
+    color: #000;
+    animation: coinBack 2.5s linear infinite, oh 5s 1.25s linear infinite both
+}
+
+.loadergif-music[data-hey-oh]:after {
+    background-color: #000;
+    animation: coin 2.5s linear infinite, hey 5s linear infinite both
+}
+
+.loadergif-music[data-no-cry]:after,
+.loadergif-music[data-no-cry]:before {
+    background: linear-gradient(45deg, #009b3a 50%, #fed100 51%);
+    box-shadow: 0 0 0 10px #000
+}
+
+.loadergif-music[data-no-cry]:before {
+    animation: coinBack 2.5s linear infinite, cry 5s 1.25s linear infinite both
+}
+
+.loadergif-music[data-no-cry]:after {
+    animation: coin 2.5s linear infinite, no 5s linear infinite both
+}
+
+.loadergif-music[data-we-are]:before {
+    animation: coinBack 2.5s linear infinite, theWorld 5s 1.25s linear infinite both;
+    background: radial-gradient(ellipse at center, #4ecdc4 0, #556270)
+}
+
+.loadergif-music[data-we-are]:after {
+    animation: coin 2.5s linear infinite, weAre 5s linear infinite both;
+    background: radial-gradient(ellipse at center, #26d0ce 0, #1a2980)
+}
+
+.loadergif-music[data-rock-you]:before {
+    animation: coinBack 2.5s linear infinite, rockYou 5s 1.25s linear infinite both;
+    background: #444
+}
+
+.loadergif-music[data-rock-you]:after {
+    animation: coin 2.5s linear infinite, weWill 5s linear infinite both;
+    background: #96281b
+}
+
+@keyframes coin {
+    to {
+        transform: rotateY(359deg)
+    }
+}
+
+@keyframes coinBack {
+    0% {
+        transform: rotateY(180deg)
+    }
+    50% {
+        transform: rotateY(1turn)
+    }
+    to {
+        transform: rotateY(180deg)
+    }
+}
+
+@keyframes hey {
+    0% {
+        content: "Hey!"
+    }
+    50% {
+        content: "Let's!"
+    }
+    to {
+        content: "Hey!"
+    }
+}
+
+@keyframes oh {
+    0% {
+        content: "Oh!"
+    }
+    50% {
+        content: "Go!"
+    }
+    to {
+        content: "Oh!"
+    }
+}
+
+@keyframes no {
+    0% {
+        content: "No..."
+    }
+    50% {
+        content: "no"
+    }
+    to {
+        content: "No..."
+    }
+}
+
+@keyframes cry {
+    0% {
+        content: "woman"
+    }
+    50% {
+        content: "cry!"
+    }
+    to {
+        content: "woman"
+    }
+}
+
+@keyframes weAre {
+    0% {
+        content: "We are"
+    }
+    50% {
+        content: "we are"
+    }
+    to {
+        content: "We are"
+    }
+}
+
+@keyframes theWorld {
+    0% {
+        content: "the world,"
+    }
+    50% {
+        content: "the children!"
+    }
+    to {
+        content: "the world,"
+    }
+}
+
+@keyframes weWill {
+    0% {
+        content: "We will,"
+    }
+    50% {
+        content: "rock you!"
+    }
+    to {
+        content: "We will,"
+    }
+}
+
+@keyframes rockYou {
+    0% {
+        content: "we will"
+    }
+    50% {
+        content: "\1F918"
+    }
+    to {
+        content: "we will"
+    }
+}
+
+.loadergif-pokeball:before {
+    content: "";
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -50px;
+    background: linear-gradient(180deg, red 42%, #000 0, #000 58%, #fff 0);
+    background-repeat: no-repeat;
+    background-color: #fff;
+    border-radius: 50%;
+    z-index: 1;
+    animation: movePokeball 1s linear infinite both
+}
+
+.loadergif-pokeball:after {
+    content: "";
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    top: 50%;
+    left: 50%;
+    margin: -12px 0 0 -12px;
+    background-color: #fff;
+    border-radius: 50%;
+    z-index: 2;
+    animation: movePokeball 1s linear infinite both, flashPokeball .5s infinite alternate;
+    border: 2px solid #000;
+    box-shadow: 0 0 0 5px #fff, 0 0 0 10px #000
+}
+
+@keyframes movePokeball {
+    0% {
+        transform: translateX(0) rotate(0)
+    }
+    15% {
+        transform: translatex(-10px) rotate(-5deg)
+    }
+    30% {
+        transform: translateX(10px) rotate(5deg)
+    }
+    45% {
+        transform: translatex(0) rotate(0)
+    }
+}
+
+@keyframes flashPokeball {
+    0% {
+        background-color: #fff
+    }
+    to {
+        background-color: #fd0
+    }
+}
+
+.loadergif-bouncing:after,
+.loadergif-bouncing:before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: calc(50% - 10px);
+    left: calc(50% - 10px);
+    border-radius: 50%;
+    background-color: #fff;
+    animation: kick .6s infinite alternate
+}
+
+.loadergif-bouncing:after {
+    margin-left: -30px;
+    animation: kick .6s infinite alternate
+}
+
+.loadergif-bouncing:before {
+    animation-delay: .2s
+}
+
+@keyframes kick {
+    0% {
+        opacity: 1;
+        transform: translateY(0)
+    }
+    to {
+        opacity: .3;
+        transform: translateY(-1rem)
+    }
+}
