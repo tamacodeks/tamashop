@@ -24,12 +24,12 @@
                                             <th></th>
                                             <th>{{ trans('common.order_tbl_sl') }}</th>
                                             <th>{{ trans('users.lbl_user_status') }}</th>
-                                            <th>{{ trans('users.lbl_tbl_cust_id') }}</th>
+                                            {{--<th>{{ trans('users.lbl_tbl_cust_id') }}</th> --}}
                                             <th>{{ trans('users.lbl_user_name') }}</th>
                                             <th>{{ trans('users.lbl_tbl_user_acc_type') }}</th>
                                             {{--<th>{{ trans('users.lbl_tbl_user_rep') }}</th>--}}
                                             <th>{{ trans('users.lbl_tbl_user_balance') }}</th>
-                                            <th>{{ trans('users.lbl_user_credit_limit') }}</th>
+                                            {{--<th>{{ trans('users.lbl_user_credit_limit') }}</th>--}}
                                             <th>{{ trans('users.lbl_tbl_user_created_on') }}</th>
                                             <th>{{ trans('common.mr_tbl_action') }}</th>
                                         </tr>
@@ -45,6 +45,10 @@
                                         <tr>
                                             <td>{{ trans('users.lbl_tbl_user_credit') }}</td>
                                             <td>@{{ credit_limit }}</td>
+                                        </tr>
+										  <tr>
+                                            <td>{{ trans('users.lbl_tbl_cust_id') }}</td>
+                                            <td>@{{ cust_id }}</td>
                                         </tr>
                                     </table>
                                 </script>
@@ -138,12 +142,12 @@
                         "defaultContent": ''
                     },
                     {data: 'status_indicator', name: 'users.status_indicator',"orderable" : false,"searchable": false,"className" : "text-center"},
-                    {data: 'cust_id', name: 'users.cust_id'},
+                    //{data: 'cust_id', name: 'users.cust_id'},
                     {data: 'username', name: 'users.username'},
                     {data: 'name', name: 'user_groups.name'},
 //                    {data: 'representative', name: 'users.representative',orderable : false,searchable: false},
                     {data: 'balance', name: 'users.balance',orderable : false,searchable: false},
-                    {data: 'credit_limit', name: 'credit_limit',orderable : false,searchable: false},
+                    //{data: 'credit_limit', name: 'credit_limit',orderable : false,searchable: false},
                     {data: 'created_at', name: 'users.created_at'},
                     {data: 'action', name: 'users.action',orderable : false,searchable: false}
                 ],
