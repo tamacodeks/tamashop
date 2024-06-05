@@ -65,9 +65,12 @@ Route::get('restrict',function (Request $request){
     return view('restrict');
 });
 //common routes for all
+    Route::group(['middleware' => ['balanceupdate', 'logout_device','auth']], function () {
+        Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+    });
 Route::group(['middleware' => ['balanceupdate','logout_device','totp']],function () {
     Route::group(['middleware' => ['auth', 'fw-block-blacklisted']], function () {
-        Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+
 
         Route::get('dashboard', 'DashboardController@index');
         //users
