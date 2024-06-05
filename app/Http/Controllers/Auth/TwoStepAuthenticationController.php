@@ -280,14 +280,15 @@ class TwoStepAuthenticationController extends Controller
                 Session::put('locale', $request->lang);
                 App::setLocale($request->lang);
             }
-            $client_ip = config('app.env') == 'local'
-                ? \Request::getClientIp(true)
-                : AppHelper::getIP(true);
-            User::where('id', AuthConfig::id())
-                ->update(['last_activity' => now(),
+            $client_ip = config('app.env') == 'local' ? \Request::getClientIp(true) : AppHelper::getIP(true);
+            $session_data = \Session::all();
+                User::where('id', AuthConfig::id())
+                ->update([
+                    'last_activity' => now(),
                     'ip_address' => $client_ip,
-                    'verify_ip' => '1'
-                    ]);
+                    'verify_ip' => '1',
+                    'last_session_id' =>  $session_data['_token'],
+                ]);
             Log::info('User ' . $user->username . ' logged in');
             AppHelper::logger('info', 'Login', 'User ' . $user->username . ' logged in');
             return redirect('/dashboard');
