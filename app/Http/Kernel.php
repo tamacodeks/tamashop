@@ -76,5 +76,6 @@ class Kernel extends HttpKernel
         'lang-editor' => \App\Http\Middleware\LanguageEditor::class,
         'restrict-manager' => \App\Http\Middleware\RestrictManager::class,
         'logout_device' => \App\Http\Middleware\LogoutDevice::class,
+        'totp' => \App\Http\Middleware\TotpDevice::class,
     ];
 }
