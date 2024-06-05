@@ -13,7 +13,7 @@ class TotpDevice
             if (in_array(auth()->user()->group_id, [3,4])) {
                 if(auth()->user()->enable_2fa == 0){
                    if(auth()->user()->verify_2fa != 1){
-                       return redirect()->to('enable_2fa')->with('message',trans('common.access_violation'))
+                       return redirect()->to('enable-2fa')->with('message',trans('common.access_violation'))
                            ->with('message_type','warning');
                    }
                 }
