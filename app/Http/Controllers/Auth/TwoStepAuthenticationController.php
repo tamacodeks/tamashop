@@ -321,7 +321,12 @@ class TwoStepAuthenticationController extends Controller
 
                 if ($user->enable_2fa == 1) {
                     $google2fa = app(Google2FA::class);
-                    $valid = $google2fa->verifyKey($user->secret, $request->totp);
+
+						$inputSecret = $request->totp;
+						$secret = $user->secret;
+						// Verify the input secret with a wider time window
+						$valid = $google2fa->verifyKey($secret, $inputSecret, 2);
+						Log::info('OTP verification result: ' . ($valid ? 'valid' : 'invalid'));
 
                     if ($valid) {
                         User::where('id', $user->id)->update(['verify_2fa' => 1]);
