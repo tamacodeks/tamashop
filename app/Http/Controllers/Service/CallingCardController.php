@@ -755,7 +755,7 @@ class CallingCardController extends Controller
                     'created_at' => $pin_printed_time,
                     'created_by' => auth()->user()->id
                 ]);
-                //by manager to pms
+                //by manager to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => $parent_user->id,
@@ -776,7 +776,7 @@ class CallingCardController extends Controller
                 ]);
             }
             else{
-                //by user to pms
+                //by user to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => auth()->user()->id,
@@ -1304,7 +1304,7 @@ class CallingCardController extends Controller
                     'created_at' => $pin_printed_time,
                     'created_by' => auth()->user()->id
                 ]);
-                //by manager to pms
+                //by manager to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => $parent_user->id,
@@ -1325,7 +1325,7 @@ class CallingCardController extends Controller
                 ]);
             }
             else{
-                //by user to pms
+                //by user to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => auth()->user()->id,
@@ -1582,7 +1582,7 @@ class CallingCardController extends Controller
                     'created_at' => $pin_printed_time,
                     'created_by' => auth()->user()->id
                 ]);
-                //by manager to pms
+                //by manager to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => $parent_user->id,
@@ -1603,7 +1603,7 @@ class CallingCardController extends Controller
                 ]);
             }
             else{
-                //by user to pms
+                //by user to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => auth()->user()->id,
@@ -1898,7 +1898,7 @@ class CallingCardController extends Controller
                     'created_at' => $pin_printed_time,
                     'created_by' => auth()->user()->id
                 ]);
-                //by manager to pms
+                //by manager to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => $parent_user->id,
@@ -1919,7 +1919,7 @@ class CallingCardController extends Controller
                 ]);
             }
             else{
-                //by user to pms
+                //by user to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => auth()->user()->id,
@@ -2198,7 +2198,7 @@ class CallingCardController extends Controller
                     'created_at' => $pin_printed_time,
                     'created_by' => auth()->user()->id
                 ]);
-                //by manager to pms
+                //by manager to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => $parent_user->id,
@@ -2219,7 +2219,7 @@ class CallingCardController extends Controller
                 ]);
             }
             else{
-                //by user to pms
+                //by user to tamashop
                 Order::insertGetId([
                     'date' => $pin_printed_time,
                     'user_id' => auth()->user()->id,

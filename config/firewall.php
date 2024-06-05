@@ -264,7 +264,7 @@ return [
         'route' => '',
 
         'from' => [
-            'name' => 'PMS DEMAT Firewall',
+            'name' => 'TAMA Shop Firewall',
 
             'address' => 'noreply@tamaexpress.com',
 

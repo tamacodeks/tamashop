@@ -13,11 +13,20 @@
 </head>
 <body class="content">
 <main role="main">
-    <section class="webapp-auth ">
+    <section class="webapp-auth">
         <figure class="webapp-auth__figure">
-            <img src="{{ secure_asset('images/logo.png') }}" alt="" >
+            <img src="{{ secure_asset('images/logo.png') }}" alt="">
         </figure>
         <section class="account-form-container">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form class="box account-form" id="frmLogin" action="{{ secure_url('securelogin') }}" method="POST">
                 {{ csrf_field() }}
                 <div class="settings-form__field">
@@ -30,15 +39,14 @@
                     <input class="settings-form__field__input" type="password" id="password" name="password" autocomplete="current-password">
                 </div>
 
-                <div class="" style="margin-top: 20px;">
+                <div style="margin-top: 20px;">
                     <div style="float: left;">
-                        <label><input tabindex="3" class="remember" name="remember" type="checkbox"
-                                      value="">{{ trans('login.lbl_remember_me') }}</label>
+                        <label><input tabindex="3" class="remember" name="remember" type="checkbox" value="">{{ trans('login.lbl_remember_me') }}</label>
                     </div>
                     <div style="text-align: right">
-                        <select class="" name="lang" id="lang" tabindex="4">
-                            <option value="fr">FR</option>
-                            <option value="en">EN</option>
+                        <select name="lang" id="lang" tabindex="4">
+                            <option value="fr" {{ old('lang') == 'fr' ? 'selected' : '' }}>FR</option>
+                            <option value="en" {{ old('lang') == 'en' ? 'selected' : '' }}>EN</option>
                         </select>
                     </div>
                 </div>
@@ -60,15 +68,13 @@
     $(document).ready(function () {
         @if(\Session::has('message'))
         $.alert({
-            title: "{{ ucfirst(session('message_type'))  }}",
-            content: '{{ session('message')  }}',
+            title: "{{ ucfirst(session('message_type')) }}",
+            content: '{{ session('message') }}',
             buttons: {
-                "{{ trans('common.btn_close') }}": function () {
-
-                }
+                "{{ trans('common.btn_close') }}": function () {}
             },
             backgroundDismiss: true, // this will just close the modal
-            type: "{{ \app\Library\AppHelper::message_types(session('message_type'))  }}",
+            type: "{{ \app\Library\AppHelper::message_types(session('message_type')) }}",
             autoClose: '{{ trans('common.btn_close') }}|5000'
         });
         @endif
@@ -89,7 +95,7 @@
                 error.addClass("help-block");
 
                 if (element.prop("type") === "checkbox") {
-                    error.insertAfter(element.parents("checkbox"));
+                    error.insertAfter(element.parents("div"));
                 } else {
                     error.insertAfter(element.parents('.settings-form__field'));
                 }

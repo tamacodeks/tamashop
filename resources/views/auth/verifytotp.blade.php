@@ -20,6 +20,15 @@
 
         <section class="account-form-container">
             <h4 class="mb-0">2FA Verification</h4>
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form class="box account-form" id="frmLogin" method="POST">
                 {{ csrf_field() }}
                 <div class="settings-form__field">

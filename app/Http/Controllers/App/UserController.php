@@ -344,8 +344,8 @@ class UserController extends Controller
 //                            'mobile_number' => $mobile_number
 //                        );
 //                        \Mail::send('emails.manager_email_support', $send_email_data, function ($message) use ($emails) {
-//                            $message->from('noreply@tamaexpress.com', 'PMS Demat');
-//                            $message->to($emails)->subject('PMS DEMAT Alert');
+//                            $message->from('noreply@tamaexpress.com', 'TAMA SHOP');
+//                            $message->to($emails)->subject('TAMA SHOP Alert');
 //                        });
 //                    }
 //                }
@@ -667,7 +667,7 @@ class UserController extends Controller
                 try{
                     Mail::send('emails.password_reset', $send_email_data, function($message) use ($emails,$send_email_data)
                     {
-                        $message->to($emails)->from('noreply@tamaexpress.com', 'PMS Demat System')->subject("Password Changed for " . $send_email_data['username']);
+                        $message->to($emails)->from('noreply@tamaexpress.com', 'TAMA SHOP System')->subject("Password Changed for " . $send_email_data['username']);
                     });
                 }catch (\Exception $e){
                     Log::warning('Password change email does not sent exception '.$e->getMessage());

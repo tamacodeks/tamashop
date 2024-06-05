@@ -441,7 +441,7 @@ class PaymentController extends Controller
             if (isset($request->payment_method_id)) {
                 $user = User::find($request->user_id);
                 $old_user_balance = AppHelper::getBalance($user->id, $user->currency, false);
-                $description = 'Payment Done From Stripe By' . ' '.$user->username.' From Fanilo';
+                $description = 'Payment Done From Stripe By' . ' '.$user->username.' From Tamashop';
                 $user_data = ([
                     'user_id' => $request->user_id,
                     'username' => $user->username,
@@ -502,7 +502,7 @@ class PaymentController extends Controller
     {
         $user = User::find($user_data['user_id']);
         $old_user_balance = AppHelper::getBalance($user->id, $user->currency, false);
-        $description = 'Payment Done From Stripe By' . ' '.$user->username.' From Fanilo';
+        $description = 'Payment Done From Stripe By' . ' '.$user->username.' From Tamashop';
         if ($intent->status == 'requires_action') {
             # Tell the client to handle the action
             return response()->json([
@@ -673,7 +673,7 @@ class PaymentController extends Controller
         $paymentDetails = $request->all();
         $user = User::find($paymentDetails['user_id']);
         $old_user_balance = AppHelper::getBalance($user->id, $user->currency, false);
-        $description = 'Payment Done From Stripe By' . ' '.$user->username.' From Fanilo';
+        $description = 'Payment Done From Stripe By' . ' '.$user->username.' From Tamashop';
 
 
 

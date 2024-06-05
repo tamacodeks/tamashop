@@ -290,7 +290,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a href="{{ secure_url('/') }}" class="navbar-brand">
-                    <i class="fa fa-fw fa-book"></i> Fanilo
+                    <i class="fa fa-fw fa-book"></i> TamaShop
                 </a>
             </div>
             <div class="collapse navbar-collapse" id="navbar">
