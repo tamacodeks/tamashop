@@ -15,11 +15,13 @@ class TotpDevice
         if(!$user_id){
             if (in_array(auth()->user()->group_id, [3,4])) {
                 if(auth()->user()->enable_2fa == 0){
-                   if(auth()->user()->verify_2fa != 1){
+                   if(auth()->user()->verify_2fa == 0){
                        return redirect()->to('enable-2fa')->with('message',trans('common.access_totp'))
                            ->with('message_type','warning');
                    }
-                }
+                }else{
+					   return $next($request);
+				}
             }
         }
         return $next($request);

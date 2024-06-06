@@ -17,7 +17,7 @@ class LogoutDevice
             if (in_array(auth()->user()->group_id, [3,4])) {
             if(auth()->user()->last_session_id != $session_data['_token']){
                 Auth::logout();
-                return redirect()->to('/')->with('message',trans('common.access_totp'))
+                return redirect()->to('/')->with('message',trans('common.access_violation'))
                     ->with('message_type','warning');
             }
             }

@@ -335,8 +335,18 @@ class TwoStepAuthenticationController extends Controller
 						$valid = $google2fa->verifyKey($secret, $inputSecret, 2);
 						Log::info('OTP verification result: ' . ($valid ? 'valid' : 'invalid'));
 
+						            
                     if ($valid) {
-                        User::where('id', $user->id)->update(['verify_2fa' => 1]);
+						$session_data = \Session::all();
+						$client_ip = config('app.env') == 'local' ? \Request::getClientIp(true) : AppHelper::getIP(true);
+                        User::where('id', $user->id)->update([
+						'verify_2fa' => 1,
+						'last_activity' => now(),
+									'ip_address' => $client_ip,
+									'verify_ip' => '1',
+									'last_session_id' =>  $session_data['_token'],
+						]);
+								
                         $request->session()->forget('login_data');
 
                         $collection = collect(config('translation'));
