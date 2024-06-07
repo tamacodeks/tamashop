@@ -165,30 +165,61 @@ class CallingCardController extends Controller
                 "created_at" => $cc['created_at'],
                 "created_by" => $cc['created_by']
             ];
+// Update or create a CallingCard instance
             $callingCard = CallingCard::updateOrCreate(
-                ['telecom_provider_id' => $existingProvider->tp_config_id, 'face_value' => $existingProvider->face_value],
+                [
+                    'telecom_provider_id' => $existingProvider->tp_config_id,
+                    'face_value' => $existingProvider->face_value
+                ],
                 $callingCardData
             );
-            $rate_table_groups = RateTableGroup::join('users','users.id','rate_table_groups.user_id')->select('rate_table_groups.id','rate_table_groups.user_id')->get();
-            foreach ($rate_table_groups as $rate_table_group) {
 
+// Retrieve all RateTableGroup records with associated user data
+            $rateTableGroups = RateTableGroup::join('users', 'users.id', '=', 'rate_table_groups.user_id')
+                ->select('rate_table_groups.id', 'rate_table_groups.user_id')
+                ->get();
 
+// Iterate over each RateTableGroup record
+            foreach ($rateTableGroups as $rateTableGroup) {
+                // Ensure rateTableGroup is not null and contains necessary data
+                if ($rateTableGroup && isset($rateTableGroup->user_id, $rateTableGroup->id)) {
+                    // Check if the RateTable record already exists with the given criteria
+                    $existingRateTable = RateTable::where('user_id', $rateTableGroup->user_id)
+                        ->where('rate_group_id', $rateTableGroup->id)
+                        ->where('cc_id', $callingCard->id)
+//                        ->where('buying_price', $callingCard->buying_price)
+                        ->first();
 
-                $rate_table_data = array(
-                    'user_id' => $rate_table_group->user_id,
-                    'rate_group_id' => $rate_table_group->id,
-                    'cc_id' => $callingCard->id,
-                    'buying_price' => $callingCard->buying_price,
-                    'sale_price' => "0.00",
-                    'sale_margin' => "0.00",
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'created_by' => auth()->user()->id
-                );
-               $ratetable = RateTable::updateOrCreate(
-                    ['user_id' => $rate_table_group->user_id, 'rate_group_id' => $rate_table_group->id, 'cc_id' => $callingCard->id],
-                    $rate_table_data
-                );
+                    if ($existingRateTable) {
+                        if ($existingRateTable->sale_price != '0.00'){
+                            // Update the existing record's sale_price
+                            $existingRateTable->where('id', $existingRateTable->id)
+                                ->update([
+                                    'buying_price' => $callingCard->buying_price,
+                                    'sale_margin' => $existingRateTable->buying_price - $callingCard->buying_price,
+                                    'updated_at' => now(), // Update timestamp
+                                    'updated_by' => auth()->user()->id // Assuming you have an updated_by field
+                                ]);
+                        }
+                    } else {
+                        // Prepare the rate table data for creating a new record
+                        $rateTableData = [
+                            'user_id' => $rateTableGroup->user_id,
+                            'rate_group_id' => $rateTableGroup->id,
+                            'cc_id' => $callingCard->id,
+                            'buying_price' => $callingCard->buying_price,
+                            'sale_price' => "0.00",
+                            'sale_margin' => "0.00",
+                            'created_at' => now(), // Use Laravel's helper for current timestamp
+                            'created_by' => auth()->user()->id
+                        ];
+
+                        // Create a new RateTable record
+                        RateTable::create($rateTableData);
+                    }
+                }
             }
+
         }
         return true;
     }
