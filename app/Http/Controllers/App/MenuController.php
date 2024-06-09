@@ -75,17 +75,20 @@ class MenuController extends Controller
             'icon' => $request->menu_icon,
             'ordering' => $request->ordering,
         );
-//        if (ENABLE_MULTI_LANG == 1) {
-//            $lang = Lman::langOption();
-//            $language = array();
-//            foreach ($lang as $l) {
-//                if ($l['folder'] != 'en') {
-//                    $menu_lang = (isset($_POST['language_title'][$l['folder']]) ? $_POST['language_title'][$l['folder']] : '');
-//                    $language['title'][$l['folder']] = $menu_lang;
-//                }
-//            }
-//            $data['trans_lang'] = json_encode($language);
-//        }
+//        dd($request->all());
+        $availableLanguages = ['en', 'fr'];
+
+        $language = array();
+        foreach ($availableLanguages as $lang) {
+            // Skip English ('en') if you only want to process other languages
+            if ($lang != 'en') {
+                $menu_lang = isset($_POST['language_title'][$lang]) ? htmlspecialchars($_POST['language_title'][$lang], ENT_QUOTES, 'UTF-8') : '';
+                $language['title'][$lang] = $menu_lang;
+            }
+        }
+
+        // Convert the language array to JSON and store it in $data['trans_lang']
+        $data['trans_lang'] = json_encode($language);
         if (!empty($menu_id)) {
             //update menu
             $data['updated_at'] = date("Y-m-d H:i:s");
