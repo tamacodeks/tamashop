@@ -56,9 +56,6 @@
                                         <th>{{ trans('myservice.lbl_buying_price') }}</th>
                                     @endif
                                     <th>{{ trans('common.transaction_tbl_sale_margin') }}</th>
-                                    @if(in_array(auth()->user()->group_id,[4]))
-                                        <th>{{ trans('tamatopup.service_charge') }}</th>
-                                    @endif
                                     <th>{{ trans('common.order_status') }}</th>
                                 </tr>
                                 </thead>
@@ -189,9 +186,6 @@
                         @endif
                     {data: 'order_amount', name: 'order_amount',orderable:false,searchable:false, className: "sum" },
                     {data: 'sale_margin', name: 'sale_margin',orderable:false,searchable:false,className: "sum"},
-                    @if(in_array(auth()->user()->group_id,[4]))
-                        {data: 'sur_charge', name: 'sur_charge',orderable:false,searchable:false,className: "sum"},
-                    @endif
                     {data: "service_id",
                         "searchable": false,
                         "orderable":false,
@@ -200,14 +194,14 @@
                                 return '<a href="flix-bus/download/'+row.instructions+','+row.link+'" target="_blank">Download</a>';
                             }else if(data == '2') {
                                 if(row.order_status_name == 'Refunded'){
-                                    return row.order_status_name;
+                                    return 'Rembourser';
                                 }else{
                                     return 'Topup Ok';
                                 }
                             }else if (data == '8') {
                                 return 'Topup Ok';
                             }else if (data == '9') {
-                                return 'Refunded';
+                                return 'Rembourser';
                             }else {
                                 return 'Calling card ok';
                             }

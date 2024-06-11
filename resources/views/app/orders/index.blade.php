@@ -61,9 +61,6 @@
                                     <th>{{ trans('common.transaction_tbl_service') }}</th>
                                     <th>{{ trans('common.lbl_product') }}</th>
                                     <th>{{ trans('common.order_tbl_price') }}</th>
-                                    {{--@if(in_array(auth()->user()->group_id,[4]))--}}
-                                    {{--<th>{{ trans('tamatopup.service_charge') }}</th>--}}
-                                    {{--@endif--}}
                                     <th>{{ trans('common.order_status') }}</th>
                                     <th>{{ trans('common.btn_print') }}</th>
                                 </tr>
@@ -170,10 +167,21 @@
                     },
                     {data: 'product_name', name: 'product_name',searchable:false,orderable:false},
                     {data: 'order_amount', name: 'order_amount',searchable:false,orderable:false},
-                    {{--@if(in_array(auth()->user()->group_id,[4]))--}}
-                        {{--{data: 'sur_charge', name: 'sur_charge',orderable:false,searchable:false,className: "sum"},--}}
-                    {{--@endif--}}
-                    {data: 'order_status_name', name: 'order_status_name',searchable:false,orderable:false},
+
+                    {data: "order_status_name",
+                        "searchable": false,
+                        "orderable":false,
+                        "render": function (data, type, row) {
+                            if(row.order_status_name == 'Refunded'){
+                                return 'Rembourser';
+                            }else{
+                                return row.order_status_name;
+                            }
+                        }
+
+                    },
+
+
                     {data: 'print_receipt', name: 'print_receipt',searchable:false,orderable:false},
                 ],
                 dom: 'Bfrtip',

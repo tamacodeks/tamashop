@@ -15,6 +15,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
@@ -244,10 +245,10 @@ class TransactionController extends Controller
         return view('app.transactions.failed_transaction',$page_data);
     }
 
-    function getfailed_transaction(Request $request){
-        $query = Order::join('users','users.id','orders.user_id')
-            ->join('order_status','order_status.id','orders.order_status_id')
-            ->join('services','services.id','orders.service_id')
+    function getfailed_transaction(Request $request) {
+        $query = Order::join('users', 'users.id', 'orders.user_id')
+            ->join('order_status', 'order_status.id', 'orders.order_status_id')
+            ->join('services', 'services.id', 'orders.service_id')
             ->select([
                 'orders.id',
                 'orders.date',
@@ -281,109 +282,98 @@ class TransactionController extends Controller
                 'order_items.link',
                 'order_status.name as order_status_name',
             ]);
-        if(auth()->user()->group_id == 2){
-            $query->join('order_items','order_items.id','orders.order_item_id');
-            $child = User::where('id',auth()->user()->id)->with('children')->first();
+
+        if (auth()->user()->group_id == 2 || auth()->user()->group_id == 3) {
+            $query->join('order_items', 'order_items.id', 'orders.order_item_id');
+            $child = User::where('id', auth()->user()->id)->with('children')->first();
             $retailers = $child->children->pluck('id')->flatten()->toArray();
-            $query->whereIn('users.id',$retailers);
+            $query->whereIn('users.id', $retailers);
             $query->where('orders.is_parent_order', '=', '1');
-        }elseif(auth()->user()->group_id == 3){
-            $query->join('order_items','order_items.id','orders.order_item_id');
-            $child = User::where('id',auth()->user()->id)->with('children')->first();
-            $retailers = $child->children->pluck('id')->flatten()->toArray();
-            $query->whereIn('users.id',$retailers);
-            $query->where('orders.is_parent_order', '=', '1');
-        }elseif(auth()->user()->group_id == 4){
-            $query->join('order_items','order_items.order_id','orders.id');
-            $query->where('users.id',auth()->user()->id);
+        } elseif (auth()->user()->group_id == 4) {
+            $query->join('order_items', 'order_items.order_id', 'orders.id');
+            $query->where('users.id', auth()->user()->id);
             $query->where('orders.is_parent_order', '=', '0');
-        }else{
-            $query->join('order_items','order_items.order_id','orders.id');
-            $query->where('users.id',auth()->user()->id);
+        } else {
+            $query->join('order_items', 'order_items.order_id', 'orders.id');
+            $query->where('users.id', auth()->user()->id);
             $query->where('orders.is_parent_order', '=', '0');
         }
+
         if (empty($request->input('from_date')) && empty($request->input('to_date'))) {
-            $today_date = date("Y-m-d");
-            switch (DEFAULT_RECORD_METHOD){
-                case 1:
-                    $query->whereBetween('orders.date', [$today_date." 00:00:00",$today_date." 23:59:59"]);
-                    break;
-                case 2:
-                    $query->whereMonth('orders.date',date('m'));
-                    break;
-                case 3:
-                    $query->whereBetween('orders.date', [Carbon::now()->startOfWeek(),Carbon::now()->endOfWeek()]);
-                    break;
-            }
-        }else{
-            $from_date = $request->input('from_date').' 00:00:00';
-            $to_date = $request->input('to_date').' 23:59:59';
-            $query->whereBetween('orders.date',[$from_date,$to_date]);
+            // No date filter, return last 10 transactions
+            $query->orderBy('orders.date', 'desc')->limit(10);
+        } else {
+            // Apply date filters
+            $from_date = $request->input('from_date') . ' 00:00:00';
+            $to_date = $request->input('to_date') . ' 23:59:59';
+            $query->whereBetween('orders.date', [$from_date, $to_date])
+                ->orderBy('orders.date', 'desc');
         }
-        $orders = $query;
-        return Datatables::of($orders)
+
+        return Datatables::of($query)
             ->addColumn('product_name', function ($orders) {
-                if($orders->service_id == 1){
+                if ($orders->service_id == 1) {
                     return optional(Product::find($orders->product_id))->name;
                 }
-                if($orders->service_id == 5){
-                    return $orders->service_name.' '.AppHelper::formatAmount($orders->app_currency,$orders->app_amount_topup);
+                if ($orders->service_id == 5) {
+                    return $orders->service_name . ' ' . AppHelper::formatAmount($orders->app_currency, $orders->app_amount_topup);
                 }
-                if($orders->service_id == 2 || $orders->service_id == 7){
+                if ($orders->service_id == 2 || $orders->service_id == 7) {
                     $tt_op = OrderItem::find($orders->order_item_id);
-                    return $orders->tt_operator == null ? optional($tt_op)->tt_operator :  $orders->tt_operator;
+                    return $orders->tt_operator == null ? optional($tt_op)->tt_operator : $orders->tt_operator;
                 }
                 $iso_code = optional(User::find($orders->user_id))->currency;
                 $price = $orders->public_price == "0.00" ? $orders->grand_total : $orders->public_price;
-                return $orders->service_name.' '.AppHelper::formatAmount($iso_code,$price);
+                return $orders->service_name . ' ' . AppHelper::formatAmount($iso_code, $price);
             })
-            ->addColumn('public_price', function ($orders){
+            ->addColumn('public_price', function ($orders) {
                 return $orders->public_price;
             })
-            ->addColumn('pin', function ($orders){
-                if($orders->service_id == 7){
-                    $pin_history = PinHistory::where('used_by',$orders->user_id)->where("date",$orders->date)->first();
+            ->addColumn('pin', function ($orders) {
+                if ($orders->service_id == 7) {
+                    $pin_history = PinHistory::where('used_by', $orders->user_id)->where("date", $orders->date)->first();
                     return optional($pin_history)->pin;
-                }else{
+                } else {
                     return $orders->tama_pin;
                 }
             })
-            ->addColumn('serial', function ($orders){
-                if($orders->service_id == 7){
-                    $pin_history = PinHistory::where('used_by',$orders->user_id)->where("date",$orders->date)->first();
+            ->addColumn('serial', function ($orders) {
+                if ($orders->service_id == 7) {
+                    $pin_history = PinHistory::where('used_by', $orders->user_id)->where("date", $orders->date)->first();
                     return optional($pin_history)->serial;
-                }else{
+                } else {
                     return $orders->tama_serial;
                 }
             })
-            ->addColumn('buying_price', function ($orders){
+            ->addColumn('buying_price', function ($orders) {
                 return $orders->buying_price;
             })
-            ->addColumn('order_amount', function ($orders){
+            ->addColumn('order_amount', function ($orders) {
                 return $orders->order_amount;
             })
-            ->addColumn('sale_margin', function ($orders){
+            ->addColumn('sale_margin', function ($orders) {
                 return $orders->sale_margin;
             })
-            ->addColumn('mobile', function ($orders){
-                if($orders->service_id == 1){
+            ->addColumn('mobile', function ($orders) {
+                if ($orders->service_id == 1) {
                     return $orders->receiver_mobile;
-                }elseif ($orders->service_id == 2){
+                } elseif ($orders->service_id == 2) {
                     return $orders->tt_mobile;
-                }else{
+                } else {
                     return $orders->app_mobile;
                 }
             })
             ->filter(function ($query) use ($request) {
-                if($request->service_id[0] == '9'){
+                if ($request->service_id[0] == '9') {
                     $qry = '9';
-                    $query->Where(function ($q) use ($qry) {
+                    $query->where(function ($q) use ($qry) {
                         $q->orWhere('orders.order_status_id', "like", "$qry");
                     });
                 }
             })
             ->make(true);
     }
+
 
     function myTransactions(){
         $page_data = [
