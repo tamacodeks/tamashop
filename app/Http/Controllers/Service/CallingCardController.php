@@ -61,8 +61,10 @@ class CallingCardController extends Controller
         }
         else
         {
-            $this->data['telecom_providers'] = TelecomProviderConfig::where('bimedia_card',1)->select('id','name')->get();
-        }
+		$this->data['telecom_providers'] = TelecomProviderConfig::where('bimedia_card', 1)
+			->select('id', 'name')
+			->orderBy('ordering')
+			->get(); }
 //		if($this->balance < 500){
 //			 return view('service.calling-card.temporary');
 //		}else{
