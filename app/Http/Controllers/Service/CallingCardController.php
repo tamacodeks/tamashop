@@ -505,7 +505,7 @@ class CallingCardController extends Controller
         $this->data['face_value'] = $provider->face_value;
         $this->data['description'] = $provider->description;
         $this->data['cus_id'] = auth()->user()->cust_id;
-        $this->data['telecom_provider_id'] =$provider['tp_config_id'];
+        $this->data['telecom_provider_id'] =$provider['id'];
         if ($check_limit != NULL) {
             if (ServiceHelper::limit_check(auth()->user()->id, $provider->face_value)) {
                 $r_bal = (\app\Library\AppHelper::get_remaning_limit_balance(auth()->user()->id));
@@ -538,16 +538,6 @@ class CallingCardController extends Controller
                     ->with('message_type', 'warning');
             }
         }
-        $dec_id = $this->decipher->decrypt($id);
-        $provider = TelecomProvider::find($dec_id);
-        $this->data['page_title'] = $provider->name.' '.AppHelper::formatAmount('EUR',$provider->face_value);
-        $this->data['card_name'] = $provider->name;
-        $this->data['card_id'] = $this->decipher->encrypt($provider->tp_config_id);
-        $this->data['provider'] = $provider;
-        $this->data['face_value'] = $provider->face_value;
-        $this->data['description'] = $provider->description;
-        $this->data['cus_id'] = auth()->user()->cust_id;
-        $this->data['telecom_provider_id'] =$provider['tp_config_id'];
         $client = new Client([
             'base_uri' => API_END_POINT,
             'timeout'  => 120,
