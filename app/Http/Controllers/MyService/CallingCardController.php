@@ -146,7 +146,7 @@ class CallingCardController extends Controller
             if (!$existingProvider) continue;
 
             $callingCardData = [
-                "telecom_provider_id" => $existingProvider->tp_config_id,
+                "telecom_provider_id" => $existingProvider->id,
                 "service_id" => $cc['service_id'],
                 "name" => $cc['name'],
                 "description" => $cc['description'],
@@ -168,7 +168,7 @@ class CallingCardController extends Controller
 // Update or create a CallingCard instance
             $callingCard = CallingCard::updateOrCreate(
                 [
-                    'telecom_provider_id' => $existingProvider->tp_config_id,
+                    'telecom_provider_id' => $existingProvider->id,
                     'face_value' => $existingProvider->face_value
                 ],
                 $callingCardData

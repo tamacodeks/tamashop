@@ -34,14 +34,14 @@ class CallingCardController extends Controller
 {
     private $log_title;
     private $decipher;
- 	private $balance;
+    private $balance;
     function __construct()
     {
         parent::__construct();
         $this->log_title = "Calling Cards";
         $this->decipher = new SecurityHelper();
         $balance = Bimedia_statistics::orderBy('id',"DESC")->first();
-		$this->balance = $balance->new_balance;
+        $this->balance = $balance->new_balance;
         if($balance->new_balance < 500){
             Log::emergency(APP_NAME." Low Balance Alert ". $balance->new_balance);
         }
@@ -51,7 +51,7 @@ class CallingCardController extends Controller
      * View Calling card telecom providers
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-     function index()
+    function index()
     {
         $operator_type = SeriveProvider::select('primary')->first();
         $this->data['page_title'] = "Calling cards";
@@ -61,14 +61,15 @@ class CallingCardController extends Controller
         }
         else
         {
-		$this->data['telecom_providers'] = TelecomProviderConfig::where('bimedia_card', 1)
-			->select('id', 'name')
-			->orderBy('ordering')
-			->get(); }
+            $this->data['telecom_providers'] = TelecomProviderConfig::where('bimedia_card', 1)
+                ->select('id', 'name')
+                ->orderBy('ordering')
+                ->get();
+        }
 //		if($this->balance < 500){
 //			 return view('service.calling-card.temporary');
 //		}else{
-		      return view('service.calling-card.index',$this->data);	
+        return view('service.calling-card.index',$this->data);
 //		}
     }
 
@@ -495,8 +496,18 @@ class CallingCardController extends Controller
         }
 
         $check_limit = AppHelper::get_daily_limit(auth()->user()->id);
+        $dec_id = $this->decipher->decrypt($id);
+        $provider = TelecomProvider::find($dec_id);
+        $this->data['page_title'] = $provider->name.' '.AppHelper::formatAmount('EUR',$provider->face_value);
+        $this->data['card_name'] = $provider->name;
+        $this->data['card_id'] = $this->decipher->encrypt($provider->tp_config_id);
+        $this->data['provider'] = $provider;
+        $this->data['face_value'] = $provider->face_value;
+        $this->data['description'] = $provider->description;
+        $this->data['cus_id'] = auth()->user()->cust_id;
+        $this->data['telecom_provider_id'] =$provider['tp_config_id'];
         if ($check_limit != NULL) {
-            if (ServiceHelper::limit_check(auth()->user()->id, $card->buying_price)) {
+            if (ServiceHelper::limit_check(auth()->user()->id, $provider->face_value)) {
                 $r_bal = (\app\Library\AppHelper::get_remaning_limit_balance(auth()->user()->id));
                 $daily_limit = (\app\Library\AppHelper::get_daily_limit(auth()->user()->id));
                 $getBalance = (\app\Library\AppHelper::getBalance(auth()->user()->id, auth()->user()->currency, false));
@@ -520,7 +531,7 @@ class CallingCardController extends Controller
                     $message->from('noreply@tamaexpress.com', 'IP Recharge');
                     $message->to($emails)->subject('IP Recharge Limit Alert');
                 });
-                AppHelper::logger('warning', 'Daily Limit Exceed', auth()->user()->username . 'Daily limit exceed to confirm tama topup order', $card);
+                AppHelper::logger('warning', 'Daily Limit Exceed', auth()->user()->username . 'Daily limit exceed to confirm tama topup order');
                 Log::warning('TamaTopup Daily Limit Exceed => ' . auth()->user()->username . ' => ' . auth()->user()->id);
                 return redirect('calling-cards')
                     ->with('message', trans('common.contact_manager'))
@@ -646,31 +657,31 @@ class CallingCardController extends Controller
         $root_txn_id = TRANSACTION_PREFIX . ServiceHelper::genTransID(5);
         $after_order_balance = number_format((float)$user_balance - $order_amount->sale_price, 2, '.', '');
         try{
-        $this->data['cus_id'] = auth()->user()->cust_id;
-        $this->data['pin_id'] =$request->pin_id;
-        $client = new Client([
-            'base_uri' => API_END_POINT,
-            'timeout'  => 120,
-        ]);
-        $ccResponse = $client->request('POST', 'calling-cards/confirm', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => "Bearer " . API_TOKEN
-            ],
-            'form_params' => $this->data
-        ]);
+            $this->data['cus_id'] = auth()->user()->cust_id;
+            $this->data['pin_id'] =$request->pin_id;
+            $client = new Client([
+                'base_uri' => API_END_POINT,
+                'timeout'  => 120,
+            ]);
+            $ccResponse = $client->request('POST', 'calling-cards/confirm', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => "Bearer " . API_TOKEN
+                ],
+                'form_params' => $this->data
+            ]);
 
-        if ($ccResponse->getStatusCode() == 200) {
-            $response_data = json_decode((string)$ccResponse->getBody(), true);
-            if (isset($response_data['data']['result'])) {
-                $response = $response_data['data']['result'];
-                $dec_pin = $response['pin'];
-                $dec_serial = $response['serial'];
+            if ($ccResponse->getStatusCode() == 200) {
+                $response_data = json_decode((string)$ccResponse->getBody(), true);
+                if (isset($response_data['data']['result'])) {
+                    $response = $response_data['data']['result'];
+                    $dec_pin = $response['pin'];
+                    $dec_serial = $response['serial'];
+                }
+            }else{
+
+                return ApiHelper::response('404',200,trans('myservice.unable_to_print'));
             }
-        }else{
-
-            return ApiHelper::response('404',200,trans('myservice.unable_to_print'));
-        }
 
             \DB::beginTransaction();
             //order comment
@@ -707,7 +718,7 @@ class CallingCardController extends Controller
             ]);
             $parent_user = User::find(auth()->user()->parent_id);
 //            $calling_card = CallingCard::find($request->cc_id);
-        $calling_card = CallingCard::where('telecom_provider_id', $request->telecom_provider_id)->where('face_value',$request->face_value)->first();
+            $calling_card = CallingCard::where('telecom_provider_id', $request->telecom_provider_id)->where('face_value',$request->face_value)->first();
             $operator_type = SeriveProvider::select('primary')->first();
             if($operator_type->primary == 'Aleda')
             {
