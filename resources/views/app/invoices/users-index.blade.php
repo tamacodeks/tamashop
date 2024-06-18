@@ -14,7 +14,7 @@
                     </div>
                     <div class="panel-body">
                         <form method="GET" id="search-form" class="form-inline" role="form"
-                              action="{{ url("invoices") }}">
+                              action="{{ secure_url("invoices") }}">
                             @if(auth()->user()->group_id == 3)
                                 <div class="form-group">
                                     <label for="service_id">{{ trans('common.users') }}</label>
@@ -80,13 +80,13 @@
                                     <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
                                     <td>{{ $invoice->invoice_ref }}</td>
                                     <td>
-                                        <a href="{{ url('invoices/view/'.$invoice->id."/".$invoice->service) }}"
+                                        <a href="{{ secure_url('invoices/view/'.$invoice->id."/".$invoice->service) }}"
                                            onclick="AppModal(this.href,'{{ $invoice
                                          ->invoice_ref}}');return false;"
                                            class="btn btn-primary btn-sm view-pdf"><i
                                                     class="fa fa-eye"></i>&nbsp;{{ trans('common.lbl_view') }}</a>
                                         <a target="_blank"
-                                           href="{{ url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
+                                           href="{{ secure_url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
                                            class="btn btn-default btn-sm"><i
                                                     class="fa fa-download"></i>&nbsp;Download</a>
                                     </td>

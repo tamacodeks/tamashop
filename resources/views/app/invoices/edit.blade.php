@@ -1,4 +1,4 @@
-<form class="form-horizontal" name="frmInvoiceSetting" id="frmInvoiceSetting" action="{{ url('invoice-settings/update/'.$setting->id) }}" method="POST">
+<form class="form-horizontal" name="frmInvoiceSetting" id="frmInvoiceSetting" action="{{ secure_url('invoice-settings/update/'.$setting->id) }}" method="POST">
     {{ csrf_field() }}
     <div class="form-group">
         <label class="control-label col-md-4" for="name">{{ trans('tamatopup.country') }}</label>

@@ -1,7 +1,7 @@
 @extends('layout.app')
 @section('content')
     @include('layout.breadcrumb',['data' => [
-        ['name' => 'Invoices','url'=> url('invoices'),'active' => 'no'],
+        ['name' => 'Invoices','url'=> secure_url('invoices'),'active' => 'no'],
         ['name' => trans('common.gen_invoice'),'url'=> '','active' => 'yes']
     ]
     ])
@@ -26,7 +26,7 @@
                             </div>
                         @endif
                         <form method="POST" id="frmGenerateInvoice" class="form-horizontal"
-                              action="{{ url('invoices/generate/confirm') }}">
+                              action="{{ secure_url('invoices/generate/confirm') }}">
                             {{ csrf_field() }}
                             <div class="form-group">
                                 <label for="service_id" class="control-label col-md-4">{{ trans('common.users') }}</label>

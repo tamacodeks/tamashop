@@ -19,10 +19,10 @@
                     </div>
                     <div class="panel-body">
                         <div class="pull-right">
-                            <a href="{{ url('invoices/generate') }}" class="btn btn-primary"><i
+                            <a href="{{ secure_url('invoices/generate') }}" class="btn btn-primary"><i
                                         class="fa fa-plus-circle"></i>&nbsp;Generate Invoice</a>
                         </div>
-                        <form method="GET" id="search-form" action="{{ url('invoices') }}" class="form-inline"
+                        <form method="GET" id="search-form" action="{{ secure_url('invoices') }}" class="form-inline"
                               role="form">
                             <div class="form-group">
                                 <label for="service_id">{{ trans('common.users') }}</label>
@@ -104,17 +104,17 @@
                                     <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
                                     <td>{{ $invoice->invoice_ref }}</td>
                                     <td>
-                                        <a  href="{{ url('invoices/view/'.$invoice->id."/".$invoice->service) }}" onclick="AppModal(this.href,'{{ $invoice
+                                        <a  href="{{ secure_url('invoices/view/'.$invoice->id."/".$invoice->service) }}" onclick="AppModal(this.href,'{{ $invoice
                                          ->invoice_ref}}');return false;"
                                             class="btn btn-primary btn-sm view-pdf" ><i
                                                     class="fa fa-eye"></i>&nbsp;{{ trans('common.lbl_view') }}</a>
-                                        <a target="_blank" href="{{ url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
+                                        <a target="_blank" href="{{ secure_url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
                                            class="btn btn-default btn-sm"><i
                                                     class="fa fa-download"></i>&nbsp;Download</a>
-                                        <button id="btnSend_{{ $invoice->id }}" onclick='sendInvoiceEmail("{{ $invoice->id }}","{{ url('invoices/email/'.$invoice->id."/".$invoice->service) }}");return false;'
+                                        <button id="btnSend_{{ $invoice->id }}" onclick='sendInvoiceEmail("{{ $invoice->id }}","{{ secure_url('invoices/email/'.$invoice->id."/".$invoice->service) }}");return false;'
                                            class="btn btn-danger btn-sm"><i
                                                     class="fa fa-envelope"></i>&nbsp;Send Email</button>
-                                        <a onclick='AppConfirmDelete("{{ url('invoices/remove/'.$invoice->id) }}","{{ __('service.confirm') }}","{{ __('common.btn_delete')." ".$invoice->username." invoice for ".date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}");return false;'
+                                        <a onclick='AppConfirmDelete("{{ secure_url('invoices/remove/'.$invoice->id) }}","{{ __('service.confirm') }}","{{ __('common.btn_delete')." ".$invoice->username." invoice for ".date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}");return false;'
                                            class="btn btn-warning btn-sm"><i
                                                     class="fa fa-trash"></i>&nbsp;{{ __("common.btn_delete") }}</a>
                                     </td>

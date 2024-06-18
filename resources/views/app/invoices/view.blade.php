@@ -1,1 +1,1 @@
-<iframe id="myFrame" src="{{ url('invoices/render/'.$id."/".$service) }}" width="530" height="800"></iframe>
+<iframe id="myFrame" src="{{ secure_url('invoices/render/'.$id."/".$service) }}" width="530" height="800"></iframe>

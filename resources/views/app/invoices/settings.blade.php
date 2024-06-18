@@ -15,7 +15,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="pull-right">
-                            <a class="btn btn-primary" href="{{ url('invoice-settings/create') }}" onclick="AppModal(this.href,'Create new setting');return false;"><i class="fa fa-plus-circle"></i>&nbsp;{{ trans('common.add_new') }} </a>
+                            <a class="btn btn-primary" href="{{ secure_url('invoice-settings/create') }}" onclick="AppModal(this.href,'Create new setting');return false;"><i class="fa fa-plus-circle"></i>&nbsp;{{ trans('common.add_new') }} </a>
                         </div>
                         <br><br>
                         <table class="table table-bordered table-striped">
@@ -37,8 +37,8 @@
                                         <td>{{ $setting->commission }}</td>
                                         <td>{{ $setting->created_at }}</td>
                                         <td>
-                                            <a href="{{ url('invoice-settings/edit/'.$setting->id) }}" onclick="AppModal(this.href,'Edit {{ $setting->nice_name }}');return false;" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i>&nbsp;{{ trans('common.lbl_edit') }} </a>
-                                            <a href="{{ url('invoice-settings/delete/'.$setting->id) }}" onclick="AppConfirmDelete(this.href,'Confirm','Do you want remove?');return false;" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>&nbsp;{{ trans('common.btn_delete') }} </a>
+                                            <a href="{{ secure_url('invoice-settings/edit/'.$setting->id) }}" onclick="AppModal(this.href,'Edit {{ $setting->nice_name }}');return false;" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i>&nbsp;{{ trans('common.lbl_edit') }} </a>
+                                            <a href="{{ secure_url('invoice-settings/delete/'.$setting->id) }}" onclick="AppConfirmDelete(this.href,'Confirm','Do you want remove?');return false;" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>&nbsp;{{ trans('common.btn_delete') }} </a>
                                         </td>
                                     </tr>
                                 @empty
