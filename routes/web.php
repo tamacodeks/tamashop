@@ -127,8 +127,19 @@ Route::group(['middleware' => ['balanceupdate','logout_device','totp']],function
         //calling card
         Route::get('processAll', 'MyService\CallingCardController@processAll');
     });
-
+//    Route::group(['middleware' => ['can-invoice-print']], function () {
+        Route::get('invoices', 'App\InvoiceController@index');
+        Route::get('invoices/download/{id}/{service}', 'App\InvoiceController@downloadInvoice');
+        Route::get('invoices/view/{id}/{service}', 'App\InvoiceController@viewInvoice');
+        Route::get('invoices/render/{id}/{service}', 'App\InvoiceController@renderInvoice');
+        Route::post('invoices/email/{id}/{service}', 'App\InvoiceController@emailInvoice');
+//    });
+    //Invoice generate
+    Route::get('invoices/generate', 'App\InvoiceController@generateInvoice');
+    Route::post('invoices/generate/confirm', 'App\InvoiceController@confirmGenerate');
+    Route::get('invoices/remove/{id}', 'App\InvoiceController@removeInvoice');
     Route::group(['middleware' => ['auth', 'root', 'fw-block-blacklisted']], function () {
+
         //menus
         Route::get('menus/{id?}', 'App\MenuController@index');
         Route::post('menu/save', 'App\MenuController@save');

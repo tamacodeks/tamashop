@@ -9,6 +9,7 @@
         "arcanedev/log-viewer": "^4.5",
         "bacon/bacon-qr-code": "^2.0",
         "barryvdh/laravel-elfinder": "^0.3.12",
+        "barryvdh/laravel-snappy": "0.4.8",
         "casinelli/currency": "dev-master",
         "doctrine/dbal": "^2.5",
         "ellipsesynergie/api-response": "^0.15.0",

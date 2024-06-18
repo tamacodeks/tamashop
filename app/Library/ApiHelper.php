@@ -16,15 +16,6 @@ use Illuminate\Support\Facades\Log;
 class ApiHelper
 {
 
-    static function apiRequest($method, $uri, $form_data = [])
-    {
-        // Initialize the Guzzle client with base URI and timeout
-
-
-        $response_api= json_decode((string)$response->getBody(), true);
-        $response_data = $response_api['data'];
-        dd($response_data);
-    }
     /**
      * API Common response format
      * @param $code
