@@ -58,6 +58,28 @@
                                     </div>
                                 </a>
                             </div>
+                            <div class="col-md-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <a href="{{ secure_url('flix-bus') }}">
+                                                    <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="{{ secure_url('flix-bus') }}"
+                                       class="a-footer">
+                                        <div class="panel-footer dashboard-panel-footer">
+                                            <span class="pull-left">{{ trans('common.click_here') }}</span>
+                                            <span class="pull-right"><i
+                                                        class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row m-b-20" id="spinnerRow">

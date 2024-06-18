@@ -61,24 +61,26 @@
                                 </a>
                             </div>
                             <div class="col-md-3">
-                                <a href="{{ secure_url('tama-topup-france') }}" style="color:#000;">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading" >
-                                            <div class="row">
-                                                <a href="{{ secure_url('tama-topup-france') }}" style="color:#000;">
-                                                    <img src="{{ secure_asset('images/calling_card.jpeg') }}"style="height: 99px;width: 235px;">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <a href="{{ secure_url('flix-bus') }}">
+                                                    <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
                                                 </a>
                                             </div>
                                         </div>
-                                        {{--<a href="{{ secure_url('tama-topup-france') }}" class="a-footer">--}}
-                                        {{--<div class="panel-footer dashboard-panel-footer">--}}
-                                        {{--<span class="pull-left">{{ trans('common.click_here') }}</span>--}}
-                                        {{--<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>--}}
-                                        {{--<div class="clearfix"></div>--}}
-                                        {{--</div>--}}
-                                        {{--</a>--}}
                                     </div>
-                                </a>
+                                    <a href="{{ secure_url('flix-bus') }}"
+                                       class="a-footer">
+                                        <div class="panel-footer dashboard-panel-footer">
+                                            <span class="pull-left">{{ trans('common.click_here') }}</span>
+                                            <span class="pull-right"><i
+                                                        class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="row">

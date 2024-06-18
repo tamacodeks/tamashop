@@ -64,6 +64,28 @@
                                     </div>
                                 </a>
                             </div>
+                            <div class="col-md-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <a href="{{ secure_url('flix-bus') }}">
+                                                    <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="{{ secure_url('flix-bus') }}"
+                                       class="a-footer">
+                                        <div class="panel-footer dashboard-panel-footer">
+                                            <span class="pull-left">{{ trans('common.click_here') }}</span>
+                                            <span class="pull-right"><i
+                                                        class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 design-process-section" id="process-tab">
@@ -73,33 +95,33 @@
                         <div class="row m-b-20" id="spinnerRow">
                             <div class="col-md-2"></div>
                             <div class="col-md-8 m-b-20">
-                                    <div class="form-group m-b-30">
-                                        <label class="control-label col-md-4"
-                                               for="operator">{{ trans('tamatopup.mobile') }}</label>
-                                        <div class="col-md-8">
-                                            <h4>+{{ $mobile_number }}
-                                                <a href="{{ secure_url('tama-topup') }}"
-                                                   style="font-size: 14px;margin-left: 20px;">{{ trans('tamatopup.change_number') }}</a></h4>
-                                        </div>
+                                <div class="form-group m-b-30">
+                                    <label class="control-label col-md-4"
+                                           for="operator">{{ trans('tamatopup.mobile') }}</label>
+                                    <div class="col-md-8">
+                                        <h4>+{{ $mobile_number }}
+                                            <a href="{{ secure_url('tama-topup') }}"
+                                               style="font-size: 14px;margin-left: 20px;">{{ trans('tamatopup.change_number') }}</a></h4>
                                     </div>
+                                </div>
 
-                                    <div class="col-md-12 div-list-products">
-                                        <ul id="productLists" class="product-lists">
-                                            <li class="denomination">
-                                                <a href="javascript:void(0);" >
-                                                    <div class="panel panel-default panel-data activatable-item">
-                                                        <div class="data">
-                                                            <div>
-                                                                <h2>{{ trans('common.service_not_avail') }}</h2>
-                                                            </div>
-                                                            <div class="clearfix"></div>
-                                                            <!-- /ko -->
+                                <div class="col-md-12 div-list-products">
+                                    <ul id="productLists" class="product-lists">
+                                        <li class="denomination">
+                                            <a href="javascript:void(0);" >
+                                                <div class="panel panel-default panel-data activatable-item">
+                                                    <div class="data">
+                                                        <div>
+                                                            <h2>{{ trans('common.service_not_avail') }}</h2>
                                                         </div>
+                                                        <div class="clearfix"></div>
+                                                        <!-- /ko -->
                                                     </div>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="col-md-2"></div>
                         </div>

@@ -63,25 +63,27 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-md-3" style="display:none;">
-                                <a href="{{ secure_url('tama-topup-france') }}" style="color:#000;">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading" >
-                                            <div class="row">
-                                                <a href="{{ secure_url('tama-topup-france') }}" style="color:#000;">
-                                                    <img src="{{ secure_asset('images/calling_card.jpeg') }}"style="height: 99px;width: 235px;">
+                            <div class="col-md-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <a href="{{ secure_url('flix-bus') }}">
+                                                    <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
                                                 </a>
                                             </div>
                                         </div>
-                                        {{--<a href="{{ secure_url('tama-topup-france') }}" class="a-footer">--}}
-                                        {{--<div class="panel-footer dashboard-panel-footer">--}}
-                                        {{--<span class="pull-left">{{ trans('common.click_here') }}</span>--}}
-                                        {{--<span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>--}}
-                                        {{--<div class="clearfix"></div>--}}
-                                        {{--</div>--}}
-                                        {{--</a>--}}
                                     </div>
-                                </a>
+                                    <a href="{{ secure_url('flix-bus') }}"
+                                       class="a-footer">
+                                        <div class="panel-footer dashboard-panel-footer">
+                                            <span class="pull-left">{{ trans('common.click_here') }}</span>
+                                            <span class="pull-right"><i
+                                                        class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -120,15 +122,15 @@
                                                             </div>
                                                         </a>
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <a href="Javascript:void(0);"onclick="fetchCallingProducts('FR','33','FR','H1FR','Talk Home France','France')">
-                                                            <div class="panel panel-default cc-panel">
-                                                                <div class="panel-body">
-                                                                    <img src="https://imagerepo.ding.com/logo/H1.svg" alt="" class="img-responsive center-block" style="padding: 30px;" />
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                    </div>
+                                                    {{--<div class="col-md-3">--}}
+                                                    {{--<a href="Javascript:void(0);"onclick="fetchCallingProducts('FR','33','FR','H1FR','Talk Home France','France')">--}}
+                                                    {{--<div class="panel panel-default cc-panel">--}}
+                                                    {{--<div class="panel-body">--}}
+                                                    {{--<img src="https://imagerepo.ding.com/logo/H1.svg" alt="" class="img-responsive center-block" style="padding: 30px;" />--}}
+                                                    {{--</div>--}}
+                                                    {{--</div>--}}
+                                                    {{--</a>--}}
+                                                    {{--</div>--}}
                                                     {{--<div class="col-md-3">--}}
                                                     {{--<a href="Javascript:void(0);"onclick="fetchCallingProducts('GB','44','GB','WCGB','White Calling EUR','United Kingdom')">--}}
                                                     {{--<div class="panel panel-default cc-panel">--}}
@@ -207,7 +209,7 @@
                                             <filter id="blur">
                                                 <fegaussianblur in="SourceGraphic" stddeviation="13"></fegaussianblur>
                                             </filter>
-                                            <circle cx="70" cy="70" r="66" fill="transparent" stroke="white" stroke-width="40" filter="secure_url(#blur)"></circle>
+                                            <circle cx="70" cy="70" r="66" fill="transparent" stroke="white" stroke-width="40" filter="url(#blur)"></circle>
                                         </svg>
                                     </div>
                                     <div class="text">{{ trans('common.processing') }}...</div>

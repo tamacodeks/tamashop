@@ -57,20 +57,42 @@
                                     </div>
                                 </a>
                             </div>
+                            <div class="col-md-3">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <a href="{{ secure_url('flix-bus') }}">
+                                                    <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <a href="{{ secure_url('flix-bus') }}"
+                                       class="a-footer">
+                                        <div class="panel-footer dashboard-panel-footer">
+                                            <span class="pull-left">{{ trans('common.click_here') }}</span>
+                                            <span class="pull-right"><i
+                                                        class="fa fa-arrow-circle-right"></i></span>
+                                            <div class="clearfix"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-1"></div>
                             <div class="col-md-10">
                                 <div class="row">
                                     @foreach($telecom_providers->chunk(4) as $chunk)
-                                            @foreach($chunk as $item)
-                                                <?php
+                                        @foreach($chunk as $item)
+                                            <?php
                                             $tp_config =  \App\Models\TelecomProviderConfig::find($item->id);
                                             $src_img = $tp_config->getMedia('telecom_providers')->first();
                                             $img = !empty($src_img) ? secure_asset(optional($src_img)->getUrl('thumb')) : secure_asset('images/no_image.png');
                                             $decipher = new \app\Library\SecurityHelper();
                                             $enc_id = $decipher->encrypt($item->id);
-                                                ?>
+                                            ?>
                                             <div class="col-md-2">
                                                 <a href="{{ secure_url('calling-cards/'.$enc_id) }}" >
                                                     <div class="panel panel-default cc-panel">
@@ -78,13 +100,13 @@
                                                             <img src="{{ $img  }}" alt="{{ $item->name }}" class="img-responsive center-block" />
                                                         </div>
                                                         {{--<div class="panel-footer">--}}
-                                                            {{--<a href="{{ secure_url('calling-cards/'.$enc_id) }}" style="text-decoration: none;color: #000;font-size: 18px">--}}
-                                                                {{--{{ $item->name }}</a>--}}
+                                                        {{--<a href="{{ secure_url('calling-cards/'.$enc_id) }}" style="text-decoration: none;color: #000;font-size: 18px">--}}
+                                                        {{--{{ $item->name }}</a>--}}
                                                         {{--</div>--}}
                                                     </div>
                                                 </a>
                                             </div>
-                                            @endforeach
+                                        @endforeach
                                     @endforeach
                                 </div>
                             </div>
