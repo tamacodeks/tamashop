@@ -166,6 +166,7 @@ return [
         PragmaRX\Google2FALaravel\ServiceProvider::class,
 //        PragmaRX\Google2FAQRCode\Google2FAQRCodeServiceProvider::class,
 
+		Barryvdh\Snappy\ServiceProvider::class,
 
 
     ],
@@ -220,6 +221,9 @@ return [
         'Slack' => Maknz\Slack\Laravel\Facade::class,
         'Google2FA' => PragmaRX\Google2FALaravel\Facade::class,
         'Google2FAQRCode' => PragmaRX\Google2FAQRCode\Facades\Google2FAQRCode::class,
+		
+	'PDF' => Barryvdh\Snappy\Facades\SnappyPdf::class,
+    'SnappyImage' => Barryvdh\Snappy\Facades\SnappyImage::class,
 
     ],
 
