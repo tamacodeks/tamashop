@@ -367,6 +367,7 @@ class UserController extends Controller
                 'enable_ip' => !empty($request->enable_ip) ? 1 : 0,
                 'is_api_user' => !empty($request->is_api_user) ? 1 : 0,
                 'daily' => !empty($request->daily) ? $request->daily : null,
+                'vat_no' => !empty($request->vat_no) ? $request->vat_no : null,
                 'weekly' => !empty($request->weekly) ? $request->weekly : null,
                 'monthly' => !empty($request->monthly) ? $request->monthly : null,
                 'web_hook_uri' => !empty($request->web_hook_uri) ? $request->web_hook_uri : null,
