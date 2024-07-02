@@ -248,6 +248,12 @@
                                                     <input class="form-control" type="password" name="confirm_password" id="confirm_password">
                                                 </div>
                                             </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-4" for="vat_no">{{ trans('users.vat_no') }}</label>
+                                                <div class="col-md-8">
+                                                    <input class="form-control" type="text" name="vat_no" id="vat_no">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
