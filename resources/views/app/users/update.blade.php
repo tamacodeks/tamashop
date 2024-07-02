@@ -252,7 +252,7 @@
                                                 <div class="form-group onlyRetailers">
                                                     <label class="control-label col-md-4" for="vat_no">{{ trans('users.vat_no') }}</label>
                                                     <div class="col-md-8">
-                                                        <input class="form-control" type="text" name="vat_no" id="vat_no">
+                                                        <input class="form-control" type="text" name="vat_no" id="vat_no" value="{{ $row['vat_no'] }}">
                                                     </div>
                                                 </div>
                                             @endif
