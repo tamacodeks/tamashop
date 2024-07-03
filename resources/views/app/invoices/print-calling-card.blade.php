@@ -190,7 +190,7 @@
     $period = explode("_", trim($fromtodate));
     $filterDate = [$period[0] . " 00:00:00", $period[1] . " 23:59:59"];
     $cdrs = \app\Library\ServiceHelper::getCDR(7, $invoiceUser->group_id, $invoiceUser->id, $filterDate);
-    //    dd($cdrs);
+        //dd($cdrs);
     ?>
     <table class="cdr-table" style="font-size: 11.5px;border-collapse: collapse;width: 100%">
         <thead>

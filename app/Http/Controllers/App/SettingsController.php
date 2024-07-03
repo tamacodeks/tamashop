@@ -96,8 +96,8 @@ class SettingsController extends Controller
         $val .= "define('COMCOD','" . $comcod . "');\n";
         $val .= "define('TPVCOD','" . $tpvcod . "');\n";
         $val .= "define('AUTHORIZATION','" . $authorization . "');\n";
-        $val .= "define('STRIPE_KEY','pk_live_51OglDXKGFPrKClRaTAkFynbL0CGtuI5q7i3d70v2d7gwmBgYNPv3SAt4rPfAh5AkKCsbwRKQv8cRgngPL1uQX5X2003nZYQfMr');\n";
-        $val .= "define('STRIPE_SECRET','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');\n";
+		$val .= "define('STRIPE_KEY','pk_live_51GAcz2EMNqklwZAX14gtDibj0rXb5B25zsnL5nulaTuvserOQi2CxBZOVad76o7RS109XrSfjoLblYpKywfHNz7E00hfeGhncm');\n";
+        $val .= "define('STRIPE_SECRET','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');\n";
         $val .= "define('min','" . $min . "');\n";
         $val .= "define('max','" . $max . "');\n";
         $val .= "?>";

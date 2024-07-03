@@ -110,7 +110,6 @@
                 $("#login-loader").LoadingOverlay("show");
                 $("#btnSubmit").html("<i class='fa fa-spinner fa-pulse'></i>").attr('disabled', 'disabled');
                 form.submit();
-
             }
         });
 

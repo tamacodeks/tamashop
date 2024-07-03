@@ -156,7 +156,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-         App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
@@ -164,7 +164,7 @@ return [
         EllipseSynergie\ApiResponse\Laravel\ResponseServiceProvider::class,
         Arcanedev\LogViewer\LogViewerServiceProvider::class,
         PragmaRX\Google2FALaravel\ServiceProvider::class,
-//        PragmaRX\Google2FAQRCode\Google2FAQRCodeServiceProvider::class,
+        //PragmaRX\Google2FAQRCode\Google2FAQRCodeServiceProvider::class,
 
 		Barryvdh\Snappy\ServiceProvider::class,
 

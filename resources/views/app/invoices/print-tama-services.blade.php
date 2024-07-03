@@ -249,7 +249,7 @@
     @forelse($servicePrintData as $srvData)
         <?php
         $invoiceUser = \App\User::find($srvData->user_id);
-        $invoiceData = \App\Invoice::find($srvData->invoice_id);
+        $invoiceData = \App\Models\Invoice::find($srvData->invoice_id);
         //        dd($invoiceData->period);
         $fromtodate = str_replace("  au ", "_", $invoiceData->period);
         $period = explode("_", trim($fromtodate));

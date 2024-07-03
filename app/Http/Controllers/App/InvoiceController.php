@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
 
+
+
 class InvoiceController extends Controller
 {
     function index(Request $request)
@@ -94,7 +96,6 @@ class InvoiceController extends Controller
 
     function downloadInvoice($id, $service)
     {
-//        dd($id);
         $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
             ->where('invoices.id', $id)
             ->where('service', $service)
@@ -112,7 +113,6 @@ class InvoiceController extends Controller
             ->where('invoice_commissions.invoice_id', $invoice->id)
             ->select('services.name as service_name', 'invoice_commissions.*')
             ->get();
-			//dd($servicePrintData);
         $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
         $pdf = PDF::loadView('app.invoices.' . $layout, [
             'invoice' => $invoice,
@@ -221,12 +221,7 @@ class InvoiceController extends Controller
         $userGroupId = auth()->user()->group_id;
 
         // Initialize the query
-        $query = User::where('status', 1);
-
-        // Add a condition based on the user's group_id
-        if (in_array($userGroupId, [2, 3])) {
-            $query->where('group_id', 4);
-        }
+        $query = User::where('status', 1)->where('group_id', 4);
 
         // Execute the query to get the users
         $users = $query->select('id', 'username')->get();
@@ -267,7 +262,7 @@ class InvoiceController extends Controller
                 $user_access = Service::join('user_access', 'user_access.service_id', 'services.id')
                     ->where('user_access.user_id', $user)
                     ->where('user_access.status', '=', 1)
-                    ->where('services.id', '!=', 7)
+					 ->where('services.id', '!=', 7)
                     ->select('services.*')
                     ->get();
                 if (!$user_access) {
@@ -281,8 +276,9 @@ class InvoiceController extends Controller
                 $checkInvoice = Invoice::where('month', $exploded_month[1])
                     ->where('year', $exploded_month[0])
                     ->where('user_id', $user)
-                    ->where('service', 'tama')
+                    ->where('service', 'tama1')
                     ->first();
+					
                 if (!$checkInvoice) {
                     //tama service invoice amount
                     $total_amount = User::select([
@@ -293,6 +289,8 @@ class InvoiceController extends Controller
                         ->where('orders.is_parent_order', 1)
                         ->where('orders.service_id', "!=", 7)
                         ->where('users.id', "=", $user)->first();
+						
+
                     if ($total_amount->sale_price == null || $total_amount->sale_price == 0) {
                         continue;
                     }
@@ -303,6 +301,7 @@ class InvoiceController extends Controller
 
                     $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
 
+										
                     $invoice = new Invoice();
                     $invoice->user_id = $user;
                     $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
@@ -319,7 +318,6 @@ class InvoiceController extends Controller
                     $invoice->count = $last_invoice;
                     $invoice->created_at = date("Y-m-d H:i:s");
                     $invoice->save();
-
                     $invoice_commission_total_amount = 0;
                     //calculate service commission
                     foreach ($user_access as $access) {
@@ -331,6 +329,8 @@ class InvoiceController extends Controller
                             ->where('orders.is_parent_order', 1)
                             ->where('orders.service_id', "=", $access->id)
                             ->where('users.id', "=", $user)->first();
+							
+							
                         if ($service_total_amount->sale_price != null) {
                             $getUserCommission = ServiceHelper::get_service_commission($user, $access->id);
                             if($userInfo->group_id == 3){
@@ -340,6 +340,15 @@ class InvoiceController extends Controller
                             $serviceCommission = ServiceHelper::calculate_commission($service_total_amount->sale_price, $getUserCommission);
                             $subServiceCommission = $service_total_amount->sale_price - $serviceCommission;
                             Log::info("user service commission $serviceCommission $subServiceCommission");
+							$r = [
+									'user_id' => $user,
+									'invoice_id' => $invoice->id,
+									'service_id' => $access->id,
+									'total_amount' => round($service_total_amount->sale_price, 2),
+									'commission' => $getUserCommission,
+									'commission_amount' => round($subServiceCommission, 2),
+									'created_at' => now()
+								];
 
                             $invoice_commission = new InvoiceCommission();
                             $invoice_commission->user_id = $user;
@@ -359,103 +368,7 @@ class InvoiceController extends Controller
                         'commission_amount' => number_format($invoice_commission_total_amount, 2),
                         'grand_total' => number_format($total_amount->sale_price - $invoice_commission_total_amount, 2)
                     ]);
-                    //check user was a manager
-                    if ($userInfo->group_id == 3) {
-                        //get retailers
-                        $retailers = User::where('parent_id', $user)->get();
-                        foreach ($retailers as $retailer) {
-                            //get access and services
-                            $retailer_user_access = Service::join('user_access', 'user_access.service_id', 'services.id')
-                                ->where('user_access.user_id', $retailer->id)
-                                ->where('user_access.status', '=', 1)
-                                ->where('services.id', '!=', 7)
-                                ->select('services.*')
-                                ->get();
-                            if (!$retailer_user_access) {
-                                Log::warning("user $retailer->username does not have access for any service");
-                                continue;
-                            }
-
-                            //check user already have invoice
-                            $checkRetailerInvoice = Invoice::where('month', $exploded_month[1])
-                                ->where('year', $exploded_month[0])
-                                ->where('user_id', $retailer->id)
-                                ->first();
-                            if (!$checkRetailerInvoice) {
-                                //tama service invoice amount
-                                $retailer_total_amount = User::select([
-                                    \DB::raw('sum(orders.order_amount) AS sale_price')
-                                ])
-                                    ->join('orders', 'orders.user_id', '=', 'users.id')
-                                    ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-                                    ->where('orders.is_parent_order', 1)
-                                    ->where('orders.service_id', "!=", 7)
-                                    ->where('users.id', "=", $retailer->id)->first();
-                                if ($retailer_total_amount->sale_price == null || $retailer_total_amount->sale_price == 0) {
-                                    continue;
-                                }
-
-                                $last_invoice_no = Invoice::where('month', $exploded_month[1])
-                                    ->where('year', $exploded_month[0])
-                                    ->select('count')->orderBy('id', "DESC")->first();
-                                $last_invoice = $last_invoice_no->count + 1;
-                                $ret_invoice = new Invoice();
-                                $ret_invoice->user_id = $retailer->id;
-                                $ret_invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-                                $ret_invoice->date = date("Y-m-d H:i:s");
-                                $ret_invoice->month = $exploded_month[1];
-                                $ret_invoice->year = $exploded_month[0];
-                                $ret_invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
-                                $ret_invoice->period_start = $startDateMonth;
-                                $ret_invoice->period_end = $endDateMonth;
-                                $ret_invoice->total_amount = $retailer_total_amount->sale_price;
-                                $ret_invoice->commission_amount = 0;
-                                $ret_invoice->grand_total = 0;
-                                $ret_invoice->service = 'tama';
-                                $ret_invoice->count = $last_invoice;
-                                $ret_invoice->created_at = date("Y-m-d H:i:s");
-                                $ret_invoice->save();
-
-                                $ret_invoice_commission_total_amount = 0;
-                                //calculate service commission
-                                foreach ($retailer_user_access as $ret_service_access) {
-                                    $ret_service_total_amount = User::select([
-                                        \DB::raw('sum(orders.order_amount) AS sale_price')
-                                    ])
-                                        ->join('orders', 'orders.user_id', '=', 'users.id')
-                                        ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-                                        ->where('orders.is_parent_order', 1)
-                                        ->where('orders.service_id', "=", $ret_service_access->id)
-                                        ->where('users.id', "=", $retailer->id)->first();
-                                    if ($ret_service_total_amount->sale_price != null) {
-                                        $getRetailerCommission = ServiceHelper::get_service_commission($retailer->id, $ret_service_access->id);
-                                        Log::info("user commission $ret_service_access->id $getRetailerCommission");
-                                        $retServiceCommission = ServiceHelper::calculate_commission($ret_service_total_amount->sale_price, $getRetailerCommission);
-                                        $subRetServiceCommission = $ret_service_total_amount->sale_price - $retServiceCommission;
-                                        Log::info("user service commission $retServiceCommission $subRetServiceCommission");
-
-                                        $ret_invoice_commission = new InvoiceCommission();
-                                        $ret_invoice_commission->user_id = $retailer->id;
-                                        $ret_invoice_commission->invoice_id = $ret_invoice->id;
-                                        $ret_invoice_commission->service_id = $ret_service_access->id;
-                                        $ret_invoice_commission->total_amount = number_format($ret_service_total_amount->sale_price, 2);
-                                        $ret_invoice_commission->commission = $getRetailerCommission;
-                                        $ret_invoice_commission->commission_amount = number_format($subRetServiceCommission, 2);
-                                        $ret_invoice_commission->created_at = date("Y-m-d H:i:s");
-                                        $ret_invoice_commission->save();
-
-                                        $ret_invoice_commission_total_amount += $subRetServiceCommission;
-                                    }
-                                }
-                                //update the invoice
-                                Invoice::where('id', $ret_invoice->id)->update([
-                                    'commission_amount' => number_format($ret_invoice_commission_total_amount, 2),
-                                    'grand_total' => number_format($retailer_total_amount->sale_price - $ret_invoice_commission_total_amount, 2)
-                                ]);
-                                Log::info("invoice created for $retailer->username");
-                            }
-                        }
-                    }
+                  
                     Log::info("invoice created for $userInfo->username");
                 } else {
                     Log::info("Invoices already exists for the user $user");
@@ -466,10 +379,9 @@ class InvoiceController extends Controller
                 ])
                     ->join('orders', 'orders.user_id', '=', 'users.id')
                     ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-                    ->where('orders.is_parent_order', 1)
+                  ->where('orders.is_parent_order', 1)
                     ->where('orders.service_id', "=", 7)
                     ->where('users.id', "=", $user)->first();
-//                dd($callingCardOrders);
                 if ($callingCardOrders && $callingCardOrders->sale_price != null) {
                     $last_invoice_no = Invoice::where('month', $exploded_month[1])
                         ->where('year', $exploded_month[0])
@@ -486,70 +398,11 @@ class InvoiceController extends Controller
                     $invoice->period_end = $endDateMonth;
                     $invoice->total_amount = $callingCardOrders->sale_price;
                     $invoice->commission_amount = 0;
-                    $invoice->grand_total = $callingCardOrders->sale_price;
+                   $invoice->grand_total = $callingCardOrders->sale_price;
                     $invoice->service = 'calling-card';
                     $invoice->count = $last_invoice;
                     $invoice->created_at = date("Y-m-d H:i:s");
                     $invoice->save();
-                }
-                if ($userInfo->group_id == 3) {
-                    //get retailers
-                    $retailers = User::where('parent_id', $user)->get();
-                    foreach ($retailers as $retailer) {
-                        //get access and services
-                        $retailer_user_access = Service::join('user_access', 'user_access.service_id', 'services.id')
-                            ->where('user_access.user_id', $retailer->id)
-                            ->where('user_access.status', '=', 1)
-                            ->where('services.id', '!=', 7)
-                            ->select('services.*')
-                            ->get();
-                        if (!$retailer_user_access) {
-                            Log::warning("user $retailer->username does not have access for any service");
-                            continue;
-                        }
-
-                        //check user already have invoice
-                        $checkRetailerInvoice = Invoice::where('month', $exploded_month[1])
-                            ->where('year', $exploded_month[0])
-                            ->where('user_id', $retailer->id)
-                            ->where('service', 'calling-card')
-                            ->first();
-                        if (!$checkRetailerInvoice) {
-                            //check for calling card
-                            $callingCardOrdersRetailer = User::select([
-                                \DB::raw('sum(orders.order_amount) AS sale_price')
-                            ])
-                                ->join('orders', 'orders.user_id', '=', 'users.id')
-                                ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-                                ->where('orders.is_parent_order', 1)
-                                ->where('orders.service_id', "=", 7)
-                                ->where('users.id', "=", $retailer->id)->first();
-//                        dd($callingCardOrders);
-                            if ($callingCardOrdersRetailer && $callingCardOrdersRetailer->sale_price != null) {
-                                $last_invoice_no = Invoice::where('month', $exploded_month[1])
-                                    ->where('year', $exploded_month[0])
-                                    ->select('count')->orderBy('id', "DESC")->first();
-                                $last_invoice = $last_invoice_no->count + 1;
-                                $ret_cc_invoice = new Invoice();
-                                $ret_cc_invoice->user_id = $retailer->id;
-                                $ret_cc_invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-                                $ret_cc_invoice->date = date("Y-m-d H:i:s");
-                                $ret_cc_invoice->month = $exploded_month[1];
-                                $ret_cc_invoice->year = $exploded_month[0];
-                                $ret_cc_invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
-                                $ret_cc_invoice->period_start = $startDateMonth;
-                                $ret_cc_invoice->period_end = $endDateMonth;
-                                $ret_cc_invoice->total_amount = $callingCardOrdersRetailer->sale_price;
-                                $ret_cc_invoice->commission_amount = 0;
-                                $ret_cc_invoice->grand_total = $callingCardOrdersRetailer->sale_price;
-                                $ret_cc_invoice->service = 'calling-card';
-                                $ret_cc_invoice->count = $last_invoice;
-                                $ret_cc_invoice->created_at = date("Y-m-d H:i:s");
-                                $ret_cc_invoice->save();
-                            }
-                        }
-                        Log::info("invoice created for $userInfo->username");
-                    }
                 }
             }
         }
@@ -558,6 +411,149 @@ class InvoiceController extends Controller
             'message_type' => "success"
         ]);
     }
+
+private function createRetailerInvoices($user, $exploded_month, $startDateMonth, $endDateMonth)
+{
+    //try {
+        $retailers = User::where('id', $user)->get();
+        foreach ($retailers as $retailer) {
+            $retailer_user_access = Service::join('user_access', 'user_access.service_id', 'services.id')
+                ->where('user_access.user_id', $retailer->id)
+                ->where('user_access.status', 1)
+                ->whereIn('services.id', [2, 7, 8, 9])  // Only fetch the relevant services
+                ->select('services.*')
+                ->get();
+		
+            if ($retailer_user_access->isEmpty()) {
+                Log::warning("Retailer $retailer->username does not have access to any service");
+                continue;
+            }
+
+            $checkRetailerInvoice = Invoice::where('month', $exploded_month[1])
+                ->where('year', $exploded_month[0])
+                ->where('user_id', $retailer->id)
+                ->first();
+
+          //  if ($checkRetailerInvoice) {
+            //    continue;
+            //}
+            // Initialize the total amount for grouped services
+            $tamaTopupTotalAmount = 0;
+            $callingCardsTotalAmount = 0;
+            $flixBusTotalAmount = 0;
+
+	
+            foreach ($retailer_user_access as $retailer_access) {
+                $service_total_amount = User::join('orders', 'orders.user_id', 'users.id')
+                    ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
+                    ->where('orders.is_parent_order', 1)
+                    ->where('orders.service_id', $retailer_access->id)
+                    ->where('users.id', $retailer->id)
+                    ->sum('orders.order_amount');
+					$getRetailerCommission = ServiceHelper::get_service_commission($retailer, $retailer_access->id);
+					dd($retailer_access);
+					$serviceCommission = ServiceHelper::calculate_commission($service_total_amount, $getRetailerCommission);
+					$subServiceCommission = $service_total_amount - $serviceCommission;
+                if ($retailer_access->id == 2 || $retailer_access->id == 8) {
+                    // Sum the amounts for Tama Topup and Tama Topup France
+                    $tamaTopupTotalAmount += $service_total_amount;
+                } elseif ($retailer_access->id == 7) {
+                    // Sum the amounts for Calling Cards
+                    $callingCardsTotalAmount += $service_total_amount;
+                } elseif ($retailer_access->id == 9) {
+                    // Sum the amounts for Flix Bus
+                    $flixBusTotalAmount += $service_total_amount;
+                } else {
+                    // Process other services individually
+                   // $this->createInvoice($retailer, $retailer_access, $exploded_month, $startDateMonth, $endDateMonth, $service_total_amount);
+                }
+            }
+			
+				$TopupService= Service::where('id', 2)->first();
+				
+                $k = self::createInvoice($retailer, $TopupService, $exploded_month, $startDateMonth, $endDateMonth, $tamaTopupTotalAmount, true, 'Tama Topup and Tama Topup France');
+        dd($k);
+
+            // Create invoice for Calling Cards
+            if ($callingCardsTotalAmount > 0) {
+                $callingCardsService = Service::where('id', 7)->first();
+                //$this->createInvoice($retailer, $callingCardsService, $exploded_month, $startDateMonth, $endDateMonth, $callingCardsTotalAmount);
+            }
+
+            // Create invoice for Flix Bus
+            if ($flixBusTotalAmount > 0) {
+                $flixBusService = Service::where('id', 9)->first();
+                //$this->createInvoice($retailer, $flixBusService, $exploded_month, $startDateMonth, $endDateMonth, $flixBusTotalAmount);
+            }
+        }
+//    } catch (\Exception $e) {
+  //      Log::error("Error in createRetailerInvoices: " . $e->getMessage());
+    //}
+}
+
+private function createInvoice($retailer, $retailer_access, $exploded_month, $startDateMonth, $endDateMonth, $service_total_amount, $isGrouped , $groupName = '')
+{
+
+   $last_invoice_no = Invoice::where('month', $exploded_month[1])
+        ->where('year', $exploded_month[0])
+        ->orderBy('id', 'desc')
+        ->first();
+   $last_invoice = $last_invoice_no ? $last_invoice_no->count + 1 : 1;
+    $ret_invoice = new Invoice();
+    $ret_invoice->user_id = $retailer->id;
+    $ret_invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . str_pad($last_invoice, 4, '0', STR_PAD_LEFT);
+    $ret_invoice->date = now();
+    $ret_invoice->month = $exploded_month[1];
+    $ret_invoice->year = $exploded_month[0];
+    $ret_invoice->period = $startDateMonth->format('Y-m-d') . " au " . $endDateMonth->format('Y-m-d');
+    $ret_invoice->period_start = $startDateMonth;
+    $ret_invoice->period_end = $endDateMonth;
+    $ret_invoice->total_amount = $service_total_amount;
+    $ret_invoice->commission_amount = 0;
+    $ret_invoice->grand_total = 0;
+    $ret_invoice->service = $isGrouped ? $groupName : $retailer_access->name;
+    $ret_invoice->count = $last_invoice;
+    $ret_invoice->created_at = now();
+    $ret_invoice->save();
+
+
+$getRetailerCommission = 20;
+$serviceCommission = ServiceHelper::calculate_commission($service_total_amount, $getRetailerCommission);
+$subServiceCommission = $service_total_amount - $serviceCommission;
+
+							
+$r = [
+    'user_id' => $retailer->id,
+    'invoice_id' => $ret_invoice->id,
+    'service_id' => $retailer_access->id,
+    'total_amount' => round($service_total_amount, 2),
+    'commission' => $getRetailerCommission,
+    'commission_amount' => round($subServiceCommission, 2),
+    'created_at' => now()
+];
+
+dd($r);
+    if (!$isGrouped) {
+        $ret_invoice_commission = new InvoiceCommission();
+        $ret_invoice_commission->user_id = $retailer->id;
+        $ret_invoice_commission->invoice_id = $ret_invoice->id;
+        $ret_invoice_commission->service_id = $retailer_access->id;
+        $ret_invoice_commission->total_amount = round($service_total_amount, 2);
+        $ret_invoice_commission->commission = $getRetailerCommission;
+        $ret_invoice_commission->commission_amount = round($subServiceCommission, 2);
+        $ret_invoice_commission->created_at = now();
+        $ret_invoice_commission->save();
+		dd($ret_invoice_commission);
+        $ret_invoice->update([
+            'commission_amount' => round($subServiceCommission, 2),
+            'grand_total' => round($service_total_amount - $subServiceCommission, 2)
+        ]);
+    }
+
+    Log::info("Retailer invoice created for user $retailer->username for service " . ($isGrouped ? $groupName : $retailer_access->name));
+}
+
+
 
     function viewInvoice($id, $service)
     {
@@ -617,7 +613,7 @@ class InvoiceController extends Controller
             ->where('invoice_commissions.invoice_id', $invoice->id)
             ->select('services.name as service_name', 'invoice_commissions.*')
             ->get();
-        dd($servicePrintData);
+        //dd($servicePrintData);
         $fileName = $invoice->username . " " . $invoice->invoice_ref;
         return PDF::loadView('app.invoices.' . $layout, [
             'invoice' => $invoice,

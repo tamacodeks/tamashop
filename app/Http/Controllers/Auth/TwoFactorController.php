@@ -24,7 +24,7 @@ class TwoFactorController extends Controller
         // Generate a secret key for the user
         $google2fa = app(Google2FA::class);
         $secret = $google2fa->generateSecretKey();
-
+		
         // Generate QR code for Google Authenticator
         $QR_Image = $google2fa->getQRCodeInline(
             config('app.name'),
@@ -39,36 +39,48 @@ class TwoFactorController extends Controller
     }
 
 	public function verify2fa(Request $request)
-	{
-		$rules = [
-			'secret' => 'required|min:6',
-		];
+{
+    $rules = [
+        'secret' => 'required|min:6',
+    ];
 
-		$validator = Validator::make($request->all(), $rules);
+    $validator = Validator::make($request->all(), $rules);
 
-		if ($validator->fails()) {
-			return redirect()->back()
-				->withErrors($validator)
-				->with('message_type', 'warning');
-		}
-		$google2fa = app(Google2FA::class);
-		$user = auth()->user();
-		$inputSecret = $request->secret;
-		$secret = $user->secret;
-		// Verify the input secret with a wider time window
-		$valid = $google2fa->verifyKey($secret, $inputSecret, 2);
-		Log::info('OTP verification result: ' . ($valid ? 'valid' : 'invalid'));
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->with('message_type', 'warning');
+    }
 
-		if ($valid) {
-			// Update user record to enable 2FA
-			User::where('id', $user->id)->update([
-				'enable_2fa' => 1,
-				'verify_2fa' => 1,
-			]);
+    $google2fa = app(Google2FA::class);
+    $user = auth()->user();
+    $inputSecret = $request->secret;
+    $secret = $user->secret;
 
-			return redirect('dashboard')->with('message', '2FA enabled successfully.')->with('message_type', 'success');
-		}
-		return redirect()->back()->withErrors(['secret' => 'Incorrect secret code'])->with('message_type', 'danger');
-	}
+    // Debugging information
+    Log::info('User ID: ' . $user->id);
+    Log::info('Stored Secret (Base32): ' . $secret);
+    Log::info('Input Secret: ' . $inputSecret);
+    Log::info('Server Time: ' . now());
+
+    // Verify the input secret with a wider time window
+    $valid = $google2fa->verifyKey($secret, $inputSecret, 4); // Increased window to 4
+
+    Log::info('OTP verification result: ' . ($valid ? 'valid' : 'invalid'));
+
+    if ($valid) {
+        // Update user record to enable 2FA
+        User::where('id', $user->id)->update([
+            'enable_2fa' => 1,
+            'verify_2fa' => 1,
+        ]);
+
+        return redirect('dashboard')->with('message', '2FA enabled successfully.')->with('message_type', 'success');
+    }
+
+    return redirect()->back()->withErrors(['secret' => 'Incorrect secret code'])->with('message_type', 'danger');
+}
+
+
 
 }
