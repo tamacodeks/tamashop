@@ -289,11 +289,16 @@ class TwoStepAuthenticationController extends Controller
                     'retailer_name' => $user->username,
                     'otp' => $otp,
                 );
-                if(!empty($user->email)){
-                    \Mail::send('emails.otp', $send_email_data, function ($message) use ($emails) {
-                        $message->from('noreply@tamaexpress.com', 'Tama Retailer');
-                        $message->to($emails)->subject('Tama OTP');
-                    });
+                if (!empty($user->email)) {
+                    try {
+                        \Mail::send('emails.otp', $send_email_data, function ($message) use ($user) {
+                            $message->from('noreply@tamaexpress.com', 'TamaShop Retailer');
+                            $message->to($user->email)->subject('TamaShop OTP');
+                        });
+                        \Log::info('OTP email sent to ' . $user->email);
+                    } catch (\Exception $e) {
+                        \Log::error('Failed to send OTP email to ' . $user->email . ': ' . $e->getMessage());
+                    }
                 }
                 User::where('id', $user->id)->update([
                     'otp' => $otp,
