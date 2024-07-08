@@ -268,7 +268,7 @@ class InvoiceController extends Controller
                 $checkInvoice = Invoice::where('month', $exploded_month[1])
                     ->where('year', $exploded_month[0])
                     ->where('user_id', $user)
-                    ->where('service', 'tama1')
+                    ->where('service', 'tama')
                     ->first();
 					
                 if (!$checkInvoice) {
@@ -365,38 +365,46 @@ class InvoiceController extends Controller
                 } else {
                     Log::info("Invoices already exists for the user $user");
                 }
-                //check for calling card
-                $callingCardOrders = User::select([
-                    \DB::raw('sum(orders.order_amount) AS sale_price')
-                ])
-                    ->join('orders', 'orders.user_id', '=', 'users.id')
-                    ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-                  ->where('orders.is_parent_order', 1)
-                    ->where('orders.service_id', "=", 7)
-                    ->where('users.id', "=", $user)->first();
-                if ($callingCardOrders && $callingCardOrders->sale_price != null) {
-                    $last_invoice_no = Invoice::where('month', $exploded_month[1])
-                        ->where('year', $exploded_month[0])
-                        ->select('count')->orderBy('id', "DESC")->first();
-                    $last_invoice = $last_invoice_no->count + 1;
-                    $invoice = new Invoice();
-                    $invoice->user_id = $user;
-                    $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-                    $invoice->date = date("Y-m-d H:i:s");
-                    $invoice->month = $exploded_month[1];
-                    $invoice->year = $exploded_month[0];
-                    $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
-                    $invoice->period_start = $startDateMonth;
-                    $invoice->period_end = $endDateMonth;
-                    $invoice->total_amount = $callingCardOrders->sale_price;
-                    $invoice->commission_amount = 0;
-                   $invoice->grand_total = $callingCardOrders->sale_price;
-                    $invoice->service = 'calling-card';
-                    $invoice->count = $last_invoice;
-                    $invoice->created_at = date("Y-m-d H:i:s");
-                    $invoice->save();
-                }
-            }
+               
+				  //check user already have invoice
+                        $checkRetailerInvoice = Invoice::where('month', $exploded_month[1])
+                            ->where('year', $exploded_month[0])
+                            ->where('user_id', $user)
+                            ->where('service', 'calling-card')
+                            ->first();
+                        if (!$checkRetailerInvoice) {
+								$callingCardOrders = User::select([
+									\DB::raw('sum(orders.order_amount) AS sale_price')
+								])
+									->join('orders', 'orders.user_id', '=', 'users.id')
+									->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
+								  ->where('orders.is_parent_order', 1)
+									->where('orders.service_id', "=", 7)
+									->where('users.id', "=", $user)->first();
+								if ($callingCardOrders && $callingCardOrders->sale_price != null) {
+									$last_invoice_no = Invoice::where('month', $exploded_month[1])
+										->where('year', $exploded_month[0])
+										->select('count')->orderBy('id', "DESC")->first();
+									$last_invoice = $last_invoice_no->count + 1;
+									$invoice = new Invoice();
+									$invoice->user_id = $user;
+									$invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
+									$invoice->date = date("Y-m-d H:i:s");
+									$invoice->month = $exploded_month[1];
+									$invoice->year = $exploded_month[0];
+									$invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
+									$invoice->period_start = $startDateMonth;
+									$invoice->period_end = $endDateMonth;
+									$invoice->total_amount = $callingCardOrders->sale_price;
+									$invoice->commission_amount = 0;
+								   $invoice->grand_total = $callingCardOrders->sale_price;
+									$invoice->service = 'calling-card';
+									$invoice->count = $last_invoice;
+									$invoice->created_at = date("Y-m-d H:i:s");
+									$invoice->save();
+								}
+							}
+						}
         }
         return back()->with([
             'message' => "Invoices generated!",
