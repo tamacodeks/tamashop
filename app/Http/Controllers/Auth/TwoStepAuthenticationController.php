@@ -282,7 +282,7 @@ class TwoStepAuthenticationController extends Controller
             $user = AuthConfig::user();
             if($user->method == '1'){
                 $otp = rand(1000, 9999);
-//                AppHelper::sendSms($user->mobile, 'Hello ' .$user->username.' Greetings From '.APP_NAME.' Your Verification Code is ' . $otp);
+                AppHelper::sendSms($user->mobile, 'Hello ' .$user->username.' Greetings From '.APP_NAME.' Your Verification Code is ' . $otp);
                 $emails = [$user->email];
 
                 $send_email_data = array(
