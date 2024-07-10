@@ -250,7 +250,7 @@
                                             </div>
                                             @if(auth()->user()->group_id == 3)
                                                 <div class="form-group">
-                                                    <label class="control-label col-md-4" for="vat_no">{{ trans('users.vat_no') }}</label>
+                                                    <label class="control-label col-md-4" for="vat_no">{{ trans('common.vat_no') }}</label>
                                                     <div class="col-md-8">
                                                         <input class="form-control" type="text" name="vat_no" id="vat_no" value="{{ $row['vat_no'] }}">
                                                     </div>
