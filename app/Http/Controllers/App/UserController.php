@@ -362,6 +362,7 @@ class UserController extends Controller
                 'currency' => $request->currency,
                 'timezone' => $request->timezone,
                 'address' => $request->address,
+                'method' => $request->authentication_method,
                 'status' => !empty($request->status) ? 1 : 0,
                 'pin_print_again' => !empty($request->pin_print_again) ? 1 : 0,
                 'enable_ip' => !empty($request->enable_ip) ? 1 : 0,
