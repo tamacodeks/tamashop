@@ -256,6 +256,20 @@
                                                     </div>
                                                 </div>
                                             @endif
+                                            @if($row['group_id'] == 4 || $row['group_id'] == 3)
+                                                <div class="form-group onlyRetailers">
+                                                    <label class="control-label col-md-4" for="authentication_method">{{ trans('common.authentication_method') }}</label>
+                                                    <div class="col-md-8">
+                                                        <select class="form-control" name="authentication_method" id="authentication_method">
+                                                            <option value="">{{ trans('common.authentication_method') }}</option>
+                                                            <option value="0" @if($row['method'] == 0) selected @endif>{{ trans('common.method_0') }}</option>
+                                                            <option value="1" @if($row['method'] == 1) selected @endif>{{ trans('common.method_1') }}</option>
+                                                            <option value="2" @if($row['method'] == 2) selected @endif>{{ trans('common.method_2') }}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            f
                                         </div>
                                     </div>
                                 </div>
