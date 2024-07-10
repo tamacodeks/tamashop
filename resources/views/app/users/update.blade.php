@@ -248,7 +248,7 @@
                                                     <input class="form-control" type="password" name="confirm_password" id="confirm_password">
                                                 </div>
                                             </div>
-                                            @if($row['group_id'] == 4)
+                                            @if(auth()->user()->group_id == 4)
                                                 <div class="form-group onlyRetailers">
                                                     <label class="control-label col-md-4" for="vat_no">{{ trans('users.vat_no') }}</label>
                                                     <div class="col-md-8">
@@ -256,12 +256,11 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if($row['group_id'] == 4 || $row['group_id'] == 3)
+                                            @if(auth()->user()->group_id  == 4 || auth()->user()->group_id == 3)
                                                 <div class="form-group onlyRetailers">
                                                     <label class="control-label col-md-4" for="authentication_method">{{ trans('common.authentication_method') }}</label>
                                                     <div class="col-md-8">
                                                         <select class="form-control" name="authentication_method" id="authentication_method">
-                                                            <option value="">{{ trans('common.authentication_method') }}</option>
                                                             <option value="0" @if($row['method'] == 0) selected @endif>{{ trans('common.method_0') }}</option>
                                                             <option value="1" @if($row['method'] == 1) selected @endif>{{ trans('common.method_1') }}</option>
                                                             <option value="2" @if($row['method'] == 2) selected @endif>{{ trans('common.method_2') }}</option>
@@ -269,7 +268,6 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            f
                                         </div>
                                     </div>
                                 </div>
