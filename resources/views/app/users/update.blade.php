@@ -248,7 +248,7 @@
                                                     <input class="form-control" type="password" name="confirm_password" id="confirm_password">
                                                 </div>
                                             </div>
-                                            @if(auth()->user()->group_id == 4)
+                                            @if(auth()->user()->group_id == 3)
                                                 <div class="form-group onlyRetailers">
                                                     <label class="control-label col-md-4" for="vat_no">{{ trans('users.vat_no') }}</label>
                                                     <div class="col-md-8">
@@ -256,7 +256,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if(auth()->user()->group_id  == 4 || auth()->user()->group_id == 3)
+                                            @if(auth()->user()->group_id  == 2 || auth()->user()->group_id == 3)
                                                 <div class="form-group onlyRetailers">
                                                     <label class="control-label col-md-4" for="authentication_method">{{ trans('common.authentication_method') }}</label>
                                                     <div class="col-md-8">
