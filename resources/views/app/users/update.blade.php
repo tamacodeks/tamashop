@@ -249,7 +249,7 @@
                                                 </div>
                                             </div>
                                             @if(auth()->user()->group_id == 3)
-                                                <div class="form-group onlyRetailers">
+                                                <div class="form-group">
                                                     <label class="control-label col-md-4" for="vat_no">{{ trans('users.vat_no') }}</label>
                                                     <div class="col-md-8">
                                                         <input class="form-control" type="text" name="vat_no" id="vat_no" value="{{ $row['vat_no'] }}">
@@ -257,7 +257,7 @@
                                                 </div>
                                             @endif
                                             @if(auth()->user()->group_id  == 2 || auth()->user()->group_id == 3)
-                                                <div class="form-group onlyRetailers">
+                                                <div class="form-group">
                                                     <label class="control-label col-md-4" for="authentication_method">{{ trans('common.authentication_method') }}</label>
                                                     <div class="col-md-8">
                                                         <select class="form-control" name="authentication_method" id="authentication_method">
