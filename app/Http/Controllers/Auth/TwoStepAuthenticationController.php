@@ -169,8 +169,8 @@ class TwoStepAuthenticationController extends Controller
                         $remember = (!$request->input('remember') == '') ? true : false;
                         if (\Auth::attempt(['username' => $request->username, 'password' => $request->password, 'status' => 1], $remember)) {
 
-                                \Session::put('locale', $request->lang);
-                                \App::setLocale($request->lang);
+//                                \Session::put('locale', $request->lang);
+//                                \App::setLocale($request->lang);
 
                             Log::info('user ' . $request->username . ' logged in');
                             AppHelper::logger('info', 'Login', 'User ' . $request->username . ' logged in');
@@ -210,8 +210,8 @@ class TwoStepAuthenticationController extends Controller
                         else{
                             $remember = (!$request->input('remember') == '') ? true : false;
                             if (\Auth::attempt(['username' => $request->username, 'password' => $request->password, 'status' => 1], $remember)) {
-                                    \Session::put('locale', $request->lang);
-                                    \App::setLocale($request->lang);
+//                                    \Session::put('locale', $request->lang);
+//                                    \App::setLocale($request->lang);
                                 Log::info('user ' . $request->username . ' logged in');
                                 AppHelper::logger('info', 'Login', 'User ' . $request->username . ' logged in');
                                 return redirect()->back()->with('message', trans('users.lbl_welcome') . ' ' . $request->username)->with('msg_type', 'info');
@@ -223,8 +223,8 @@ class TwoStepAuthenticationController extends Controller
                 {
                     $remember = (!$request->input('remember') == '') ? true : false;
                     if (\Auth::attempt(['username' => $request->username, 'password' => $request->password, 'status' => 1], $remember)) {
-                            \Session::put('locale', $request->lang);
-                            \App::setLocale($request->lang);
+//                            \Session::put('locale', $request->lang);
+//                            \App::setLocale($request->lang);
                         Log::info('user ' . $request->username . ' logged in');
                         AppHelper::logger('info', 'Login', 'User ' . $request->username . ' logged in');
                         return redirect()->back()->with('message', trans('users.lbl_welcome') . ' ' . $request->username)->with('msg_type', 'info');
@@ -272,7 +272,8 @@ class TwoStepAuthenticationController extends Controller
             'username' => 'required',
             'password' => 'required',
         ]);
-
+        \Session::put('locale', 'fr');
+        \App::setLocale('fr');
         if ($validator->fails()) {
             Log::warning('Validation failed', ['input' => $credentials]);
             return redirect()->back()->withInput()->withErrors($validator);
@@ -316,11 +317,11 @@ class TwoStepAuthenticationController extends Controller
                 }else{
                     // Normal login
                     $this->guard()->login($user, $remember);
-                    $collection = collect(config('translation'));
-                    if ($collection->contains('folder', $request->lang)) {
-                        Session::put('locale', $request->lang);
-                        App::setLocale($request->lang);
-                    }
+//                    $collection = collect(config('translation'));
+//                    if ($collection->contains('folder', $request->lang)) {
+//                        Session::put('locale', $request->lang);
+//                        App::setLocale($request->lang);
+//                    }
                     $client_ip = config('app.env') == 'local' ? \Request::getClientIp(true) : AppHelper::getIP(true);
                     $session_data = \Session::all();
                     User::where('id', AuthConfig::id())
@@ -338,10 +339,10 @@ class TwoStepAuthenticationController extends Controller
                 // Normal login
                 $this->guard()->login($user, $remember);
                 $collection = collect(config('translation'));
-                if ($collection->contains('folder', $request->lang)) {
-                    Session::put('locale', $request->lang);
-                    App::setLocale($request->lang);
-                }
+//                if ($collection->contains('folder', $request->lang)) {
+//                    Session::put('locale', $request->lang);
+//                    App::setLocale($request->lang);
+//                }
                 $client_ip = config('app.env') == 'local' ? \Request::getClientIp(true) : AppHelper::getIP(true);
                 $session_data = \Session::all();
                 User::where('id', AuthConfig::id())
@@ -412,10 +413,10 @@ class TwoStepAuthenticationController extends Controller
                         $request->session()->forget('login_data');
 
                         $collection = collect(config('translation'));
-                        if ($collection->contains('folder', session('login_data.lang'))) {
-                            session()->put('locale', session('login_data.lang'));
-                            App::setLocale(session('login_data.lang'));
-                        }
+//                        if ($collection->contains('folder', session('login_data.lang'))) {
+//                            session()->put('locale', session('login_data.lang'));
+//                            App::setLocale(session('login_data.lang'));
+//                        }
 
                         Log::info('User ' . $user->username . ' logged in');
                         AppHelper::logger('info', 'Login', 'User ' . $user->username . ' logged in');
