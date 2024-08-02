@@ -174,8 +174,8 @@
                                                             <input type="email" class="booking-input" placeholder="Email" name="email" id="email">
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label>Phone Number</label>
-                                                            <input type="text" class="booking-input" placeholder="Phone Number" name="phone_number" id="phone_number">
+                                                            <label><h4 style="color: #ff0000;">Phone Number - Add Country Code</h4></label>
+                                                            <input type="text" class="booking-input" placeholder="Phone Number" name="phone_number" id="phone_number" value="+">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12"><hr></div>

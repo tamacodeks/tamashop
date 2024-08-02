@@ -173,6 +173,7 @@ class TamaBusController extends Controller
             "reservation_token.*" => "required",
             "reservation_id.*" => "required",
             "email" => "required",
+            "phone_number" => "required",
         ]);
 
         if($validator->fails())
@@ -184,6 +185,7 @@ class TamaBusController extends Controller
         $params["reservation_token"] =$request->reservation_token[0];
         $params["reservation_id"] =$request->reservation_id[0];
         $params["email"] =$request->email;
+        $params["phone_number"] =$request->phone_number;
         $params["total_price"] =$request->total_price;
 
         for($i=0; $i < count($request->type); $i++ ){
