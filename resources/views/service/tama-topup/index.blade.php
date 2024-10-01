@@ -4,9 +4,9 @@
         ['name' => "TamaTopup",'url'=> '','active' => 'yes']
     ]
     ])
-    <link href="{{ secure_asset('vendor/intel/css/prism.css?v=2') }}" rel="stylesheet">
-    <link href="{{ secure_asset('vendor/intel/css/demo.css?v=2') }}" rel="stylesheet">
-    <link href="{{ secure_asset('vendor/intel/css/intlTelInput.css?v=2') }}" rel="stylesheet">
+    <link href="{{ secure_asset('vendor/intel/css/prism.css?v=3') }}" rel="stylesheet">
+    <link href="{{ secure_asset('vendor/intel/css/demo.css?v=3') }}" rel="stylesheet">
+    <link href="{{ secure_asset('vendor/intel/css/intlTelInput.css?v=3') }}" rel="stylesheet">
     <link href="{{ secure_asset('css/topup.css') }}" rel="stylesheet">
     <div id="loadergif" data-text="Chargement, veuillez patienter"></div>
     <div class="container-fluid">
@@ -259,8 +259,8 @@
         </div>
         <input type="hidden" id="flag" value="{{$select_flag}}">
     </div>
-    <script src="{{ secure_asset('vendor/intel/js/intlTelInput-jquery.min.js?v=2') }}" type="text/javascript"></script>
-    <script src="{{ secure_asset('vendor/intel/js/prism.js?v=2') }}" type="text/javascript"></script>
+    <script src="{{ secure_asset('vendor/intel/js/intlTelInput-jquery.min.js?v=3') }}" type="text/javascript"></script>
+    <script src="{{ secure_asset('vendor/intel/js/prism.js?v=3') }}" type="text/javascript"></script>
     <script>
         var api_base_url = "{{ secure_url('') }}";
         var will_be_received = "{{ trans('tamatopup.will_be_received') }}";
@@ -352,7 +352,7 @@
             // initialise plugin
             telInput.intlTelInput({
                 nationalMode: true,
-                utilsScript: "{{ secure_asset('vendor/intel/js/utils.js?v=2') }}"
+                utilsScript: "{{ secure_asset('vendor/intel/js/utils.js') }}"
             });
             var reset = function () {
                 telInput.removeClass("has-error");
@@ -405,5 +405,5 @@
 
         });
     </script>
-    <script src="{{ secure_asset('js/topup.js?v=2') }}" type="text/javascript"></script>
+    <script src="{{ secure_asset('js/topup.js?v=3') }}" type="text/javascript"></script>
 @endsection
