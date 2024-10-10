@@ -30,6 +30,7 @@ use App\Models\Bimedia_statistics;
 use App\Models\CallingCardTransaction;
 use App\Models\Log as log_data;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 class CallingCardController extends Controller
 {
     private $log_title;
@@ -105,11 +106,17 @@ class CallingCardController extends Controller
      */
     function bimedia_card_fetch($id)
     {
-        $check_card = log_data::where('title', 'card')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
-        if($check_card) {
-            $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
-            if ($date >= $date2) {
+        $check_card = log_data::where('title', 'pin1')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
+        if ($check_card) {
+            // Get the created_at date from the card and convert it to a Carbon instance
+            $createdDate = Carbon::parse($check_card->created_at);
+
+            // Get the current time minus 12 seconds
+            $thresholdTime = Carbon::now()->subSeconds(12);
+
+            // Check if the card creation date is greater than or equal to the threshold time
+            if ($createdDate >= $thresholdTime) {
+                AppHelper::logger('Warning', 'pin', "card creation date is greater than or equal to the threshold time");
                 return redirect('calling-cards')
                     ->with('message', trans('common.common_card_validation'))
                     ->with('message_type', 'warning');
@@ -484,11 +491,17 @@ class CallingCardController extends Controller
      */
     function mycalling_card_fetch($id)
     {
-        $check_card = log_data::where('title', 'card')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
-        if($check_card) {
-            $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
-            if ($date >= $date2) {
+        $check_card = log_data::where('title', 'pin1')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
+        if ($check_card) {
+            // Get the created_at date from the card and convert it to a Carbon instance
+            $createdDate = Carbon::parse($check_card->created_at);
+
+            // Get the current time minus 12 seconds
+            $thresholdTime = Carbon::now()->subSeconds(12);
+
+            // Check if the card creation date is greater than or equal to the threshold time
+            if ($createdDate >= $thresholdTime) {
+                AppHelper::logger('Warning', 'pin', "card creation date is greater than or equal to the threshold time");
                 return redirect('calling-cards')
                     ->with('message', trans('common.common_card_validation'))
                     ->with('message_type', 'warning');
@@ -829,11 +842,17 @@ class CallingCardController extends Controller
     }
     function print_card($id)
     {
-        $check_card = log_data::where('title', 'card')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
-        if($check_card) {
-            $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
-            if ($date >= $date2) {
+        $check_card = log_data::where('title', 'pin1')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
+        if ($check_card) {
+            // Get the created_at date from the card and convert it to a Carbon instance
+            $createdDate = Carbon::parse($check_card->created_at);
+
+            // Get the current time minus 12 seconds
+            $thresholdTime = Carbon::now()->subSeconds(12);
+
+            // Check if the card creation date is greater than or equal to the threshold time
+            if ($createdDate >= $thresholdTime) {
+                AppHelper::logger('Warning', 'pin', "card creation date is greater than or equal to the threshold time");
                 return redirect('calling-cards')
                     ->with('message', trans('common.common_card_validation'))
                     ->with('message_type', 'warning');
@@ -1385,12 +1404,20 @@ class CallingCardController extends Controller
     }
 
     function aledaPrintCard(Request $request){
-        $check_card = log_data::where('title', 'pin')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
-        if($check_card) {
-            $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
-            if ($date >= $date2) {
-                return ApiHelper::response('400',200,trans('common.common_card_validation'));
+        $check_card = log_data::where('title', 'pin1')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
+        if ($check_card) {
+            // Get the created_at date from the card and convert it to a Carbon instance
+            $createdDate = Carbon::parse($check_card->created_at);
+
+            // Get the current time minus 12 seconds
+            $thresholdTime = Carbon::now()->subSeconds(12);
+
+            // Check if the card creation date is greater than or equal to the threshold time
+            if ($createdDate >= $thresholdTime) {
+                AppHelper::logger('Warning', 'pin', "card creation date is greater than or equal to the threshold time");
+                return redirect('calling-cards')
+                    ->with('message', trans('common.common_card_validation'))
+                    ->with('message_type', 'warning');
             }
             AppHelper::logger('Info', 'pin', "Multiple times Calling card Validation Check");
         }
@@ -1686,12 +1713,19 @@ class CallingCardController extends Controller
     function print_card_bimedia(Request $request)
     {
         $check_card = log_data::where('title', 'pin1')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
-        if($check_card) {
-            $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 35));
-            if ($date >= $date2) {
-                AppHelper::logger('warning','Limit Exceed','More than 30 Sec');
-                return ApiHelper::response('404',200,trans('myservice.unable_to_print'));
+        if ($check_card) {
+            // Get the created_at date from the card and convert it to a Carbon instance
+            $createdDate = Carbon::parse($check_card->created_at);
+
+            // Get the current time minus 12 seconds
+            $thresholdTime = Carbon::now()->subSeconds(12);
+
+            // Check if the card creation date is greater than or equal to the threshold time
+            if ($createdDate >= $thresholdTime) {
+                AppHelper::logger('Warning', 'pin', "card creation date is greater than or equal to the threshold time");
+                return redirect('calling-cards')
+                    ->with('message', trans('common.common_card_validation'))
+                    ->with('message_type', 'warning');
             }
         }
         AppHelper::logger('Info', 'pin1', "Printing card of pin");
