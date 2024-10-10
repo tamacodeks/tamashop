@@ -108,7 +108,7 @@ class CallingCardController extends Controller
         $check_card = log_data::where('title', 'card')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
         if($check_card) {
             $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 25));
+            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
             if ($date >= $date2) {
                 return redirect('calling-cards')
                     ->with('message', trans('common.common_card_validation'))
@@ -487,7 +487,7 @@ class CallingCardController extends Controller
         $check_card = log_data::where('title', 'card')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
         if($check_card) {
             $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 25));
+            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
             if ($date >= $date2) {
                 return redirect('calling-cards')
                     ->with('message', trans('common.common_card_validation'))
@@ -832,7 +832,7 @@ class CallingCardController extends Controller
         $check_card = log_data::where('title', 'card')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
         if($check_card) {
             $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 25));
+            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
             if ($date >= $date2) {
                 return redirect('calling-cards')
                     ->with('message', trans('common.common_card_validation'))
@@ -1388,7 +1388,7 @@ class CallingCardController extends Controller
         $check_card = log_data::where('title', 'pin')->where('created_by', auth()->user()->id)->orderBy('created_at', 'DESC')->first();
         if($check_card) {
             $date = strtotime($check_card->created_at);
-            $date2 = strtotime(date("Y-m-d H:i:s", time() - 25));
+            $date2 = strtotime(date("Y-m-d H:i:s", time() - 12));
             if ($date >= $date2) {
                 return ApiHelper::response('400',200,trans('common.common_card_validation'));
             }
