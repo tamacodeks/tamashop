@@ -122,6 +122,7 @@ class CallingCardController extends Controller
                     ->with('message_type', 'warning');
             }
         }
+        AppHelper::logger('Info', 'pin1', "Printing card of pin");
         $dec_id = $this->decipher->decrypt($id);
         $provider = TelecomProvider::find($dec_id);
         $this->data['page_title'] = $provider->name.' '.AppHelper::formatAmount('EUR',$provider->face_value);
@@ -507,6 +508,7 @@ class CallingCardController extends Controller
                     ->with('message_type', 'warning');
             }
         }
+        AppHelper::logger('Info', 'pin1', "Printing card of pin");
 
         $check_limit = AppHelper::get_daily_limit(auth()->user()->id);
         $dec_id = $this->decipher->decrypt($id);
@@ -858,6 +860,7 @@ class CallingCardController extends Controller
                     ->with('message_type', 'warning');
             }
         }
+        AppHelper::logger('Info', 'pin1', "Printing card of pin");
         $dec_id = $this->decipher->decrypt($id);
         $provider = TelecomProvider::find($dec_id);
         $this->data['page_title'] = $provider->name.' '.AppHelper::formatAmount('EUR',$provider->face_value);
@@ -1421,6 +1424,7 @@ class CallingCardController extends Controller
             }
             AppHelper::logger('Info', 'pin', "Multiple times Calling card Validation Check");
         }
+        AppHelper::logger('Info', 'pin1', "Printing card of pin");
         $operator_type = SeriveProvider::select('primary')->first();
         if($operator_type->primary == 'Bimedia')
         {
