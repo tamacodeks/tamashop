@@ -179,35 +179,46 @@ class UserController extends Controller
      */
     function impersonate(Request $request, $enc)
     {
-        if ($enc == '') {
-            AppHelper::logger('warning', 'Impersonate Failed', 'Unable to impersonate, enc id not found!');
+        if (empty($enc)) {
+            AppHelper::logger('warning', 'Impersonate Failed', 'Unable to impersonate, encrypted id not found!');
             return redirect()->back()->with('message', trans('users.impersonate_failed'))->with('message_type', 'warning');
         }
+
+        // Decrypt the user ID
         $dec_user_id = SecurityHelper::simpleEncDec('de', $enc);
         $user = User::find($dec_user_id);
+
         if (!$user) {
             AppHelper::logger('warning', 'Impersonate Failed', 'Unable to impersonate, user not found!');
             return redirect()->back()->with('message', trans('users.impersonate_failed'))->with('message_type', 'warning');
         }
-        if (\Session::has('impersonate')) {
-            $impersonate_array = \Session::get('impersonate');
-            $collection = collect($impersonate_array);
-            if ($collection->contains(auth()->user()->id)) {
-                //do nothing
-            } else {
-                $impersonate_array = array_add($impersonate_array, count($impersonate_array), auth()->user()->id);
+
+        // Check if 'impersonate' session exists
+        if (session()->has('impersonate')) {
+            $impersonate_array = session('impersonate');
+            if (!in_array(auth()->user()->id, $impersonate_array)) {
+                $impersonate_array[] = auth()->user()->id;
             }
         } else {
-            $impersonate_array = [
-                auth()->user()->id
-            ];
+            // Initialize impersonate array with current user ID
+            $impersonate_array = [auth()->user()->id];
         }
-        \Session::put('impersonate', $impersonate_array);
+
+        // Store impersonate array in session
+        session()->put('impersonate', $impersonate_array);
+
+        // Store the impersonation state and log in as the new user
         $old_user = auth()->user()->username;
-        \Session::put('impersonated', 'true');
+        session()->put('impersonated', true);
         auth()->loginUsingId($user->id);
-        \Session::put('userGroup',optional(UserGroup::find(auth()->user()->group_id))->name);
-        AppHelper::logger('success', 'Impersonate OK', $old_user . ' impersonate to ' . $user->username);
+
+        // Set the user group name in session
+        session()->put('userGroup', optional(UserGroup::find(auth()->user()->group_id))->name);
+
+        // Log the impersonation event
+        AppHelper::logger('success', 'Impersonate Successful', "$old_user impersonated as {$user->username}");
+
+        // Redirect to dashboard
         return redirect('dashboard')->with('message', trans('users.impersonate_success'))->with('message_type', 'success');
     }
 
@@ -473,6 +484,43 @@ class UserController extends Controller
                 ]);
                 $payment = Payment::find($payment_id);
 //                event(new PaymentReceived($payment));
+                // Check if the "same_amount_manager" checkbox is checked
+                if ($request->has('same_amount_manager')) {
+                    $user = User::find($user_id);
+                    $manager = User::find($user->parent_id);
+                    if ($manager) {
+                        // Get old balance for the manager and calculate new balance
+                        $old_manager_balance = AppHelper::getBalance($manager->id, $request->currency, false);
+                        $new_manager_balance = $old_manager_balance + $request->amount;
+
+                        // Insert transaction for the manager
+                        $manager_trans_id = Transaction::insertGetId([
+                            'user_id' => $manager->id,
+                            'date' => date('Y-m-d H:i:s'),
+                            'type' => 'credit',
+                            'amount' => $request->amount,
+                            'credit' => $request->amount,
+                            'prev_bal' => $old_manager_balance,
+                            'balance' => $new_manager_balance,
+                            'description' => "Top-up from retailer: " . $request->description,
+                            'created_at' => date("Y-m-d H:i:s"),
+                            'created_by' => auth()->user()->id,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ]);
+
+                        // Insert payment for the manager
+                        $manager_payment_id = Payment::insertGetId([
+                            'user_id' => $manager->id,
+                            'transaction_id' => $manager_trans_id,
+                            'date' => date('Y-m-d H:i:s'),
+                            'amount' => $request->amount,
+                            'description' => "Top-up from retailer: " . $request->description,
+                            'received_by' => auth()->user()->id
+                        ]);
+                        $manager_payment = Payment::find($manager_payment_id);
+                    }
+                }
+
             }
             if (!empty($request->credit_limit) && $request->credit_limit != '0') {
                 //check user already have a credit limit
