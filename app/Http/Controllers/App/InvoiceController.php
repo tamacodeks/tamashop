@@ -10,6 +10,7 @@ use app\Library\ServiceHelper;
 use App\Models\Commission;
 use App\Models\Country;
 use App\Models\Order;
+use App\Models\Payment;
 use App\Models\Service;
 use App\User;
 use Carbon\Carbon;
@@ -51,11 +52,6 @@ class InvoiceController extends Controller
             $month = ltrim($exploded[1],0);
             $year = $exploded[0];
         }
-//        $exploded_month = explode('-', $invoiceFor);
-//        $month = date("F", mktime(0, 0, 0, $exploded_month[1], 1));
-//        $startDateMonth = new Carbon("first day of $month $exploded_month[0]");
-//        $endDateMonth = new Carbon("last day of $month $exploded_month[0]");
-//        \DB::enableQueryLog();
         $invoices_qry = Invoice::join('users', 'users.id', 'invoices.user_id');
         if (auth()->user()->group_id == 1) {
             $users = User::whereIn('group_id', [4])
@@ -70,6 +66,7 @@ class InvoiceController extends Controller
 
         $invoices = $invoices_qry
             ->select('invoices.*', 'users.username')
+            ->groupBy('invoices.period_start')
             ->orderBy('id', "DESC")->paginate(100);
 //        dd(\DB::getQueryLog());(
 		if(auth()->user()->group_id == 1 || auth()->user()->group_id == 4){
@@ -84,6 +81,66 @@ class InvoiceController extends Controller
 		}else{
 			return redirect('dashboard')->with('message',trans('common.access_violation'))->with('message_type','warning');
 		}
+    }
+    function viewInvoice($id, $service)
+    {
+        $users = [];
+        $invoices = [];
+
+        // Retrieve the invoice based on the provided service ID
+        $invoice = Invoice::where('id', $service)->first();
+
+        // If no invoice is found, redirect with an error message
+        if (!$invoice) {
+            return redirect('dashboard')->with('message', trans('common.invoice_not_found'))->with('message_type', 'danger');
+        }
+
+        // Extract the year and month from the period_start
+        $dateString = $invoice->period_start;
+        $exploded = explode('-', substr($dateString, 0, 10)); // Extract YYYY-MM-DD part
+        $year = $exploded[0]; // Extract year
+        $month = ltrim($exploded[1], '0'); // Extract month without leading zero
+
+        // Start the query for retrieving related invoices
+        $invoices_qry = Invoice::join('users', 'users.id', '=', 'invoices.user_id')
+            ->where('invoices.user_id', $id);
+
+        // Group ID 1 specific logic (admin user)
+        if (auth()->user()->group_id == 1) {
+            // Fetch users with group_id = 4 and status = 1
+            $users = User::whereIn('group_id', [4])
+                ->where('status', 1)
+                ->select('id', 'username')
+                ->get();
+
+            // Filter invoices by year and month
+            $invoices_qry->where('invoices.year', $year)
+                ->where('invoices.month', $month);
+        } else {
+            // For other users, limit the query to their own invoices
+            $invoices_qry->where('invoices.user_id', auth()->user()->id);
+        }
+
+        // Fetch the invoices with related user information
+        $invoices = $invoices_qry
+            ->select('invoices.*', 'users.username')
+            ->orderBy('invoices.id', 'DESC')
+            ->get();
+
+        // Check user permissions for viewing the invoice
+        if (auth()->user()->group_id == 1 || auth()->user()->group_id == 4) {
+            return view('app.invoices.admin-view', [
+                'page_title' => "Manage Invoices",
+                'users' => $users,
+                'invoices' => $invoices,
+                'req_period' => $invoice->period,
+                'req_year' => $year,
+                'req_month' => $month
+            ]);
+        } else {
+            // Redirect to dashboard if the user lacks permission
+            return redirect('dashboard')->with('message', trans('common.access_violation'))->with('message_type', 'warning');
+        }
     }
 
     function downloadInvoice($id, $service)
@@ -101,15 +158,33 @@ class InvoiceController extends Controller
                 'message_type' => "warning"
             ]);
         }
-        $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
-            ->where('invoice_commissions.invoice_id', $invoice->id)
-            ->select('services.name as service_name', 'invoice_commissions.*')
-            ->get();
-        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-        $pdf = PDF::loadView('app.invoices.' . $layout, [
-            'invoice' => $invoice,
-            'servicePrintData' => $servicePrintData
-        ]);
+        if($service == 'payment'){
+            $servicePrintData = Payment::where('payments.user_id', $invoice->user_id)
+                ->join('transactions', 'payments.transaction_id', '=', 'transactions.id')
+                ->whereBetween('payments.date', [$invoice->period_start, $invoice->period_end])
+                ->select('payments.*', 'transactions.*')
+                ->get();
+
+            $layout = $service == 'payment';
+            $pdf = PDF::loadView('app.invoices.print-payment-services', [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
+//            $pdf = PDF::loadView('app.invoices.' . $layout, [
+//                'invoice' => $invoice,
+//                'servicePrintData' => $servicePrintData
+//            ]);
+        }else{
+            $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
+                ->where('invoice_commissions.invoice_id', $invoice->id)
+                ->select('services.name as service_name', 'invoice_commissions.*')
+                ->get();
+            $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
+            $pdf = PDF::loadView('app.invoices.' . $layout, [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
+        }
         $fileName = $invoice->username . " " . $invoice->invoice_ref;
         return $pdf->download($fileName . '.pdf');
 
@@ -404,6 +479,52 @@ class InvoiceController extends Controller
 									$invoice->save();
 								}
 							}
+
+                        // Check if the payment invoice already exists for the user for this period
+                        $checkPaymentInvoice = Invoice::where('month', $exploded_month[1])
+                            ->where('year', $exploded_month[0])
+                            ->where('user_id', $user)
+                            ->where('service', 'payment')
+                            ->first();
+                        if (!$checkPaymentInvoice) {
+
+                            // Fetch total amount of payments for this user in the specified date range
+                            $totalPayments = \DB::table('payments')
+                                ->where('user_id', $user)
+                                ->whereBetween('date', [$startDateMonth, $endDateMonth])
+                                ->sum('amount');
+
+                            if ($totalPayments > 0) {
+                                // Get the last invoice number
+                                $last_invoice_no = Invoice::where('month', $exploded_month[1])
+                                    ->where('year', $exploded_month[0])
+                                    ->select('count')->orderBy('id', "DESC")->first();
+
+                                $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
+
+                                // Create new payment invoice
+                                $invoice = new Invoice();
+                                $invoice->user_id = $user;
+                                $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
+                                $invoice->date = date("Y-m-d H:i:s");
+                                $invoice->month = $exploded_month[1];
+                                $invoice->year = $exploded_month[0];
+                                $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
+                                $invoice->period_start = $startDateMonth;
+                                $invoice->period_end = $endDateMonth;
+                                $invoice->total_amount = $totalPayments;
+                                $invoice->commission_amount = 0;  // Assuming no commission on payments
+                                $invoice->grand_total = $totalPayments;
+                                $invoice->service = 'payment'; // Label this invoice as a payment invoice
+                                $invoice->count = $last_invoice;
+                                $invoice->created_at = date("Y-m-d H:i:s");
+                                $invoice->save();
+
+                                Log::info("Payment invoice created for user $user");
+                            }
+                        } else {
+                            Log::info("Payment invoice already exists for user $user");
+                        }
 						}
         }
         return back()->with([
@@ -413,39 +534,39 @@ class InvoiceController extends Controller
     }
 
 
-    function viewInvoice($id, $service)
-    {
-        $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
-            ->where('invoices.id', $id)
-            ->where('service', $service)
-            ->select('users.username', 'users.first_name', 'users.last_name', 'users.address'
-                , 'users.cust_id',  'invoices.*')
-            ->first();
-        if (!$invoice) {
-            Log::warning('unable to find invoice for invoice id ' . $id);
-            return back()->with([
-                'message' => "Unable to download your invoice!",
-                'message_type' => "warning"
-            ]);
-        }
-        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-        $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
-            ->where('invoice_commissions.invoice_id', $invoice->id)
-            ->select('services.name as service_name', 'invoice_commissions.*')
-            ->get();
-
-		
-		        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-        $pdf = PDF::loadView('app.invoices.' . $layout, [
-            'invoice' => $invoice,
-            'servicePrintData' => $servicePrintData
-        ]);
-        return view('app.invoices.view', [
-            'id' => $id,
-            'service' => $service
-        ]);
-		
-    }
+//    function viewInvoice($id, $service)
+//    {
+//        $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
+//            ->where('invoices.id', $id)
+//            ->where('service', $service)
+//            ->select('users.username', 'users.first_name', 'users.last_name', 'users.address'
+//                , 'users.cust_id',  'invoices.*')
+//            ->first();
+//        if (!$invoice) {
+//            Log::warning('unable to find invoice for invoice id ' . $id);
+//            return back()->with([
+//                'message' => "Unable to download your invoice!",
+//                'message_type' => "warning"
+//            ]);
+//        }
+//        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
+//        $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
+//            ->where('invoice_commissions.invoice_id', $invoice->id)
+//            ->select('services.name as service_name', 'invoice_commissions.*')
+//            ->get();
+//
+//
+//		        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
+//        $pdf = PDF::loadView('app.invoices.' . $layout, [
+//            'invoice' => $invoice,
+//            'servicePrintData' => $servicePrintData
+//        ]);
+//        return view('app.invoices.view', [
+//            'id' => $id,
+//            'service' => $service
+//        ]);
+//
+//    }
 
     /**
      * Render Invoice
