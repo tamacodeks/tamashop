@@ -7,7 +7,7 @@
     <meta http-equiv="cache-control" content="no-cache"/>
     <meta http-equiv="expires" content="0"/>
     <meta http-equiv="pragma" content="no-cache"/>
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    {{--<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">--}}
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -103,7 +103,7 @@
         <tr>
             <!-- Logo Column -->
             <td style="width: 60%;">
-                <img src="{{ public_path('images/tama_logo.png') }}" alt="TAMA Group Logo">
+                <img src="{{ public_path('images/logo.png') }}" alt="TamaShop Logo">
             </td>
 
             <!-- Invoice Details Column -->
@@ -143,20 +143,22 @@
         <thead>
         <tr>
             <th>Payment Date</th>
-            <th>Amount Paid</th>
+            <th>Description</th>
             <th>Previous Balance</th>
             <th>New Balance</th>
-            <th>Description</th>
+            <th>Amount</th>
+
         </tr>
         </thead>
         <tbody>
         @forelse($servicePrintData as $srvData)
             <tr>
                 <td>{{ \Illuminate\Support\Carbon::parse($srvData->updated_at)->format('d-m-Y') }}</td>
-                <td>{{ number_format($srvData->amount, 2) }} &euro;</td>
+                <td>{{ $srvData->description }}</td>
                 <td>{{ number_format($srvData->prev_bal, 2) }} &euro;</td>
                 <td>{{ number_format($srvData->balance, 2) }} &euro;</td>
-                <td>{{ $srvData->description }}</td>
+                <td>{{ number_format($srvData->amount, 2) }} &euro;</td>
+
             </tr>
         @empty
             <tr>

@@ -102,7 +102,7 @@
                                     <td>{{ $invoice->username }}</td>
                                     <td>{{ ucfirst(str_replace("-"," ",$invoice->service)) }}</td>
                                     <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
-                                    <td>{{ $invoice->invoice_ref }}</td>>
+                                    <td>{{ $invoice->invoice_ref }}</td>
                                     <td>
                                         <a  href="{{ secure_url('invoices/view/'.$invoice->id."/".$invoice->service) }}" onclick="AppModal(this.href,'{{ $invoice
                                          ->invoice_ref}}');return false;"

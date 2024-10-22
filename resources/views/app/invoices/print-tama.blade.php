@@ -7,7 +7,7 @@
     <meta http-equiv="cache-control" content="no-cache"/>
     <meta http-equiv="expires" content="0"/>
     <meta http-equiv="pragma" content="no-cache"/>
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    {{--<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">--}}
     <style>
         body {
             font-family: 'Nunito', sans-serif;
@@ -117,7 +117,7 @@
         <tr>
             <!-- Logo Column -->
             <td style="width: 60%;">
-                <img src="{{ public_path('images/tama_logo.png') }}" alt="TAMA Group Logo">
+                <img src="{{ public_path('images/logo.png') }}" alt="TamaShop Logo">
             </td>
 
             <!-- Invoice Details Column -->

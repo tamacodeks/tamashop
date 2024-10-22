@@ -81,7 +81,8 @@ class InvoiceController extends Controller
 			return redirect('dashboard')->with('message',trans('common.access_violation'))->with('message_type','warning');
 		}
     }
-    public function fetchPayments(Request $request)
+
+    function fetchPayments(Request $request)
     {
         // Determine the correct view based on user group
         $page = auth()->user()->group_id == 1 ? "admin-index" : "users-index";
@@ -170,7 +171,7 @@ class InvoiceController extends Controller
         }
     }
 
-    public function downloadPayment($id)
+    function downloadPayment($id)
     {
         // Fetch the invoice/payment by ID
         $query = Payment::join('transactions', 'transactions.id', 'payments.transaction_id')
@@ -198,21 +199,21 @@ class InvoiceController extends Controller
         }
 
 
-        return view('app.invoices.print-payment-invoice', [
+//        return view('app.invoices.print-payment-invoice', [
+//            'invoice' => $query,
+//        ]);
+//        // Generate the PDF
+        $pdf = PDF::loadView('app.invoices.print-payment-invoice', [
             'invoice' => $query,
         ]);
-//        // Generate the PDF
-//        $pdf = PDF::loadView('app.invoices.' . $layout, [
-//            'invoice' => $invoice,
-//            'servicePrintData' => $servicePrintData
-//        ]);
 //
 //        // Create a meaningful filename for the PDF
-//        $fileName = $invoice->username . " " . $invoice->invoice_ref;
+        $fileName = $query->username . " " . $query->invoice_ref;
 //
 //        // Download the PDF file
-//        return $pdf->download($fileName . '.pdf');
+        return $pdf->download($fileName . '.pdf');
     }
+
     function viewInvoice($id, $service)
     {
         $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
@@ -233,6 +234,7 @@ class InvoiceController extends Controller
             'service' => $service
         ]);
     }
+
     function checkInvoice(Request $request ,$id, $service)
     {
         $users = [];
@@ -299,6 +301,7 @@ class InvoiceController extends Controller
             return redirect('dashboard')->with('message', trans('common.access_violation'))->with('message_type', 'warning');
         }
     }
+
     function downloadInvoice($id, $service)
     {
         $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
@@ -321,15 +324,7 @@ class InvoiceController extends Controller
                 ->select('payments.*', 'transactions.*')
                 ->get();
             $layout = $service == 'payment';
-//            $pdf = PDF::loadView('app.invoices.print-payment-services', [
-//                'invoice' => $invoice,
-//                'servicePrintData' => $servicePrintData
-//            ]);
-//            $pdf = PDF::loadView('app.invoices.' . $layout, [
-//                'invoice' => $invoice,
-//                'servicePrintData' => $servicePrintData
-//            ]);
-            return view('app.invoices.print-payment', [
+            $pdf = PDF::loadView('app.invoices.print-payment', [
                 'invoice' => $invoice,
                 'servicePrintData' => $servicePrintData
             ]);
@@ -339,11 +334,7 @@ class InvoiceController extends Controller
                 ->select('services.name as service_name', 'invoice_commissions.*')
                 ->get();
             $layout = $service == 'tama' ? "print-tama" : "print-calling-card";
-//            $pdf = PDF::loadView('app.invoices.' . $layout, [
-//                'invoice' => $invoice,
-//                'servicePrintData' => $servicePrintData
-//            ]);
-            return view('app.invoices.' . $layout, [
+            $pdf = PDF::loadView('app.invoices.' . $layout, [
                 'invoice' => $invoice,
                 'servicePrintData' => $servicePrintData
             ]);
@@ -406,7 +397,6 @@ class InvoiceController extends Controller
         ]);
     }
 
-
     function updateSetting(Request $request, $id)
     {
 //        dd($request->all());
@@ -460,7 +450,6 @@ class InvoiceController extends Controller
             'users' => $users
         ]);
     }
-
 
     function confirmGenerate(Request $request)
     {
@@ -710,46 +699,28 @@ class InvoiceController extends Controller
                 'message_type' => "warning"
             ]);
         }
-
+        $fileName = $invoice->username . " " . $invoice->invoice_ref;
         if($service == 'payment'){
             $servicePrintData = Payment::where('payments.user_id', $invoice->user_id)
                 ->join('transactions', 'payments.transaction_id', '=', 'transactions.id')
                 ->whereBetween('payments.date', [$invoice->period_start, $invoice->period_end])
                 ->select('payments.*', 'transactions.*')
                 ->get();
-            $layout = $service == 'payment';
-//            $pdf = PDF::loadView('app.invoices.print-payment-services', [
-//                'invoice' => $invoice,
-//                'servicePrintData' => $servicePrintData
-//            ]);
-//            $pdf = PDF::loadView('app.invoices.' . $layout, [
-//                'invoice' => $invoice,
-//                'servicePrintData' => $servicePrintData
-//            ]);
-            return view('app.invoices.print-payment', [
+            $pdf = PDF::loadView('app.invoices.print-payment', [
                 'invoice' => $invoice,
                 'servicePrintData' => $servicePrintData
-            ]);
+            ])->inline($fileName);
         }else{
             $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
                 ->where('invoice_commissions.invoice_id', $invoice->id)
                 ->select('services.name as service_name', 'invoice_commissions.*')
                 ->get();
             $layout = $service == 'tama' ? "print-tama" : "print-calling-card";
-//            $pdf = PDF::loadView('app.invoices.' . $layout, [
-//                'invoice' => $invoice,
-//                'servicePrintData' => $servicePrintData
-//            ]);
-            return view('app.invoices.' . $layout, [
+            $pdf = PDF::loadView('app.invoices.' . $layout, [
                 'invoice' => $invoice,
                 'servicePrintData' => $servicePrintData
-            ]);
+            ])->inline($fileName);
         }
-        $fileName = $invoice->username . " " . $invoice->invoice_ref;
-        return PDF::loadView('app.invoices.' . $layout, [
-            'invoice' => $invoice,
-            'servicePrintData' => $servicePrintData
-        ])->inline($fileName);
     }
 
     function emailInvoice($id, $service, Request $request)
@@ -772,15 +743,27 @@ class InvoiceController extends Controller
                 'message_type' => 'warning'
             ], 400);
         }
-        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-        $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
-            ->where('invoice_commissions.invoice_id', $invoice->id)
-            ->select('services.name as service_name', 'invoice_commissions.*')
-            ->get();
-        $pdf = PDF::loadView('app.invoices.' . $layout, [
-            'invoice' => $invoice,
-            'servicePrintData' => $servicePrintData
-        ]);
+        if($service == 'payment'){
+            $servicePrintData = Payment::where('payments.user_id', $invoice->user_id)
+                ->join('transactions', 'payments.transaction_id', '=', 'transactions.id')
+                ->whereBetween('payments.date', [$invoice->period_start, $invoice->period_end])
+                ->select('payments.*', 'transactions.*')
+                ->get();
+            $pdf = PDF::loadView('app.invoices.print-payment', [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
+        }else{
+            $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
+            $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
+                ->where('invoice_commissions.invoice_id', $invoice->id)
+                ->select('services.name as service_name', 'invoice_commissions.*')
+                ->get();
+            $pdf = PDF::loadView('app.invoices.' . $layout, [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
+        }
         $fileName = $invoice->username . " " . $invoice->invoice_ref . ".pdf";
         $user = User::find($invoice->user_id);
         try {
