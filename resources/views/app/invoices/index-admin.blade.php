@@ -86,7 +86,7 @@
                                     <td>{{ $sl }}</td>
                                     <td>{{ $invoice->username }}</td>
                                     <td>
-                                        <a href="{{ secure_url('invoices/view/'.$invoice->user_id."/".$invoice->id) }}"
+                                        <a href="{{ secure_url('invoices/viewed/'.$invoice->user_id."/".$invoice->id) }}"
                                            class="btn btn-primary btn-sm view-pdf">
                                             <i class="fa fa-eye"></i>&nbsp;{{ trans('common.lbl_view') }}
                                         </a>

@@ -22,7 +22,7 @@
                             <a href="{{ secure_url('invoices/generate') }}" class="btn btn-primary"><i
                                         class="fa fa-plus-circle"></i>&nbsp;Generate Invoice</a>
                         </div>
-                        <form method="GET" id="search-form" action="{{ secure_url('invoices/view/') }}" class="form-inline"
+                        <form method="GET" id="search-form" action="{{ secure_url('invoices/viewed/'.$id."/".$service) }}" class="form-inline"
                               role="form">
                             {{--<div class="form-group">--}}
                                 {{--<label for="service_id">{{ trans('common.users') }}</label>--}}
@@ -114,6 +114,7 @@
                                         <button id="btnSend_{{ $invoice->id }}" onclick='sendInvoiceEmail("{{ $invoice->id }}","{{ secure_url('invoices/email/'.$invoice->id."/".$invoice->service) }}");return false;'
                                            class="btn btn-danger btn-sm"><i
                                                     class="fa fa-envelope"></i>&nbsp;Send Email</button>
+
                                         <a onclick='AppConfirmDelete("{{ secure_url('invoices/remove/'.$invoice->id) }}","{{ __('service.confirm') }}","{{ __('common.btn_delete')." ".$invoice->username." invoice for ".date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}");return false;'
                                            class="btn btn-warning btn-sm"><i
                                                     class="fa fa-trash"></i>&nbsp;{{ __("common.btn_delete") }}</a>

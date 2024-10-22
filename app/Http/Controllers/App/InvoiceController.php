@@ -27,7 +27,7 @@ class InvoiceController extends Controller
 {
     function index(Request $request)
     {
-        $page = auth()->user()->group_id == 1 ? "admin-index" : "users-index";
+        $page = auth()->user()->group_id == 1 ? "index-admin" : "index-users";
         $users = [];
         $invoices = [];
         $month = '';
@@ -155,7 +155,7 @@ class InvoiceController extends Controller
         $payments = $query->orderBy('payments.id', "DESC")->paginate(100);
         // If the user has proper permissions, return the view; otherwise, redirect to dashboard
         if (auth()->user()->group_id == 1 || auth()->user()->group_id == 4) {
-            return view('app.invoices.payments', [
+            return view('app.invoices.payment_single_invoices', [
                 'page_title' => "Manage Payments",
                 'users' => $users,
                 'payments' => $payments,
@@ -169,6 +169,7 @@ class InvoiceController extends Controller
                 ->with('message_type', 'warning');
         }
     }
+
     public function downloadPayment($id)
     {
         // Fetch the invoice/payment by ID
@@ -214,6 +215,26 @@ class InvoiceController extends Controller
     }
     function viewInvoice($id, $service)
     {
+        $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
+            ->where('invoices.id', $id)
+            ->where('service', $service)
+            ->select('users.username', 'users.first_name', 'users.last_name', 'users.address'
+                , 'users.cust_id', 'invoices.*')
+            ->first();
+        if (!$invoice) {
+            Log::warning('unable to find invoice for invoice id ' . $id);
+            return back()->with([
+                'message' => "Unable to download your invoice!",
+                'message_type' => "warning"
+            ]);
+        }
+        return view('app.invoices.view', [
+            'id' => $id,
+            'service' => $service
+        ]);
+    }
+    function checkInvoice(Request $request ,$id, $service)
+    {
         $users = [];
         $invoices = [];
 
@@ -224,17 +245,21 @@ class InvoiceController extends Controller
         if (!$invoice) {
             return redirect('dashboard')->with('message', trans('common.invoice_not_found'))->with('message_type', 'danger');
         }
+        if($request->year){
+            $year = $request->year; // Extract year
+            $month = $request->month;
+        }else{
+            // Extract the year and month from the period_start
+            $dateString = $invoice->period_start;
+            $exploded = explode('-', substr($dateString, 0, 10)); // Extract YYYY-MM-DD part
+            $year = $exploded[0]; // Extract year
+            $month = ltrim($exploded[1], '0'); // Extract month without leading zero
+        }
 
-        // Extract the year and month from the period_start
-        $dateString = $invoice->period_start;
-        $exploded = explode('-', substr($dateString, 0, 10)); // Extract YYYY-MM-DD part
-        $year = $exploded[0]; // Extract year
-        $month = ltrim($exploded[1], '0'); // Extract month without leading zero
 
         // Start the query for retrieving related invoices
         $invoices_qry = Invoice::join('users', 'users.id', '=', 'invoices.user_id')
             ->where('invoices.user_id', $id);
-
         // Group ID 1 specific logic (admin user)
         if (auth()->user()->group_id == 1) {
             // Fetch users with group_id = 4 and status = 1
@@ -259,13 +284,15 @@ class InvoiceController extends Controller
 
         // Check user permissions for viewing the invoice
         if (auth()->user()->group_id == 1 || auth()->user()->group_id == 4) {
-            return view('app.invoices.admin-view', [
+            return view('app.invoices.index-view-admin', [
                 'page_title' => "Manage Invoices",
                 'users' => $users,
                 'invoices' => $invoices,
                 'req_period' => $invoice->period,
                 'req_year' => $year,
-                'req_month' => $month
+                'req_month' => $month,
+                'service' => $service,
+                'id' => $id
             ]);
         } else {
             // Redirect to dashboard if the user lacks permission
@@ -302,7 +329,7 @@ class InvoiceController extends Controller
 //                'invoice' => $invoice,
 //                'servicePrintData' => $servicePrintData
 //            ]);
-            return view('app.invoices.print-payment-services', [
+            return view('app.invoices.print-payment', [
                 'invoice' => $invoice,
                 'servicePrintData' => $servicePrintData
             ]);
@@ -311,7 +338,7 @@ class InvoiceController extends Controller
                 ->where('invoice_commissions.invoice_id', $invoice->id)
                 ->select('services.name as service_name', 'invoice_commissions.*')
                 ->get();
-            $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
+            $layout = $service == 'tama' ? "print-tama" : "print-calling-card";
 //            $pdf = PDF::loadView('app.invoices.' . $layout, [
 //                'invoice' => $invoice,
 //                'servicePrintData' => $servicePrintData
@@ -323,7 +350,6 @@ class InvoiceController extends Controller
         }
         $fileName = $invoice->username . " " . $invoice->invoice_ref;
         return $pdf->download($fileName . '.pdf');
-
     }
 
     function invoiceSettings()
@@ -684,12 +710,41 @@ class InvoiceController extends Controller
                 'message_type' => "warning"
             ]);
         }
-        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-        $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
-            ->where('invoice_commissions.invoice_id', $invoice->id)
-            ->select('services.name as service_name', 'invoice_commissions.*')
-            ->get();
-        //dd($servicePrintData);
+
+        if($service == 'payment'){
+            $servicePrintData = Payment::where('payments.user_id', $invoice->user_id)
+                ->join('transactions', 'payments.transaction_id', '=', 'transactions.id')
+                ->whereBetween('payments.date', [$invoice->period_start, $invoice->period_end])
+                ->select('payments.*', 'transactions.*')
+                ->get();
+            $layout = $service == 'payment';
+//            $pdf = PDF::loadView('app.invoices.print-payment-services', [
+//                'invoice' => $invoice,
+//                'servicePrintData' => $servicePrintData
+//            ]);
+//            $pdf = PDF::loadView('app.invoices.' . $layout, [
+//                'invoice' => $invoice,
+//                'servicePrintData' => $servicePrintData
+//            ]);
+            return view('app.invoices.print-payment', [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
+        }else{
+            $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
+                ->where('invoice_commissions.invoice_id', $invoice->id)
+                ->select('services.name as service_name', 'invoice_commissions.*')
+                ->get();
+            $layout = $service == 'tama' ? "print-tama" : "print-calling-card";
+//            $pdf = PDF::loadView('app.invoices.' . $layout, [
+//                'invoice' => $invoice,
+//                'servicePrintData' => $servicePrintData
+//            ]);
+            return view('app.invoices.' . $layout, [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
+        }
         $fileName = $invoice->username . " " . $invoice->invoice_ref;
         return PDF::loadView('app.invoices.' . $layout, [
             'invoice' => $invoice,
