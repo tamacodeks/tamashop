@@ -89,54 +89,51 @@
 <body id="print-content">
 <div class="page">
 
-<table class="table">
-    <tbody>
-    <tr>
-        <td style="width: 35%"><strong>TAMA GROUPE SASU</strong>
-            <br>131 Rue de Crequi
-            <br>69006 Lyon
-            <br>France
-            <br>+33176660340
-            <br>billing@tamaexpress.com
-            <br>TVA intracom: FR 41823939285
-        </td>
-        <td><img src="{{ public_path('images/tama_logo.png') }}" style="width: 130px"></td>
-    </tr>
-    </tbody>
-</table>
-<br><br><br>
+    <table class="table">
+        <tbody>
+        <tr>
+            <!-- First column with logo -->
+            <td style="width: 90%;">
+                <img src="{{ public_path('images/tama_logo.png') }}" style="width: 130px">
+            </td>
 
-<table class="table">
-    <tbody>
-    <tr>
-        <td style="width: 100%"></td>
-        <td><strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
-            <br>{!! $invoice->address !!}
-            <br>France
-            <br>Customer ID: {{ $invoice->cust_id }}
-            <br>TVA intracom: {{ $invoice->tva_no }}
-        </td>
-    </tr>
-    </tbody>
-</table>
-<br>
+        {{--<!-- Second column with customer information -->--}}
+        {{--<td style="width: 40%;">--}}
+        {{--<strong>{{ isset($invoice) ? $invoice->first_name ." ". $invoice->last_name : "" }}</strong>--}}
+        {{--<br>{!! $invoice->address !!}--}}
+        {{--<br>France--}}
+        {{--<br>Customer ID: {{ $invoice->cust_id }}--}}
+        {{--<br>TVA intracom: {{ $invoice->tva_no }}--}}
+        {{--</td>--}}
+
+        <!-- Third column with invoice details -->
+            <?php
+            $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
+            ?>
+            <td style="width: 10%;">
+                <strong>Date:</strong> {{ $invoiceDate }}
+                <br><strong>Période:</strong> {{ $invoice->period }}
+                <br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}
+                <br><strong>BANQUE: LCL</strong>
+                <br><strong> IBAN :FR91 3000 2016 3700 0007 1620 S65 </strong>
+                <br><strong>BIC : CRLYFRPP</strong>
+            </td>
+            <td style="width: 80%"></td>
+            <td><strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
+                <br>{!! $invoice->address !!}
+                <br>France
+                <br>Customer ID: {{ $invoice->cust_id }}
+                <br>TVA intracom: {{ $invoice->tva_no }}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <br><br><br>
 
 <p style="border-bottom: 5px solid #ff0000"></p>
-<br><br>
 
-<table class="table">
-    <tbody>
-    <tr>
-        <?php
-        $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year."-".$invoice->month)->startOfMonth()->addMonth()->toDateString();
-        ?>
-        <td style="width: 35%"><strong>Date:</strong> {{ $invoiceDate }}
-            <br><strong>Période:</strong> {{ $invoice->period }}
-            <br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}</td>
-        <td></td>
-    </tr>
-    </tbody>
-</table>
+
 <h4>FACTURATION</h4>
 <table class="table">
     <tbody>

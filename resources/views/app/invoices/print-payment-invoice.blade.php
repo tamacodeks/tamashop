@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $invoice->username }} Invoice No {{ $invoice->invoice_ref }}</title>
+    <base href=""/>
     <meta http-equiv="cache-control" content="max-age=0"/>
     <meta http-equiv="cache-control" content="no-cache"/>
     <meta http-equiv="expires" content="0"/>
@@ -12,78 +13,92 @@
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             color: #333;
         }
 
-        .table {
+        .container {
+            width: 90%;
+            margin: auto;
+        }
+
+        .header-table {
             width: 100%;
-            table-layout: fixed;
             border-collapse: collapse;
             margin-bottom: 20px;
         }
 
-        .table td {
+        .header-table td {
             padding: 10px;
+            vertical-align: top;
         }
 
-        .table img {
-            width: 150px;
+        .header-logo {
+            width: 60%;
         }
 
-        .invoice-info {
+        .header-details {
+            width: 40%;
             text-align: right;
-            line-height: 1.5;
         }
 
-        .invoice-info strong {
+        .header-details strong {
             display: block;
-            margin-bottom: 5px;
+            font-size: 14px;
         }
 
-        h4 {
-            text-align: center;
-            font-size: 18px;
-            text-transform: uppercase;
-            margin-top: 40px;
+        .invoice-details {
             margin-bottom: 20px;
         }
 
-        .cdr-table {
+        .invoice-details td {
+            padding: 5px;
+        }
+
+        h4 {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .separator {
+            border-bottom: 5px solid #ff0000;
+            margin: 20px 0;
+        }
+
+        .payment-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 13px;
         }
 
-        .cdr-table th, .cdr-table td {
+        .payment-table th, .payment-table td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
         }
 
-        .cdr-table th {
+        .payment-table th {
             background-color: #f2f2f2;
             text-transform: uppercase;
         }
 
-        .total-row td {
+        .total-row {
             background-color: #f2f2f2;
             font-weight: bold;
+            border-top: 2px solid #000;
         }
 
         .footer {
             text-align: center;
             margin-top: 30px;
             font-size: 14px;
+            color: #555;
         }
 
         .footer strong {
             font-size: 15px;
-        }
-
-        .separator {
-            border-bottom: 4px solid #ff0000;
-            margin: 20px 0;
         }
 
         @media print {
@@ -93,22 +108,21 @@
         }
     </style>
 </head>
-<body>
+<body id="print-content">
 
-<div class="page">
+<div class="container">
 
     <!-- Header Section -->
-    <table class="table">
+    <table class="header-table">
         <tbody>
         <tr>
             <!-- Logo Column -->
-            <td style="width: 60%;">
-                <img src="{{ public_path('images/tama_logo.png') }}" alt="TAMA Group Logo">
+            <td class="header-logo">
+                <img src="{{ secure_url('images/logo.png') }}" alt="Logo">
             </td>
-
             <!-- Invoice Details Column -->
-            <td class="invoice-info" style="width: 40%;">
-                <strong>Date:</strong> {{ \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString() }}
+            <td class="header-details">
+                <strong>Date:</strong> {{ $invoice->date }}
                 <strong>Période:</strong> {{ $invoice->period }}
                 <strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}
                 <strong>BANQUE: LCL</strong>
@@ -120,11 +134,11 @@
     </table>
 
     <!-- Client Details Section -->
-    <table class="table">
+    <table class="invoice-details">
         <tbody>
         <tr>
             <td>
-                <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong><br>
+                <strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong><br>
                 {!! nl2br($invoice->address) !!}<br>
                 France<br>
                 <strong>Customer ID:</strong> {{ $invoice->cust_id }}<br>
@@ -137,44 +151,33 @@
     <div class="separator"></div>
 
     <!-- Payment Details Section -->
-    <h4>Détails des paiements</h4>
+    <h4>Details des payments</h4>
 
-    <table class="cdr-table">
+    <table class="payment-table">
         <thead>
         <tr>
             <th>Payment Date</th>
             <th>Amount Paid</th>
-            <th>Previous Balance</th>
-            <th>New Balance</th>
-            <th>Description</th>
         </tr>
         </thead>
         <tbody>
-        @forelse($servicePrintData as $srvData)
-            <tr>
-                <td>{{ \Illuminate\Support\Carbon::parse($srvData->updated_at)->format('d-m-Y') }}</td>
-                <td>{{ number_format($srvData->amount, 2) }} &euro;</td>
-                <td>{{ number_format($srvData->prev_bal, 2) }} &euro;</td>
-                <td>{{ number_format($srvData->balance, 2) }} &euro;</td>
-                <td>{{ $srvData->description }}</td>
-            </tr>
-        @empty
-            <tr>
-                <td colspan="5">No Payment Data Available</td>
-            </tr>
-        @endforelse
+        <tr>
+            <td>{{ $invoice->date }}</td>
+            <td>{{ number_format($invoice->amount, 2) }} &euro;</td>
+        </tr>
         <tr class="total-row">
-            <td colspan="4">Total des commissions TTC</td>
-            <td>{{ number_format($invoice->total_amount, 2) }} &euro;</td>
+            <td><strong>Total des commissions TTC</strong></td>
+            <td><strong>{{ number_format($invoice->amount, 2) }} &euro;</strong></td>
         </tr>
         </tbody>
     </table>
 
     <!-- Footer Section -->
     <div class="footer">
-        Facture établie par <strong>TAMA GROUPE</strong> au nom et pour le compte de
-        <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong>.
+        Facture établie par <strong>TAMA GROUPE</strong> au nom et pour le compte
+        de <strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
     </div>
+
 </div>
 
 </body>

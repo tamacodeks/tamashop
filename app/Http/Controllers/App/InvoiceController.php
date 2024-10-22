@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\Snappy\Facades\SnappyPdf as PDF;
-
+use Yajra\DataTables\Facades\DataTables;
 
 
 class InvoiceController extends Controller
@@ -58,7 +58,7 @@ class InvoiceController extends Controller
                 ->where('status', 1)
                 ->select('id', 'username')->get();
 				
-            $invoices_qry->where('invoices.year', $year)->where('invoices.month',$month);
+            $invoices_qry->where('invoices.year', $year)->where('invoices.month',$month)->groupBy('invoices.period_start');
 		}
 		else {
             $invoices_qry->where('user_id', auth()->user()->id);
@@ -66,7 +66,6 @@ class InvoiceController extends Controller
 
         $invoices = $invoices_qry
             ->select('invoices.*', 'users.username')
-            ->groupBy('invoices.period_start')
             ->orderBy('id', "DESC")->paginate(100);
 //        dd(\DB::getQueryLog());(
 		if(auth()->user()->group_id == 1 || auth()->user()->group_id == 4){
@@ -81,6 +80,137 @@ class InvoiceController extends Controller
 		}else{
 			return redirect('dashboard')->with('message',trans('common.access_violation'))->with('message_type','warning');
 		}
+    }
+    public function fetchPayments(Request $request)
+    {
+        // Determine the correct view based on user group
+        $page = auth()->user()->group_id == 1 ? "admin-index" : "users-index";
+
+        // Initialize variables
+        $users = [];
+        $payments = [];
+        $month = '';
+        $year = '';
+        $rangeFrom = '';
+        $rangeEnd = '';
+
+        // Handle the 'period' parameter from the request
+        if ($request->has('period') && !empty($request->period)) {
+            // Split the period into two dates
+            $exploded = explode(' ', $request->period);
+            $rangeFrom = $exploded[0] . " 00:00:00";
+            $rangeEnd = $exploded[1] . " 23:59:59";
+        } elseif (!empty($request->year) || !empty($request->month)) {
+            // Handle 'year' and 'month' parameters
+            $month = $request->month;
+            $year = $request->year;
+        } else {
+            // Default to last month's date range if no 'period', 'year', or 'month' is provided
+            $date = Carbon::now();
+            $start = new \Carbon\Carbon('first day of last month');
+            $end = new \Carbon\Carbon('last day of last month');
+            $rangeFrom = $start->toDateString() . " 00:00:00";
+            $rangeEnd = $end->toDateString() . " 23:59:59";
+
+            // Extract month and year from the last month
+            $invoiceFor = $date->subMonth()->format('Y-m');
+            $exploded = explode("-", $invoiceFor);
+            $month = ltrim($exploded[1], '0'); // Remove leading zero
+            $year = $exploded[0];
+        }
+
+        // Prepare the base query for payments with necessary joins
+        $query = Payment::join('transactions', 'transactions.id', 'payments.transaction_id')
+            ->join('users', 'users.id', 'payments.user_id')
+            ->select([
+                'payments.date',
+                'payments.id',
+                'users.username',
+                'users.cust_id',
+                'payments.amount',
+                'transactions.prev_bal',
+                'transactions.balance',
+                'payments.description',
+                'payments.received_by'
+            ]);
+
+        // Apply user filtering: If admin, show all; else, only show payments for the current user
+        if (auth()->user()->group_id == 1) {
+            // Admin view, fetch users in group 4 with active status
+            $users = User::whereIn('group_id', [4])
+                ->where('status', 1)
+                ->select('id', 'username')
+                ->get();
+        } else {
+            // Non-admin view, filter payments for the current authenticated user
+            $query->where('payments.user_id', auth()->user()->id);
+        }
+
+        // Apply date range filter (only if period is available)
+        if (!empty($rangeFrom) && !empty($rangeEnd)) {
+            $query->whereBetween('payments.date', [$rangeFrom, $rangeEnd]);
+        }
+
+        // Fetch the payments, ordering by ID in descending order
+        $payments = $query->orderBy('payments.id', "DESC")->paginate(100);
+        // If the user has proper permissions, return the view; otherwise, redirect to dashboard
+        if (auth()->user()->group_id == 1 || auth()->user()->group_id == 4) {
+            return view('app.invoices.payments', [
+                'page_title' => "Manage Payments",
+                'users' => $users,
+                'payments' => $payments,
+                'req_period' => $request->period,
+                'req_year' => $year,
+                'req_month' => $month
+            ]);
+        } else {
+            return redirect('dashboard')
+                ->with('message', trans('common.access_violation'))
+                ->with('message_type', 'warning');
+        }
+    }
+    public function downloadPayment($id)
+    {
+        // Fetch the invoice/payment by ID
+        $query = Payment::join('transactions', 'transactions.id', 'payments.transaction_id')
+            ->join('users', 'users.id', 'payments.user_id')
+            ->select([
+                'payments.date',
+                'payments.id',
+                'payments.amount',
+                'users.username',
+                'users.first_name',
+                'users.last_name',
+                'users.address',
+                'users.cust_id',
+                'payments.amount',
+                'transactions.id as invoice_ref',
+                'transactions.balance',
+                'payments.description',
+                'payments.received_by'
+            ])
+            ->where('payments.id', $id)
+            ->first(); // Correctly assign the result of the query to a variable
+
+        if (!$query) {
+            return redirect()->back()->with('message', 'Payment not found')->with('message_type', 'warning');
+        }
+
+
+        return view('app.invoices.print-payment-invoice', [
+            'invoice' => $query,
+        ]);
+//        // Generate the PDF
+//        $pdf = PDF::loadView('app.invoices.' . $layout, [
+//            'invoice' => $invoice,
+//            'servicePrintData' => $servicePrintData
+//        ]);
+//
+//        // Create a meaningful filename for the PDF
+//        $fileName = $invoice->username . " " . $invoice->invoice_ref;
+//
+//        // Download the PDF file
+//        return $pdf->download($fileName . '.pdf');
     }
     function viewInvoice($id, $service)
     {
@@ -142,7 +272,6 @@ class InvoiceController extends Controller
             return redirect('dashboard')->with('message', trans('common.access_violation'))->with('message_type', 'warning');
         }
     }
-
     function downloadInvoice($id, $service)
     {
         $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
@@ -164,23 +293,30 @@ class InvoiceController extends Controller
                 ->whereBetween('payments.date', [$invoice->period_start, $invoice->period_end])
                 ->select('payments.*', 'transactions.*')
                 ->get();
-
             $layout = $service == 'payment';
-            $pdf = PDF::loadView('app.invoices.print-payment-services', [
-                'invoice' => $invoice,
-                'servicePrintData' => $servicePrintData
-            ]);
+//            $pdf = PDF::loadView('app.invoices.print-payment-services', [
+//                'invoice' => $invoice,
+//                'servicePrintData' => $servicePrintData
+//            ]);
 //            $pdf = PDF::loadView('app.invoices.' . $layout, [
 //                'invoice' => $invoice,
 //                'servicePrintData' => $servicePrintData
 //            ]);
+            return view('app.invoices.print-payment-services', [
+                'invoice' => $invoice,
+                'servicePrintData' => $servicePrintData
+            ]);
         }else{
             $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
                 ->where('invoice_commissions.invoice_id', $invoice->id)
                 ->select('services.name as service_name', 'invoice_commissions.*')
                 ->get();
             $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-            $pdf = PDF::loadView('app.invoices.' . $layout, [
+//            $pdf = PDF::loadView('app.invoices.' . $layout, [
+//                'invoice' => $invoice,
+//                'servicePrintData' => $servicePrintData
+//            ]);
+            return view('app.invoices.' . $layout, [
                 'invoice' => $invoice,
                 'servicePrintData' => $servicePrintData
             ]);
@@ -533,47 +669,6 @@ class InvoiceController extends Controller
         ]);
     }
 
-
-//    function viewInvoice($id, $service)
-//    {
-//        $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
-//            ->where('invoices.id', $id)
-//            ->where('service', $service)
-//            ->select('users.username', 'users.first_name', 'users.last_name', 'users.address'
-//                , 'users.cust_id',  'invoices.*')
-//            ->first();
-//        if (!$invoice) {
-//            Log::warning('unable to find invoice for invoice id ' . $id);
-//            return back()->with([
-//                'message' => "Unable to download your invoice!",
-//                'message_type' => "warning"
-//            ]);
-//        }
-//        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-//        $servicePrintData = InvoiceCommission::join('services', 'services.id', 'invoice_commissions.service_id')
-//            ->where('invoice_commissions.invoice_id', $invoice->id)
-//            ->select('services.name as service_name', 'invoice_commissions.*')
-//            ->get();
-//
-//
-//		        $layout = $service == 'tama' ? "print-tama-services" : "print-calling-card";
-//        $pdf = PDF::loadView('app.invoices.' . $layout, [
-//            'invoice' => $invoice,
-//            'servicePrintData' => $servicePrintData
-//        ]);
-//        return view('app.invoices.view', [
-//            'id' => $id,
-//            'service' => $service
-//        ]);
-//
-//    }
-
-    /**
-     * Render Invoice
-     * @param $id
-     * @param $service
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
-     */
     function renderInvoice($id, $service)
     {
         $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
@@ -602,12 +697,6 @@ class InvoiceController extends Controller
         ])->inline($fileName);
     }
 
-    /**
-     * Email invoice to user
-     * @param $id
-     * @param $service
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Symfony\Component\HttpFoundation\Response
-     */
     function emailInvoice($id, $service, Request $request)
     {
         if (!$request->ajax()) {

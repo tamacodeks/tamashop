@@ -22,26 +22,26 @@
                             <a href="{{ secure_url('invoices/generate') }}" class="btn btn-primary"><i
                                         class="fa fa-plus-circle"></i>&nbsp;Generate Invoice</a>
                         </div>
-                        <form method="GET" id="search-form" action="{{ secure_url('invoices/view/') }}" class="form-inline"
+                        <form method="GET" id="search-form" action="{{ secure_url('invoices') }}" class="form-inline"
                               role="form">
-                            {{--<div class="form-group">--}}
-                                {{--<label for="service_id">{{ trans('common.users') }}</label>--}}
-                                {{--<select name="service_id" id="service_id" class="select-picker" data-live-search="true"--}}
-                                        {{--title="{{ trans('common.lbl_please_choose') }}" data-actions-box="true"--}}
-                                        {{--multiple>--}}
-                                    {{--<option value="">{{ trans('common.lbl_please_choose') }}</option>--}}
-                                    {{--@forelse($users as $user)--}}
-                                        {{--<option value="{{ $user->id }}">{{ $user->username }}</option>--}}
-                                    {{--@empty--}}
-                                    {{--@endforelse--}}
-                                {{--</select>--}}
-                            {{--</div>--}}
+                            <div class="form-group">
+                                <label for="service_id">{{ trans('common.users') }}</label>
+                                <select name="service_id" id="service_id" class="select-picker" data-live-search="true"
+                                        title="{{ trans('common.lbl_please_choose') }}" data-actions-box="true"
+                                        multiple>
+                                    <option value="">{{ trans('common.lbl_please_choose') }}</option>
+                                    @forelse($users as $user)
+                                        <option value="{{ $user->id }}">{{ $user->username }}</option>
+                                    @empty
+                                    @endforelse
+                                </select>
+                            </div>
                             <div class="form-group">
                                 <label for="invoice_date">Invoice For </label>
-                                <?php
-                                $yearArray = range(2018, date("Y"));
-                                ?>
-                                <!-- displaying the dropdown list -->
+                            <?php
+                            $yearArray = range(2018, date("Y"));
+                            ?>
+                            <!-- displaying the dropdown list -->
                                 <select name="year" id="year" class="form-control">
                                     <option value="">Select Year</option>
                                     <?php
@@ -88,9 +88,6 @@
                             <tr>
                                 <td>Sl</td>
                                 <td>Username</td>
-                                <td>Invoice For</td>
-                                <td>Period</td>
-                                <td>Invoice ID</td>
                                 <td>Action</td>
                             </tr>
                             </thead>
@@ -100,23 +97,10 @@
                                 <tr>
                                     <td>{{ $sl }}</td>
                                     <td>{{ $invoice->username }}</td>
-                                    <td>{{ ucfirst(str_replace("-"," ",$invoice->service)) }}</td>
-                                    <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
-                                    <td>{{ $invoice->invoice_ref }}</td>>
                                     <td>
-                                        <a  href="{{ secure_url('invoices/view/'.$invoice->id."/".$invoice->service) }}" onclick="AppModal(this.href,'{{ $invoice
-                                         ->invoice_ref}}');return false;"
+                                        <a  href="{{ secure_url('invoices/view/'.$invoice->user_id."/".$invoice->id) }}"
                                             class="btn btn-primary btn-sm view-pdf" ><i
                                                     class="fa fa-eye"></i>&nbsp;{{ trans('common.lbl_view') }}</a>
-                                        <a target="_blank" href="{{ secure_url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
-                                           class="btn btn-default btn-sm"><i
-                                                    class="fa fa-download"></i>&nbsp;Download</a>
-                                        <button id="btnSend_{{ $invoice->id }}" onclick='sendInvoiceEmail("{{ $invoice->id }}","{{ secure_url('invoices/email/'.$invoice->id."/".$invoice->service) }}");return false;'
-                                           class="btn btn-danger btn-sm"><i
-                                                    class="fa fa-envelope"></i>&nbsp;Send Email</button>
-                                        <a onclick='AppConfirmDelete("{{ secure_url('invoices/remove/'.$invoice->id) }}","{{ __('service.confirm') }}","{{ __('common.btn_delete')." ".$invoice->username." invoice for ".date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}");return false;'
-                                           class="btn btn-warning btn-sm"><i
-                                                    class="fa fa-trash"></i>&nbsp;{{ __("common.btn_delete") }}</a>
                                     </td>
                                 </tr>
                                 @php($sl++)
@@ -125,7 +109,7 @@
                             @endforelse
                             </tbody>
                         </table>
-                        {{--{!! $invoices->render() !!}--}}
+                        {!! $invoices->render() !!}
                     </div>
                 </div>
             </div>
@@ -133,43 +117,6 @@
     </div>
     <script src="{{ asset('vendor/select-picker/js/bootstrap-select.js') }}"></script>
     <script>
-        function sendInvoiceEmail(id,ajaxUrl){
-            $.confirm({
-                title: 'Confirm!',
-                content: 'Do you want to sent this invoice as email?',
-                buttons: {
-                    confirm: function () {
-                        $("#btnSend_"+id).html('<i class="fa fa-spinner fa-pulse"></i> {{ trans('common.processing') }}...');
-                        $.ajaxSetup({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            }
-                        });
-                        $.ajax({
-                            url: ajaxUrl,
-                            type: 'POST',
-                            contentType: 'application/x-www-form-urlencoded',
-                            data: $(this).serialize(),
-                            success: function( data, textStatus, jQxhr ){
-                                console.log(data);
-                                $.alert({
-                                    title: 'Success',
-                                    content: data.message,
-                                });
-                                $("#btnSend_"+id).html('<i class="fa fa-envelope"></i>&nbsp;Send Email');
-                            },
-                            error: function( jqXhr, textStatus, errorThrown ){
-                                console.log( errorThrown );
-                                $("#btnSend_"+id).html('<i class="fa fa-envelope"></i>&nbsp;Send Email');
-                            }
-                        });
-                    },
-                    cancel: function () {
-                       console.log("invoice sent email cancelled")
-                    }
-                }
-            });
-        }
         $(document).ready(function () {
             $(".select-picker").selectpicker();
         });

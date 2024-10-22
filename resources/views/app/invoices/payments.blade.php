@@ -14,21 +14,21 @@
                     </div>
                     <div class="panel-body">
                         <form method="GET" id="search-form" class="form-inline" role="form"
-                              action="{{ Request::is('payment_invoice*') ? secure_url('invoices/payments') : secure_url('invoices') }}">
-                        @if(auth()->user()->group_id == 3)
-                                    <div class="form-group">
-                                        <label for="service_id">{{ trans('common.users') }}</label>
-                                        <select name="service_id" id="service_id" class="select-picker" multiple
-                                                data-live-search="true" title="{{ trans('common.lbl_please_choose') }}"
-                                                data-actions-box="true">
-                                            <option value="">{{ trans('common.lbl_please_choose') }}</option>
-                                            @forelse($users as $user)
-                                                <option value="{{ $user->id }}">{{ $user->username }}</option>
-                                            @empty
-                                            @endforelse
-                                        </select>
-                                    </div>
-                                @endif
+                              action="{{ secure_url("payment_invoice") }}">
+                            @if(auth()->user()->group_id == 3)
+                                <div class="form-group">
+                                    <label for="service_id">{{ trans('common.users') }}</label>
+                                    <select name="service_id" id="service_id" class="select-picker" multiple
+                                            data-live-search="true" title="{{ trans('common.lbl_please_choose') }}"
+                                            data-actions-box="true">
+                                        <option value="">{{ trans('common.lbl_please_choose') }}</option>
+                                        @forelse($users as $user)
+                                            <option value="{{ $user->id }}">{{ $user->username }}</option>
+                                        @empty
+                                        @endforelse
+                                    </select>
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <label for="invoice_date">Invoice For </label>
                                 <?php
@@ -60,43 +60,49 @@
                 <div class="panel" style="margin-top: -20px">
                     <div class="panel-body">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class="active"><a href="{{ url('invoices') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Invoice</a></li>
-                            <li><a href="{{ url('payment_invoice') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">payments</a></li>
+                            <li><a href="{{ url('invoices') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Invoice</a></li>
+                            <li class="active"><a href="{{ url('payment_invoice') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Payments</a></li>
                         </ul>
                         <table class="table table-bordered table-striped">
                             <thead>
                             <tr>
                                 <td>Sl</td>
                                 <td>Username</td>
-                                <td>Invoice For</td>
-                                <td>Period</td>
-                                <td>Invoice ID</td>
+                                <td>Customer ID</td>
+                                <td>Payment Date</td>
+                                <td>Amount</td>
+                                <td>Previous Balance</td>
+                                <td>Balance</td>
                                 <td>Action</td>
                             </tr>
                             </thead>
                             <tbody>
                             @php($sl=1)
-                            @forelse($invoices as $invoice)
+                            @forelse($payments as $payment)
                                 <tr>
                                     <td>{{ $sl }}</td>
-                                    <td>{{ $invoice->username }}</td>
-                                    <td>{{ ucfirst(str_replace("-"," ",$invoice->service)) }}</td>
-                                    <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
-                                    <td>{{ $invoice->invoice_ref }}</td>
+                                    <td>{{ $payment->username }}</td>
+                                    <td>{{ $payment->cust_id }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($payment->date)->format('Y-m-d H:i:s') }}</td>
+                                    <td>{{ number_format($payment->amount, 2) }}</td>
+                                    <td>{{ number_format($payment->prev_bal, 2) }}</td>
+                                    <td>{{ number_format($payment->balance, 2) }}</td>
                                     <td>
                                         <a target="_blank"
-                                           href="{{ secure_url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
+                                           href="{{ secure_url('payments/download/'.$payment->id) }}"
                                            class="btn btn-default btn-sm"><i
                                                     class="fa fa-download"></i>&nbsp;Download</a>
                                     </td>
                                 </tr>
                                 @php($sl++)
                             @empty
-
+                                <tr>
+                                    <td colspan="8">No Payments Found</td>
+                                </tr>
                             @endforelse
                             </tbody>
                         </table>
-                        {!! $invoices->render() !!}
+                        {!! $payments->render() !!}
                     </div>
                 </div>
             </div>

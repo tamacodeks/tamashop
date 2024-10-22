@@ -3,7 +3,6 @@
 <head>
     <meta charset="utf-8">
     <title>{{ $invoice->username }} Invoice No {{ $invoice->invoice_ref }}</title>
-    <base href=""/>
     <meta http-equiv="cache-control" content="max-age=0"/>
     <meta http-equiv="cache-control" content="no-cache"/>
     <meta http-equiv="expires" content="0"/>
@@ -12,75 +11,95 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #333;
         }
 
         .table {
             border-collapse: collapse;
             table-layout: fixed;
             width: 100%;
-            white-space: nowrap;
-            /*border: 1px solid #000;*/
+            margin-bottom: 20px;
         }
 
         .table td {
-            /*border: 1px solid black;*/
-            width: 50%;
+            padding: 10px;
         }
 
-        .table tr:first-child td {
-            border-top: 0;
+        .table img {
+            width: 130px;
         }
 
-        .table tr td:first-child {
-            border-left: 0;
+        .invoice-details {
+            width: 40%;
+            text-align: right;
+            line-height: 1.5;
         }
 
-        .table tr:last-child td {
-            border-bottom: 0;
+        .invoice-details strong {
+            display: block;
+            margin-bottom: 5px;
         }
 
-        .table tr td:last-child {
-            border-right: 0;
+        h4 {
+            text-align: center;
+            font-size: 18px;
+            text-transform: uppercase;
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
 
-        .none {
-            display: none;
+        .separator {
+            border-bottom: 4px solid #ff0000;
+            margin: 20px 0;
         }
 
-        #goods thead tr td {
-            border-bottom: 1px solid #000;
+        #goods {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #goods td {
+            padding: 10px;
             border-top: 1px solid #000;
         }
 
-        #goods tr td {
-            border-right: 1px solid #fff;
-            border-bottom: 1px solid #fff;
+        .cdr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 20px;
         }
 
-        #goods tr:last-child td {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
+        .cdr-table th, .cdr-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
         }
 
-        p {
-            margin: 0;
+        .cdr-table th {
+            background-color: #f2f2f2;
+            text-transform: uppercase;
         }
 
-        .cdr-table td, th {
-            border: 1px solid black;
+        .total-row {
+            background-color: #f2f2f2;
+            font-weight: bold;
         }
 
-        .page {
-            page-break-after: always;
-            page-break-inside: avoid;
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #555;
         }
 
-        .lastpage{
-            overflow-wrap: normal !important;
-            white-space: normal !important;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        .footer strong {
+            font-size: 15px;
         }
+
         @media print {
             body {
                 font-size: 14pt;
@@ -88,223 +107,176 @@
         }
     </style>
 </head>
-<body id="print-content">
+<body>
 
 <div class="page">
-    <table class="table">
-        <tbody>
-        <tr>
-            <td style="width: 35%"><strong>TAMA GROUPE SASU</strong>
-                <br>131 Rue de Crequi
-                <br>69006 Lyon
-                <br>France
-                <br>+33176660340
-                <br>billing@tamaexpress.com
-                <br>TVA intracom: FR 41823939285
-            </td>
-            <td><img src="{{ public_path('images/tama_logo.png') }}" style="width: 130px"></td>
-        </tr>
-        </tbody>
-    </table>
-    <br><br><br>
 
+    <!-- Header Section -->
     <table class="table">
         <tbody>
         <tr>
-            <td style="width: 100%"></td>
-            <td><strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
-                <br>{!! $invoice->address !!}
-                <br>France
-                <br>Customer ID: {{ $invoice->cust_id }}
-                <br>TVA intracom: {{ $invoice->tva_no }}
+            <!-- Logo Column -->
+            <td style="width: 60%;">
+                <img src="{{ public_path('images/tama_logo.png') }}" alt="TAMA Group Logo">
+            </td>
+
+            <!-- Invoice Details Column -->
+            <td class="invoice-details">
+                <?php
+                $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
+                ?>
+                <strong>Date:</strong> {{ $invoiceDate }}
+                <strong>Période:</strong> {{ $invoice->period }}
+                <strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}
+                <strong>BANQUE: LCL</strong>
+                <strong>IBAN: FR91 3000 2016 3700 0007 1620 S65</strong>
+                <strong>BIC: CRLYFRPP</strong>
             </td>
         </tr>
         </tbody>
     </table>
-    <br>
 
-    <p style="border-bottom: 5px solid #ff0000"></p>
-    <br><br>
-
+    <!-- Customer Information Section -->
     <table class="table">
         <tbody>
         <tr>
-            <?php
-            $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year."-".$invoice->month)->startOfMonth()->addMonth()->toDateString();
-            ?>
-            <td style="width: 35%"><strong>Date:</strong> {{ $invoiceDate }}
-                <br><strong>Période:</strong> {{ $invoice->period }}
-                <br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}</td>
-            <td></td>
+            <td>
+                <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong><br>
+                {!! nl2br($invoice->address) !!}<br>
+                France<br>
+                <strong>Customer ID:</strong> {{ $invoice->cust_id }}<br>
+                <strong>TVA intracom:</strong> {{ $invoice->tva_no }}
+            </td>
         </tr>
         </tbody>
     </table>
-    <br>
-    <div style="border-bottom:1px solid #000;">
-        <div style="display:inline-block"><h4>FACTURATION</h4></div>
-        <div style="display:inline-block; float:right"><h4>MONTANT</h4></div>
+
+    <div class="separator"></div>
+
+    <!-- Facturation Section -->
+    <div style="border-bottom:1px solid #000; padding-bottom: 5px;">
+        <h4 style="display:inline-block;">FACTURATION</h4>
+        <h4 style="display:inline-block; float:right;">MONTANT</h4>
     </div>
-    <table class="table" id="goods" style="border: 1px solid #fff;">
+
+    <table id="goods">
         <tbody>
         <tr>
-            <td style="border-top: 1px #000 solid"></td>
-            <td style="border-top: 1px #000 solid"></td>
-            <td style="border-top: 1px #000 solid"></td>
-        </tr>
-        <tr style="border-bottom: 1px #000 solid">
-            <td style="height: 30px;"></td>
-            <td style="text-align: center"></td>
-            <td style="text-align: right"></td>
-        </tr>
-        <tr>
-            <td style="height: 30px;">Ventes services Tama collectées TTC</td>
-            <td style="text-align: center"></td>
-            <td style="text-align: right">{{ number_format($invoice->total_amount,2) }} &euro;</td>
-        </tr>
-        <tr>
-            <td style="height: 60px;"></td>
-            <td></td>
-            <td></td>
+            <td>Ventes services Tama collectées TTC</td>
+            <td style="text-align: right">{{ number_format($invoice->total_amount, 2) }} &euro;</td>
         </tr>
         <?php
         $vatInfo = \app\Library\ServiceHelper::vat($invoice->commission_amount, 20);
         ?>
         <tr>
             <td>Commissions HT</td>
-            <td style="text-align: center">&nbsp;</td>
-            <td style="text-align: right">{{ $vatInfo['price_before_vat'] }}  &euro;</td>
+            <td style="text-align: right">{{ number_format($vatInfo['price_before_vat'], 2) }} &euro;</td>
         </tr>
         <tr>
-            <td style="height: 40px;">TVA Commission 20%</td>
-            <td style="text-align: center">&nbsp;</td>
-            <td style="text-align: right">{{ $vatInfo['vat_amount']  }}  &euro;</td>
+            <td>TVA Commission 20%</td>
+            <td style="text-align: right">{{ number_format($vatInfo['vat_amount'], 2) }} &euro;</td>
         </tr>
-        <tr>
-            <td style="height: 30px;"></td>
-            <td></td>
-            <td></td>
+        <tr class="total-row">
+            <td>Commission sur vente TTC</td>
+            <td style="text-align: right">{{ number_format($invoice->commission_amount, 2) }} &euro;</td>
         </tr>
-        <tr>
-            <td style="border-bottom: 1px #000 solid">Commission sur vente TTC</td>
-            <td style="text-align: center;border-bottom: 1px #000 solid">&nbsp;</td>
-            <td style="text-align: right;border-bottom: 1px #000 solid">{{ $invoice->commission_amount }}  &euro;</td>
-        </tr>
-        <tr>
-            <td style="height: 60px;"></td>
-            <td></td>
-            <td></td>
-        </tr>
-        <tr>
-            <td style="border-bottom: 1px solid #000; background: #f2f2f2">
-                <strong>Montant total du TTC</strong>
-            </td>
-            <td style="text-align: center; border-bottom: 1px solid #000; background: #f2f2f2"></td>
-            <td style="text-align: right; border-bottom: 1px solid #000; background: #f2f2f2">
-                <strong>{{ $invoice->grand_total }} &euro;</strong>
-            </td>
+        <tr class="total-row">
+            <td><strong>Montant total du TTC</strong></td>
+            <td style="text-align: right"><strong>{{ number_format($invoice->grand_total, 2) }} &euro;</strong></td>
         </tr>
         </tbody>
     </table>
-    <div style="text-align: center;margin-top:10px;margin-bottom: 100px">
-        Facture etablie par TAMA GROUPE au nom et pour le compte
-        de {{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}
+
+    <!-- Footer Section -->
+    <div class="footer">
+        Facture établie par <strong>TAMA GROUPE</strong> au nom et pour le compte de
+        <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong>.
     </div>
+
 </div>
+
 <div class="page">
-    <h4 style="text-align: center">Details des commissions</h4>
-    <br><br><br>
-    <table class="cdr-table" style="font-size: 13px;border-collapse: collapse;width: 100%;">
+    <h4 style="text-align: center">Détails des commissions</h4>
+
+    <table class="cdr-table">
         <thead>
-            <tr style="background: #f2f2f2">
-                <td style="text-align: center">Service Tama</td>
-                <td style="text-align: center">Montant TTC</td>
-                <td style="text-align: center">Commission TTC</td>
-                <td style="text-align: center">Total Commission</td>
-            </tr>
+        <tr>
+            <th>Service Tama</th>
+            <th>Montant TTC</th>
+            <th>Commission TTC</th>
+            <th>Total Commission</th>
+        </tr>
         </thead>
         <tbody>
         @forelse($servicePrintData as $srvData)
             <tr>
-                <td style="height: 30px;">Services({{ $srvData->service_name }})</td>
-                <td style="text-align: center">{{ $srvData->total_amount }} &euro;</td>
-                <td style="text-align: center">{{ $srvData->commission }}% ttc</td>
-                <td style="text-align: right">{{$srvData->commission_amount }}  &euro;</td>
+                <td>{{ $srvData->service_name }}</td>
+                <td>{{ number_format($srvData->total_amount, 2) }} &euro;</td>
+                <td>{{ $srvData->commission }}% ttc</td>
+                <td>{{ number_format($srvData->commission_amount, 2) }} &euro;</td>
             </tr>
         @empty
+            <tr>
+                <td colspan="4">Aucune donnée disponible</td>
+            </tr>
         @endforelse
-        <tr>
-            <td style="border-bottom: 1px solid #000; background: #f2f2f2">
-                <strong>Total des commissions TTC</strong>
-            </td>
-            <td style="text-align: center; border-bottom: 1px solid #000; background: #f2f2f2"></td>
-            <td style="background: #f2f2f2">&nbsp;</td>
-            <td style="text-align: right; border-bottom: 1px solid #000; background: #f2f2f2">
-                <strong>{{$invoice->commission_amount }}  &euro;</strong>
-            </td>
+        <tr class="total-row">
+            <td>Total des commissions TTC</td>
+            <td colspan="2"></td>
+            <td>{{ number_format($invoice->commission_amount, 2) }} &euro;</td>
         </tr>
         </tbody>
     </table>
 </div>
+
 <div class="lastpage">
     @forelse($servicePrintData as $srvData)
         <?php
         $invoiceUser = \App\User::find($srvData->user_id);
         $invoiceData = \App\Models\Invoice::find($srvData->invoice_id);
-        //        dd($invoiceData->period);
         $fromtodate = str_replace("  au ", "_", $invoiceData->period);
         $period = explode("_", trim($fromtodate));
         $filterDate = [$period[0] . " 00:00:00", $period[1] . " 23:59:59"];
         $cdrs = \app\Library\ServiceHelper::getCDR($srvData->service_id, $invoiceUser->group_id, $invoiceUser->id, $filterDate);
         ?>
         <h4><u>{{ $srvData->service_name }}</u></h4>
-        <table class="cdr-table" style="font-size: 13px;border-collapse: collapse;width: 100%;">
+        <table class="cdr-table">
             <thead>
             <tr>
-                <th style="text-align: center">#</th>
-                <th style="text-align: center">{{ trans('common.lbl_date') }}</th>
-                <th style="text-align: center">{{ trans('common.transaction_tbl_trans_id') }}</th>
-                <th style="text-align: center">{{ trans('common.lbl_product') }}</th>
-                <th style="text-align: center">{{ trans('common.transaction_tbl_pub_price') }}</th>
-                <th style="text-align: center">{{ trans('common.transaction_tbl_res_price') }}</th>
-                <th style="text-align: center">{{ trans('common.transaction_tbl_sale_margin') }}</th>
-                <th style="text-align: center">{{ trans('tamatopup.mobile') }}</th>
+                <th>#</th>
+                <th>Date</th>
+                <th>Transaction ID</th>
+                <th>Produit</th>
+                <th>Prix Public</th>
+                <th>Prix Rés</th>
+                <th>Marge de Vente</th>
+                <th>Mobile</th>
             </tr>
             </thead>
             <tbody>
-            @php($sl=1)
+            @php($sl = 1)
             @forelse($cdrs as $cdr)
-                <?php
-                if ($cdr->service_id == 1) {
-                    $product_name = str_replace("€", "&euro;", optional(\App\Models\Product::find($cdr->product_id))->name);
-                } elseif ($cdr->service_id == 5) {
-                    $product_name = $cdr->service_name . ' ' . "&euro; ".$cdr->app_amount_topup;
-                } elseif ($cdr->service_id == 2 || $cdr->service_id == 7) {
-                    $tt_op = \App\Models\OrderItem::find($cdr->order_item_id);
-                    $product_name = $cdr->tt_operator == null ? optional($tt_op)->tt_operator : $cdr->tt_operator;
-                } else {
-                    $price = $cdr->public_price == "0.00" ? $cdr->grand_total : $cdr->public_price;
-                    $product_name = $cdr->service_name . ' ' . "&euro; ".$price;
-                    $mobile = $cdr->app_mobile;
-                }
-                $mobile = $cdr->service_id == 2 ? $cdr->tt_mobile : $cdr->app_mobile;
-                ?>
                 <tr>
                     <td>{{ $sl }}</td>
-                    <td style="text-align: center">{{ $cdr->date }}</td>
-                    <td style="text-align: center">{{ $cdr->txn_id }}</td>
-                    <td style="text-align: center">{!! $product_name !!}</td>
-                    <td style="text-align: center">{{ $cdr->public_price }}</td>
-                    <td style="text-align: center">{{ $cdr->grand_total }}</td>
-                    <td style="text-align: center">{{ $cdr->sale_margin }}</td>
-                    <td style="text-align: center">{{ $mobile }}</td>
+                    <td>{{ $cdr->date }}</td>
+                    <td>{{ $cdr->txn_id }}</td>
+                    <td>{!! $cdr->service_id == 1 ? optional(\App\Models\Product::find($cdr->product_id))->name : $cdr->service_name !!}</td>
+                    <td>{{ $cdr->public_price }} &euro;</td>
+                    <td>{{ $cdr->grand_total }} &euro;</td>
+                    <td>{{ $cdr->sale_margin }} &euro;</td>
+                    <td>{{ $cdr->service_id == 2 ? $cdr->tt_mobile : $cdr->app_mobile }}</td>
                 </tr>
                 @php($sl++)
             @empty
+                <tr>
+                    <td colspan="8">Aucune donnée disponible</td>
+                </tr>
             @endforelse
             </tbody>
         </table>
     @empty
     @endforelse
 </div>
+
 </body>
 </html>
