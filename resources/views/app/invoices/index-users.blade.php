@@ -60,8 +60,8 @@
                 <div class="panel" style="margin-top: -20px">
                     <div class="panel-body">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li class="active"><a href="{{ url('invoices') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Invoice</a></li>
-                            <li><a href="{{ url('payment_invoice') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">payments</a></li>
+                            <li @if($singleornot == 0) class="active" @endif ><a href="{{ url('invoices') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Invoice</a></li>
+                            <li @if($singleornot == 1) class="active" @endif><a href="{{ url('payment_invoice') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">payments</a></li>
                         </ul>
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -77,23 +77,27 @@
                             <tbody>
                             @php($sl=1)
                             @forelse($invoices as $invoice)
-                                <tr>
-                                    <td>{{ $sl }}</td>
-                                    <td>{{ $invoice->username }}</td>
-                                    <td>{{ ucfirst(str_replace("-"," ",$invoice->service)) }}</td>
-                                    <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
-                                    <td>{{ $invoice->invoice_ref }}</td>
-                                    <td>
-                                        <a target="_blank"
-                                           href="{{ secure_url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
-                                           class="btn btn-default btn-sm"><i
-                                                    class="fa fa-download"></i>&nbsp;Download</a>
-                                    </td>
-                                </tr>
-                                @php($sl++)
+                                @if(($singleornot == 1 && $invoice->service == 'each_payment') || ($singleornot != 1 && $invoice->service != 'each_payment'))
+                                    <tr>
+                                        <td>{{ $sl }}</td>
+                                        <td>{{ $invoice->username }}</td>
+                                        <td>{{ $invoice->service == 'each_payment' ? 'Payment' : ucfirst(str_replace("-", " ", $invoice->service)) }}</td>
+                                        <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10)) . " " . $invoice->year }}</td>
+                                        <td>{{ $invoice->invoice_ref }}</td>
+                                        <td>
+                                            <a target="_blank"
+                                               href="{{ secure_url('invoices/download/'.$invoice->id."/".$invoice->service) }}"
+                                               class="btn btn-default btn-sm"><i class="fa fa-download"></i>&nbsp;Download</a>
+                                        </td>
+                                    </tr>
+                                    @php($sl++)
+                                @endif
                             @empty
-
+                                <tr>
+                                    <td colspan="6">No invoices found</td>
+                                </tr>
                             @endforelse
+
                             </tbody>
                         </table>
                         {!! $invoices->render() !!}

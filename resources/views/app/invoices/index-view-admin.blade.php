@@ -100,7 +100,8 @@
                                 <tr>
                                     <td>{{ $sl }}</td>
                                     <td>{{ $invoice->username }}</td>
-                                    <td>{{ ucfirst(str_replace("-"," ",$invoice->service)) }}</td>
+
+                                    <td>{{ $invoice->service == 'each_payment' ? 'Payment' : ucfirst(str_replace("-", " ", $invoice->service)) }}</td>
                                     <td>{{ date("F", mktime(0, 0, 0, $invoice->month, 10))." ".$invoice->year }}</td>
                                     <td>{{ $invoice->invoice_ref }}</td>
                                     <td>
@@ -122,8 +123,11 @@
                                 </tr>
                                 @php($sl++)
                             @empty
-
+                                <tr>
+                                    <td colspan="6">No invoices found</td>
+                                </tr>
                             @endforelse
+
                             </tbody>
                         </table>
                         {{--{!! $invoices->render() !!}--}}

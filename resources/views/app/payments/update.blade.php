@@ -15,7 +15,7 @@
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
                                 <form id="frmPayment" class="form-horizontal" action="{{ secure_url('payment/update') }}" method="POST">
-                                    {{ csrf_field() }}
+                                {{ csrf_field() }}
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="retailer_id">{{ trans('myservice.lbl_choose_retailers') }}</label>
                                         <div class="col-md-8">
@@ -39,20 +39,24 @@
                                             <input type="text" class="form-control money-input" name="amount" id="amount">
                                         </div>
                                     </div>
+                                    @if(auth()->user()->group_id == 3)
+                                        <input type="hidden" id="same_amount_manager" name="same_amount_manager"value ="1">
+                                    @endif
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="description">{{ trans('common.lbl_desc') }}</label>
                                         <div class="col-md-6">
-                                           <textarea class="form-control" name="description" id="description"></textarea>
+                                            <textarea class="form-control" name="description" id="description"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-4"></div>
                                         <div class="col-md-4">
-                                            <button type="submit" class="btn btn-primary" id="btnSubmit"><i class="fa fa-save"></i>&nbsp;{{ trans('common.update_payment') }}</button>
+                                            <button type="submit" class="btn btn-primary" id="btnSubmit">
+                                                <i class="fa fa-save"></i>&nbsp;{{ trans('common.update_payment') }}
+                                            </button>
                                         </div>
                                         <div class="col-md-4"></div>
                                     </div>
-
                                 </form>
                             </div>
                             <div class="col-md-3"></div>

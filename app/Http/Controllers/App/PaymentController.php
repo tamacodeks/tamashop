@@ -195,22 +195,30 @@ class PaymentController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    function update_payment(Request $request)
+    public function update_payment(Request $request)
     {
 //        dd($request->all());
         $validator = Validator::make($request->all(),[
             'retailer_id' => 'required',
-            'amount' => 'required'
+            'amount' => 'required|numeric|min:1'
         ]);
         if ($validator->fails()) {
-            AppHelper::logger('warning','Payment Update Validation','Validation failed',$request->all());
+            AppHelper::logger('warning', 'Payment Update Validation', 'Validation failed', $request->all());
             $html = AppHelper::create_error_bag($validator);
             return redirect()->back()
-                ->with('message',$html)
-                ->with('message_type','warning');
+                ->with('message', $html)
+                ->with('message_type', 'warning');
         }
+
+        // Get retailer by ID
         $user = User::find($request->retailer_id);
-        $old_user_balance = AppHelper::getBalance($user->id,$user->currency,false);
+        if (!$user) {
+            return redirect()->back()
+                ->with('message', trans('common.retailer_not_found'))
+                ->with('message_type', 'error');
+        }
+        // Get old user balance for logging (optional)
+        $old_user_balance = AppHelper::getBalance($user->id, $user->currency, false);
         $payment_id = Payment::insertGetId([
             'user_id' => $user->id,
             'transaction_id' => NULL,
@@ -221,13 +229,44 @@ class PaymentController extends Controller
         ]);
         $payment = Payment::find($payment_id);
         event(new PaymentReceived($payment));
-        $emails = explode(',',PAYMENT_EMAILS);
-        $send_email_order_data = array(
+
+        // Check if 'same_amount_manager' checkbox is checked
+        if ($request->has('same_amount_manager')) {
+            // Get the manager (parent of the retailer)
+            $manager = User::find($user->parent_id);  // Assuming 'parent_id' is the manager's ID
+
+            if ($manager) {
+                // Insert payment for the manager
+                $manager_payment_id = Payment::insertGetId([
+                    'user_id' => $manager->id,
+                    'transaction_id' => NULL,
+                    'date' => date('Y-m-d H:i:s'),
+                    'amount' => $request->amount, // Same amount as retailer
+                    'description' => "Top-up to manager: " . $request->description,
+                    'received_by' => auth()->user()->id
+                ]);
+
+                // Fire payment event for manager
+                $manager_payment = Payment::find($manager_payment_id);
+                event(new PaymentReceived($manager_payment));
+
+                // Log success for manager payment
+                AppHelper::logger('success', 'Payment Update', $manager->username . ' (Manager) payment was updated by ' . auth()->user()->username);
+            } else {
+                AppHelper::logger('error', 'Payment Update', 'Manager (parent_id) not found for retailer: ' . $user->username);
+                return redirect()->back()
+                    ->with('message', trans('common.manager_not_found'))
+                    ->with('message_type', 'error');
+            }
+        }
+        // Send payment email notifications
+        $emails = explode(',', PAYMENT_EMAILS);
+        $send_email_order_data = [
             'updater' => auth()->user()->username,
             'amount' => $request->amount,
             'reseller_name' => $user->username,
             'desc' => $request->description
-        );
+        ];
         \Mail::send('emails.payment_added', $send_email_order_data, function ($message) use ($emails) {
             $message->from('noreply@tamaexpress.com', 'Tama Retailer');
             $message->to($emails)->subject('Payment Added');

@@ -12,114 +12,177 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
 
         .table {
             border-collapse: collapse;
-            table-layout: fixed;
             width: 100%;
-            white-space: nowrap;
-            /*border: 1px solid #000;*/
+            margin-bottom: 20px;
         }
 
         .table td {
-            /*border: 1px solid black;*/
-            width: 50%;
+            padding: 10px;
+            vertical-align: top;
         }
 
-        .table tr:first-child td {
-            border-top: 0;
+        .table thead tr {
+            background-color: #f2f2f2;
         }
 
-        .table tr td:first-child {
-            border-left: 0;
+        .table thead tr td {
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-bottom: 2px solid #ccc;
         }
 
-        .table tr:last-child td {
-            border-bottom: 0;
+        .table tbody tr td {
+            border-bottom: 1px solid #e6e6e6;
         }
 
-        .table tr td:last-child {
-            border-right: 0;
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
-        .none {
-            display: none;
-        }
-
-        #goods thead tr td {
-            border-bottom: 1px solid #000;
-            border-top: 1px solid #000;
-        }
-
-        #goods tr td {
-            border-right: 1px solid #fff;
-            border-bottom: 1px solid #fff;
-        }
-
-        #goods tr:nth-last-child(2) td {
-            border-top: 1px solid #000;
-            border-bottom: 1px solid #000;
+        .invoice-header img {
+            max-width: 150px;
         }
 
         p {
             margin: 0;
         }
-        .cdr-table td,  th {
+
+        .cdr-table td, th {
             border: 1px solid black;
+            padding: 8px;
         }
 
         .page {
             page-break-after: always;
-            page-break-inside: avoid;
         }
-        .lastpage{
-            overflow-wrap: normal !important;
-            white-space: normal !important;
-            margin-bottom: 0;
-            padding-bottom: 0;
+
+        .lastpage {
+            white-space: normal;
         }
+
+        .section-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ff0000;
+            text-align: left;
+            border-bottom: 2px solid #ff0000;
+            padding-bottom: 5px;
+        }
+
+        .table-invoice td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .bank-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+
+        .bank-details strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .total {
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #f2f2f2;
+        }
+
+        #goods {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #goods td {
+            padding: 10px;
+            border-top: 1px solid #000;
+            text-align: right;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .footer strong {
+            font-size: 15px;
+        }
+
+        .cdr-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        .cdr-table th, .cdr-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .cdr-table th {
+            background-color: #f2f2f2;
+            text-transform: uppercase;
+        }
+
+        .total-row {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
         @media print {
             body {
                 font-size: 10pt;
+            }
+
+            .table td {
+                padding: 5px;
+            }
+
+            .page {
+                page-break-after: always;
             }
         }
     </style>
 </head>
 <body id="print-content">
-<div class="page">
 
+<!-- Invoice Header -->
+<div class="invoice-header">
     <table class="table">
         <tbody>
         <tr>
-            <!-- First column with logo -->
-            <td style="width: 90%;">
-                <img src="{{ public_path('images/logo.png') }}" alt="TamaShop Logo">
+            <!-- Center Column with Logo -->
+            <td style="width: 40%; text-align: left;">
+                <img src="{{ public_path('images/tama_logo.png') }}" alt="Tama Logo">
             </td>
 
-        {{--<!-- Second column with customer information -->--}}
-        {{--<td style="width: 40%;">--}}
-        {{--<strong>{{ isset($invoice) ? $invoice->first_name ." ". $invoice->last_name : "" }}</strong>--}}
-        {{--<br>{!! $invoice->address !!}--}}
-        {{--<br>France--}}
-        {{--<br>Customer ID: {{ $invoice->cust_id }}--}}
-        {{--<br>TVA intracom: {{ $invoice->tva_no }}--}}
-        {{--</td>--}}
-
-        <!-- Third column with invoice details -->
+            <!-- Right Column with Customer Details -->
             <?php
             $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
             ?>
-            <td style="width: 10%;">
-                <strong>Date:</strong> {{ $invoiceDate }}
-                <br><strong>Période:</strong> {{ $invoice->period }}
-                <br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}
-                <br><strong>BANQUE: LCL</strong>
-                <br><strong> IBAN :FR91 3000 2016 3700 0007 1620 S65 </strong>
-                <br><strong>BIC : CRLYFRPP</strong>
-            </td>
-            <td style="width: 80%"></td>
-            <td><strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
+            <td style="width: 30%; text-align: right;">
+                <strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
                 <br>{!! $invoice->address !!}
                 <br>France
                 <br>Customer ID: {{ $invoice->cust_id }}
@@ -128,54 +191,65 @@
         </tr>
         </tbody>
     </table>
+</div>
 
-    <br><br><br>
+<!-- Invoice Section Header -->
+<div class="section-header"></div>
 
-<p style="border-bottom: 5px solid #ff0000"></p>
-
-
-<h4>FACTURATION</h4>
+<?php
+$invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
+?>
 <table class="table">
     <tbody>
     <tr>
-        <td>
-            <table class="table" id="goods" style="border: 1px solid #fff;">
-                <thead>
-                <tr style="border-bottom: 1px solid; background: #f2f2f2">
-                    <td style="width: 85%"></td>
-                    <td style="text-align: center;width: 15%;white-space: pre-wrap; font-weight: bold">MONTANT</td>
-
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td style="height: 60px;">Recharges Téléphoniques HT</td>
-                    <td style="text-align: right">{{ number_format($invoice->total_amount,2) }} &euro;</td>
-                </tr>
-                <tr>
-                    <td style="height: 60px;">TVA</td>
-                    <td style="text-align: right">0 &euro;</td>
-                </tr>
-
-
-                <tr>
-                    <td style="border-bottom: 1px solid #000; background: #f2f2f2">
-                        <strong>Montant total TTC</strong>
-                    </td>
-                    <td style="text-align: right; border-bottom: 1px solid #000; background: #f2f2f2">
-                        <strong>{{ number_format($invoice->grand_total,2) }} &euro;</strong>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        <td style="width: 10%;">
+            <strong>Date:</strong> {{ $invoiceDate }}
+            <br><strong>Période:</strong> {{ $invoice->period }}
+            {{--<br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}--}}
         </td>
     </tr>
     </tbody>
+</table>
+
+
+
+<!-- Invoice Details -->
+<table class="table table-invoice">
+    <thead>
+    <tr>
+        <td>Détails de la transaction</td>
+        <td>Montant</td>
+    </tr>
+    </thead>
+    <tr>
+        <td style="height: 60px;">Recharges Téléphoniques HT</td>
+        <td style="text-align: center">{{ number_format($invoice->total_amount,2) }} &euro;</td>
+    </tr>
+    <tr>
+        <td style="height: 60px;">TVA</td>
+        <td style="text-align: center">0 &euro;</td>
+    </tr>
+    <tr>
+        <td style="border-bottom: 1px solid #000; background: #f2f2f2">
+            <strong>Montant total TTC</strong>
+        </td>
+        <td style="text-align: center;border-bottom: 1px solid #000; background: #f2f2f2 ">
+            <strong >{{ number_format($invoice->grand_total,2) }} &euro;</strong>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
 </table>
 <div style="text-align: center;margin-top:10px;margin-bottom: 50px">
     Autoliquidation de la TVA art 283-2 octies du CGI. TVA due par le
     preneur
 </div>
+<!-- Bank Details -->
+{{--<div class="bank-details">--}}
+    {{--<strong>BANQUE: LCL</strong>--}}
+    {{--<strong>IBAN: FR91 3000 2016 3700 0007 1620 S65</strong>--}}
+    {{--<strong>BIC: CRLYFRPP</strong>--}}
+{{--</div>--}}
 </div>
 <div class="lastpage">
     <h4><u>Cdr's</u></h4>

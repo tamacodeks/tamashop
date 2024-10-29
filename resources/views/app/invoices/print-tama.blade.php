@@ -11,48 +11,96 @@
     <style>
         body {
             font-family: 'Nunito', sans-serif;
+            color: #333;
             margin: 0;
             padding: 20px;
-            color: #333;
+            background-color: #f4f4f4;
         }
 
         .table {
             border-collapse: collapse;
-            table-layout: fixed;
             width: 100%;
             margin-bottom: 20px;
         }
 
         .table td {
             padding: 10px;
+            vertical-align: top;
         }
 
-        .table img {
-            width: 130px;
+        .table thead tr {
+            background-color: #f2f2f2;
         }
 
-        .invoice-details {
-            width: 40%;
-            text-align: right;
-            line-height: 1.5;
+        .table thead tr td {
+            font-weight: bold;
+            text-align: center;
+            padding: 15px;
+            border-bottom: 2px solid #ccc;
         }
 
-        .invoice-details strong {
+        .table tbody tr td {
+            border-bottom: 1px solid #e6e6e6;
+        }
+
+        .invoice-header {
+            text-align: center;
+            /*margin-bottom: 30px;*/
+        }
+
+        .invoice-header img {
+            max-width: 150px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .cdr-table td, th {
+            border: 1px solid black;
+            padding: 8px;
+        }
+
+        .page {
+            page-break-after: always;
+        }
+
+        .lastpage {
+            white-space: normal;
+        }
+
+        .section-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #ff0000;
+            text-align: left;
+            border-bottom: 2px solid #ff0000;
+            padding-bottom: 5px;
+        }
+
+        .table-invoice td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .bank-details {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+
+        .bank-details strong {
             display: block;
             margin-bottom: 5px;
         }
 
-        h4 {
-            text-align: center;
-            font-size: 18px;
-            text-transform: uppercase;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        .separator {
-            border-bottom: 4px solid #ff0000;
-            margin: 20px 0;
+        .total {
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #f2f2f2;
         }
 
         #goods {
@@ -64,6 +112,18 @@
         #goods td {
             padding: 10px;
             border-top: 1px solid #000;
+            text-align: right;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .footer strong {
+            font-size: 15px;
         }
 
         .cdr-table {
@@ -89,112 +149,112 @@
             font-weight: bold;
         }
 
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 14px;
-            color: #555;
-        }
-
-        .footer strong {
-            font-size: 15px;
-        }
-
         @media print {
             body {
-                font-size: 14pt;
+                font-size: 10pt;
+            }
+
+            .table td {
+                padding: 5px;
+            }
+
+            .page {
+                page-break-after: always;
             }
         }
     </style>
 </head>
-<body>
+<body id="print-content">
 
-<div class="page">
-
-    <!-- Header Section -->
+<!-- Invoice Header -->
+<div class="invoice-header">
     <table class="table">
         <tbody>
         <tr>
-            <!-- Logo Column -->
-            <td style="width: 60%;">
-                <img src="{{ public_path('images/logo.png') }}" alt="TamaShop Logo">
+           <!-- Center Column with Logo -->
+            <td style="width: 40%; text-align: left;">
+                <img src="{{ public_path('images/tama_logo.png') }}" alt="Tama Logo">
             </td>
 
-            <!-- Invoice Details Column -->
-            <td class="invoice-details">
-                <?php
-                $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
-                ?>
-                <strong>Date:</strong> {{ $invoiceDate }}
-                <strong>Période:</strong> {{ $invoice->period }}
-                <strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}
-                <strong>BANQUE: LCL</strong>
-                <strong>IBAN: FR91 3000 2016 3700 0007 1620 S65</strong>
-                <strong>BIC: CRLYFRPP</strong>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-
-    <!-- Customer Information Section -->
-    <table class="table">
-        <tbody>
-        <tr>
-            <td>
-                <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong><br>
-                {!! nl2br($invoice->address) !!}<br>
-                France<br>
-                <strong>Customer ID:</strong> {{ $invoice->cust_id }}<br>
-                <strong>TVA intracom:</strong> {{ $invoice->tva_no }}
+            <!-- Right Column with Customer Details -->
+            <?php
+            $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
+            ?>
+            <td style="width: 30%; text-align: right;">
+                <strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
+                <br>{!! $invoice->address !!}
+                <br>France
+                <br>Customer ID: {{ $invoice->cust_id }}
+                <br>TVA intracom: {{ $invoice->tva_no }}
             </td>
         </tr>
         </tbody>
     </table>
-
-    <div class="separator"></div>
-
-    <!-- Facturation Section -->
-    <div style="border-bottom:1px solid #000; padding-bottom: 5px;">
-        <h4 style="display:inline-block;">FACTURATION</h4>
-        <h4 style="display:inline-block; float:right;">MONTANT</h4>
-    </div>
-
-    <table id="goods">
-        <tbody>
-        <tr>
-            <td>Ventes services Tama collectées TTC</td>
-            <td style="text-align: right">{{ number_format($invoice->total_amount, 2) }} &euro;</td>
-        </tr>
-        <?php
-        $vatInfo = \app\Library\ServiceHelper::vat($invoice->commission_amount, 20);
-        ?>
-        <tr>
-            <td>Commissions HT</td>
-            <td style="text-align: right">{{ number_format($vatInfo['price_before_vat'], 2) }} &euro;</td>
-        </tr>
-        <tr>
-            <td>TVA Commission 20%</td>
-            <td style="text-align: right">{{ number_format($vatInfo['vat_amount'], 2) }} &euro;</td>
-        </tr>
-        <tr class="total-row">
-            <td>Commission sur vente TTC</td>
-            <td style="text-align: right">{{ number_format($invoice->commission_amount, 2) }} &euro;</td>
-        </tr>
-        <tr class="total-row">
-            <td><strong>Montant total du TTC</strong></td>
-            <td style="text-align: right"><strong>{{ number_format($invoice->grand_total, 2) }} &euro;</strong></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <!-- Footer Section -->
-    <div class="footer">
-        Facture établie par <strong>TAMA GROUPE</strong> au nom et pour le compte de
-        <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong>.
-    </div>
-
 </div>
 
+<!-- Invoice Section Header -->
+<div class="section-header"></div>
+
+<?php
+$invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
+?>
+<table class="table">
+    <tbody>
+    <tr>
+        <td style="width: 10%;">
+            <strong>Date:</strong> {{ $invoiceDate }}
+            <br><strong>Période:</strong> {{ $invoice->period }}
+            {{--<br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}--}}
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Invoice Details -->
+<table class="table table-invoice">
+    <thead>
+    <tr>
+        <td>Détails de la transaction</td>
+        <td>Montant</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>Ventes services Tama collectées HT</td>
+        <td style="text-align: center">{{ number_format($invoice->total_amount, 2) }} &euro;</td>
+    </tr>
+    <?php
+    $vatInfo = \app\Library\ServiceHelper::vat($invoice->commission_amount, 20);
+    ?>
+    <tr>
+        <td>Commissions HT</td>
+        <td style="text-align: center">{{ number_format($vatInfo['price_before_vat'], 2) }} &euro;</td>
+    </tr>
+    <tr>
+        <td>TVA Commission 20%</td>
+        <td style="text-align: center">{{ number_format($vatInfo['vat_amount'], 2) }} &euro;</td>
+    </tr>
+    <tr class="total-row">
+        <td>Commission sur vente TTC</td>
+        <td style="text-align: center">{{ number_format($invoice->commission_amount, 2) }} &euro;</td>
+    </tr>
+    <tr class="total-row">
+        <td><strong>Montant total du HT</strong></td>
+        <td style="text-align: center"><strong>{{ number_format($invoice->grand_total, 2) }} &euro;</strong></td>
+    </tr>
+    </tbody>
+</table>
+    {{--<div class="footer">--}}
+        {{--Facture établie par <strong>TAMA GROUPE</strong> au nom et pour le compte de--}}
+        {{--<strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong>.--}}
+    {{--</div>--}}
+</div>
+<!-- Bank Details -->
+{{--<div class="bank-details">--}}
+    {{--<strong>BANQUE: LCL</strong>--}}
+    {{--<strong>IBAN: FR91 3000 2016 3700 0007 1620 S65</strong>--}}
+    {{--<strong>BIC: CRLYFRPP</strong>--}}
+{{--</div>--}}
 <div class="page">
     <h4 style="text-align: center">Détails des commissions</h4>
 
@@ -202,7 +262,7 @@
         <thead>
         <tr>
             <th>Service Tama</th>
-            <th>Montant TTC</th>
+            <th>Montant HT</th>
             <th>Commission TTC</th>
             <th>Total Commission</th>
         </tr>

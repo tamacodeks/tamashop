@@ -304,6 +304,9 @@
                                                         <input class="form-control money-input" type="text" name="amount" id="amount" value="">
                                                     </div>
                                                 </div>
+                                                @if(auth()->user()->group_id == 3)
+                                                    <input type="hidden" id="same_amount_manager" name="same_amount_manager"value ="1">
+                                                @endif
                                                 <div class="form-group">
                                                     <label class="control-label col-md-4" for="description">{{ trans('common.lbl_desc') }}</label>
                                                     <div class="col-md-8">
