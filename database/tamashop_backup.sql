@@ -1,1 +1,0 @@
-ALTER TABLE `invoices` ADD `payment_id` INT(10) NULL DEFAULT NULL AFTER `user_id`;
