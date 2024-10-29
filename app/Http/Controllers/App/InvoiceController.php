@@ -53,22 +53,33 @@ class InvoiceController extends Controller
             $year = $exploded[0];
         }
         $invoices_qry = Invoice::join('users', 'users.id', 'invoices.user_id');
+
         if (auth()->user()->group_id == 1) {
+            // Get users with group_id 4 and active status
             $users = User::whereIn('group_id', [4])
                 ->where('status', 1)
-                ->select('id', 'username')->get();
-				
-            $invoices_qry->where('invoices.year', $year)->where('invoices.month',$month)->groupBy('invoices.period_start');
-		}
-		else {
-            $invoices_qry->where('user_id', auth()->user()->id);
-        }
+                ->select('id', 'username')
+                ->get();
 
-        $invoices = $invoices_qry
-            ->select('invoices.*', 'users.username')
-            ->orderBy('id', "DESC")->paginate(100);
-//        dd(\DB::getQueryLog());(
-		if(auth()->user()->group_id == 1 || auth()->user()->group_id == 4){
+            // Apply the filter for users with group_id 4
+            $invoices_qry->whereIn('invoices.user_id', $users->pluck('id'));
+
+            // Apply the grouping for these users only
+            $invoices = $invoices_qry
+                ->select('invoices.*', 'users.username', \DB::raw('SUM(invoices.total_amount) as total_amount'))
+                ->groupBy('users.username')
+                ->orderBy('id', 'DESC')
+                ->paginate(100);
+        } else {
+            // For other users, apply user-specific filtering without grouping
+            $invoices_qry->where('user_id', auth()->user()->id);
+
+            $invoices = $invoices_qry
+                ->select('invoices.*', 'users.username')
+                ->orderBy('id', 'DESC')
+                ->paginate(100);
+        }
+        if(auth()->user()->group_id == 1 || auth()->user()->group_id == 4){
 			return view('app.invoices.' . $page, [
 				'page_title' => "Manage Invoices",
 				'users' => $users,

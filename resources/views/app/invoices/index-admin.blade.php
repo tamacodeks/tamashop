@@ -20,51 +20,6 @@
                                     <i class="fa fa-plus-circle"></i>&nbsp;Generate Invoice
                                 </a>
                             </div>
-                            <form method="GET" id="search-form" action="{{ secure_url('invoices') }}" class="form-inline" role="form">
-                                <div class="form-group">
-                                    <label for="service_id">{{ trans('common.users') }}</label>
-                                    <select name="service_id[]" id="service_id" class="select-picker" data-live-search="true"
-                                            title="{{ trans('common.lbl_please_choose') }}" data-actions-box="true" multiple>
-                                        <option value="">{{ trans('common.lbl_please_choose') }}</option>
-                                        @forelse($users as $user)
-                                            <option value="{{ $user->id }}"
-                                                    @if(is_array(request()->service_id) && in_array($user->id, request()->service_id))
-                                                    selected
-                                                    @endif>
-                                                {{ $user->username }}
-                                            </option>
-                                        @empty
-                                        <!-- No users available -->
-                                        @endforelse
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="invoice_date">Invoice For </label>
-                                    <?php
-                                    $start = new \Carbon\Carbon('first day of last month');
-                                    $end = new \Carbon\Carbon('last day of last month');
-                                    $lastMonth = $start->toDateString()." ".$end->toDateString();
-
-                                    $first_day_of_the_current_month = \Carbon\Carbon::today()->startOfMonth();
-                                    $last_day_of_the_current_month = $first_day_of_the_current_month->copy()->endOfMonth();
-
-                                    $first_day_of_month_3 = $first_day_of_the_current_month->copy()->subMonth(3);
-                                    $first_day_of_month_6 = $first_day_of_the_current_month->copy()->subMonth(6);
-
-                                    $last3month =  $first_day_of_month_3->toDateString()." ".$last_day_of_the_current_month->toDateString();
-                                    $last6month =  $first_day_of_month_6->toDateString()." ".$last_day_of_the_current_month->toDateString();
-                                    ?>
-                                    <select name="period" id="period" class="form-control">
-                                        <option value="">Select Period</option>
-                                        <option value="{{ $lastMonth }}" @if($req_period == $lastMonth) selected @endif>Last month</option>
-                                        <option value="{{ $last3month }}" @if($req_period == $last3month) selected @endif>Last 3 months</option>
-                                        <option value="{{ $last6month }}" @if($req_period == $last6month) selected @endif>Last 6 months</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fa fa-filter"></i>&nbsp;{{ trans('common.filter_lbl_search') }}
-                                </button>
-                            </form>
                         @endif
                     </div>
                 </div>
