@@ -38,7 +38,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('release:card')->dailyAt('11:00');
         $schedule->command('report:TamaMasterRetailer')->dailyAt('11:00');
         $schedule->command('calback:Reloadlycallback')->everyMinute();
-//        $schedule->command('refund:Transfercallback')->everyMinute();
+        $schedule->command('refund:Transfercallback')->everyMinute();
     }
 
     /**
