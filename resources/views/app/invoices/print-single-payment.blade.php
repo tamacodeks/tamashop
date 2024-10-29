@@ -190,7 +190,7 @@ $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice
     <tbody>
 <tr>
 <td style="width: 10%;">
-    <strong>Date:</strong> {{ $invoiceDate }}
+    <strong>Date:</strong> {{ $invoice->date }}
     <br><strong>Numéro de facture:</strong> {{ $invoice->invoice_ref }}
 </td>
 </tr>

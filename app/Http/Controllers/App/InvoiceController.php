@@ -288,7 +288,7 @@ class InvoiceController extends Controller
         $invoice = Invoice::join('users', 'users.id', 'invoices.user_id')
             ->where('invoices.id', $id)
             ->where('service', $service)
-            ->select('users.username', 'users.first_name', 'users.last_name', 'users.address'
+            ->select('users.username', 'users.first_name', 'users.last_name', 'users.address', 'users.vat_no as tva_no'
                 , 'users.cust_id',  'invoices.*')
             ->first();
         if (!$invoice) {
@@ -679,7 +679,7 @@ class InvoiceController extends Controller
                                     $invoice = new Invoice();
                                     $invoice->user_id = $user;
                                     $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-                                    $invoice->date = date("Y-m-d H:i:s");
+                                    $invoice->date = $payment->date;
                                     $invoice->month = $exploded_month[1];
                                     $invoice->year = $exploded_month[0];
                                     $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
