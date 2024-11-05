@@ -658,7 +658,7 @@ class InvoiceController extends Controller
                             // Fetch individual payments for this user in the specified date range
                             $payments = \DB::table('payments')
                                 ->where('user_id', $user)
-                                ->where('description', 'not like', '%Refunded Amount of this%')
+                                //->where('description', 'not like', '%Refunded Amount of this%')
                                 ->whereBetween('date', [$startDateMonth, $endDateMonth])
                                 ->get();
 
@@ -666,8 +666,8 @@ class InvoiceController extends Controller
                             foreach ($payments as $payment) {
                                 // Check if an invoice for this specific payment already exists
                                 $existingInvoice = Invoice::where('payment_id', $payment->id)->first();
-
-                                if (!$existingInvoice) {
+								if (strpos($payment->description,'Refunded')  === false) {
+									if (!$existingInvoice) {
                                     // Get the last invoice number
                                     $last_invoice_no = Invoice::where('month', $exploded_month[1])
                                         ->where('year', $exploded_month[0])
@@ -698,6 +698,9 @@ class InvoiceController extends Controller
                                 } else {
                                     Log::info("Payment invoice already exists for user $user for payment id: $payment->id");
                                 }
+								}else{
+									
+								}
                             }
                         } else {
                             Log::info("Payment invoice already exists for user $user for the period.");
