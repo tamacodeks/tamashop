@@ -462,145 +462,145 @@ class InvoiceController extends Controller
                 //user info
                 $userInfo = User::find($user);
                 //check user already have invoice
-//                $checkInvoice = Invoice::where('month', $exploded_month[1])
-//                    ->where('year', $exploded_month[0])
-//                    ->where('user_id', $user)
-//                    ->where('service', 'tama')
-//                    ->first();
-//
-//                if (!$checkInvoice) {
-//                    //tama service invoice amount
-//                    $total_amount = User::select([
-//                        \DB::raw('sum(orders.order_amount) AS sale_price')
-//                    ])
-//                        ->join('orders', 'orders.user_id', '=', 'users.id')
-//                        ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-//                        ->where('orders.is_parent_order', 1)
-//                        ->where('orders.service_id', "!=", 7)
-//                        ->where('users.id', "=", $user)->first();
-//
-//
-//                    if ($total_amount->sale_price == null || $total_amount->sale_price == 0) {
-//                        continue;
-//                    }
-//                    //get last invoice number
-//                    $last_invoice_no = Invoice::where('month', $exploded_month[1])
-//                        ->where('year', $exploded_month[0])
-//                        ->select('count')->orderBy('id', "DESC")->first();
-//
-//                    $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
-//
-//
-//                    $invoice = new Invoice();
-//                    $invoice->user_id = $user;
-//                    $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-//                    $invoice->date = date("Y-m-d H:i:s");
-//                    $invoice->month = $exploded_month[1];
-//                    $invoice->year = $exploded_month[0];
-//                    $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
-//                    $invoice->period_start = $startDateMonth;
-//                    $invoice->period_end = $endDateMonth;
-//                    $invoice->total_amount = $total_amount->sale_price;
-//                    $invoice->commission_amount = 0;
-//                    $invoice->grand_total = 0;
-//                    $invoice->service = 'tama';
-//                    $invoice->count = $last_invoice;
-//                    $invoice->created_at = date("Y-m-d H:i:s");
-//                    $invoice->save();
-//                    $invoice_commission_total_amount = 0;
-//                    //calculate service commission
-//                    foreach ($user_access as $access) {
-//                        $service_total_amount = User::select([
-//                            \DB::raw('sum(orders.order_amount) AS sale_price')
-//                        ])
-//                            ->join('orders', 'orders.user_id', '=', 'users.id')
-//                            ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-//                            ->where('orders.is_parent_order', 1)
-//                            ->where('orders.service_id', "=", $access->id)
-//                            ->where('users.id', "=", $user)->first();
-//
-//
-//                        if ($service_total_amount->sale_price != null) {
-//                            $getUserCommission = ServiceHelper::get_service_commission($user, $access->id);
-//                            if($userInfo->group_id == 3){
-//                                $getUserCommission = 1;
-//                            }
-//                            Log::info("user commission $access->id $getUserCommission");
-//                            $serviceCommission = ServiceHelper::calculate_commission($service_total_amount->sale_price, $getUserCommission);
-//                            $subServiceCommission = $service_total_amount->sale_price - $serviceCommission;
-//                            Log::info("user service commission $serviceCommission $subServiceCommission");
-//							$r = [
-//									'user_id' => $user,
-//									'invoice_id' => $invoice->id,
-//									'service_id' => $access->id,
-//									'total_amount' => round($service_total_amount->sale_price, 2),
-//									'commission' => $getUserCommission,
-//									'commission_amount' => round($subServiceCommission, 2),
-//									'created_at' => now()
-//								];
-//
-//                            $invoice_commission = new InvoiceCommission();
-//                            $invoice_commission->user_id = $user;
-//                            $invoice_commission->invoice_id = $invoice->id;
-//                            $invoice_commission->service_id = $access->id;
-//                            $invoice_commission->total_amount = number_format($service_total_amount->sale_price, 2);
-//                            $invoice_commission->commission = $getUserCommission;
-//                            $invoice_commission->commission_amount = number_format($subServiceCommission, 2);
-//                            $invoice_commission->created_at = date("Y-m-d H:i:s");
-//                            $invoice_commission->save();
-//
-//                            $invoice_commission_total_amount += $subServiceCommission;
-//                        }
-//                    }
-//                    //update the invoice
-//                    Invoice::where('id', $invoice->id)->update([
-//                        'commission_amount' => number_format($invoice_commission_total_amount, 2),
-//                        'grand_total' => number_format($total_amount->sale_price - $invoice_commission_total_amount, 2)
-//                    ]);
-//
-//                    Log::info("invoice created for $userInfo->username");
-//                } else {
-//                    Log::info("Invoices already exists for the user $user");
-//                }
+                $checkInvoice = Invoice::where('month', $exploded_month[1])
+                    ->where('year', $exploded_month[0])
+                    ->where('user_id', $user)
+                    ->where('service', 'tama')
+                    ->first();
+
+                if (!$checkInvoice) {
+                    //tama service invoice amount
+                    $total_amount = User::select([
+                        \DB::raw('sum(orders.order_amount) AS sale_price')
+                    ])
+                        ->join('orders', 'orders.user_id', '=', 'users.id')
+                        ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
+                        ->where('orders.is_parent_order', 1)
+                        ->where('orders.service_id', "!=", 7)
+                        ->where('users.id', "=", $user)->first();
+
+
+                    if ($total_amount->sale_price == null || $total_amount->sale_price == 0) {
+                        continue;
+                    }
+                    //get last invoice number
+                    $last_invoice_no = Invoice::where('month', $exploded_month[1])
+                        ->where('year', $exploded_month[0])
+                        ->select('count')->orderBy('id', "DESC")->first();
+
+                    $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
+
+
+                    $invoice = new Invoice();
+                    $invoice->user_id = $user;
+                    $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
+                    $invoice->date = date("Y-m-d H:i:s");
+                    $invoice->month = $exploded_month[1];
+                    $invoice->year = $exploded_month[0];
+                    $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
+                    $invoice->period_start = $startDateMonth;
+                    $invoice->period_end = $endDateMonth;
+                    $invoice->total_amount = $total_amount->sale_price;
+                    $invoice->commission_amount = 0;
+                    $invoice->grand_total = 0;
+                    $invoice->service = 'tama';
+                    $invoice->count = $last_invoice;
+                    $invoice->created_at = date("Y-m-d H:i:s");
+                    $invoice->save();
+                    $invoice_commission_total_amount = 0;
+                    //calculate service commission
+                    foreach ($user_access as $access) {
+                        $service_total_amount = User::select([
+                            \DB::raw('sum(orders.order_amount) AS sale_price')
+                        ])
+                            ->join('orders', 'orders.user_id', '=', 'users.id')
+                            ->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
+                            ->where('orders.is_parent_order', 1)
+                            ->where('orders.service_id', "=", $access->id)
+                            ->where('users.id', "=", $user)->first();
+
+
+                        if ($service_total_amount->sale_price != null) {
+                            $getUserCommission = ServiceHelper::get_service_commission($user, $access->id);
+                            if($userInfo->group_id == 3){
+                                $getUserCommission = 1;
+                            }
+                            Log::info("user commission $access->id $getUserCommission");
+                            $serviceCommission = ServiceHelper::calculate_commission($service_total_amount->sale_price, $getUserCommission);
+                            $subServiceCommission = $service_total_amount->sale_price - $serviceCommission;
+                            Log::info("user service commission $serviceCommission $subServiceCommission");
+							$r = [
+									'user_id' => $user,
+									'invoice_id' => $invoice->id,
+									'service_id' => $access->id,
+									'total_amount' => round($service_total_amount->sale_price, 2),
+									'commission' => $getUserCommission,
+									'commission_amount' => round($subServiceCommission, 2),
+									'created_at' => now()
+								];
+
+                            $invoice_commission = new InvoiceCommission();
+                            $invoice_commission->user_id = $user;
+                            $invoice_commission->invoice_id = $invoice->id;
+                            $invoice_commission->service_id = $access->id;
+                            $invoice_commission->total_amount = number_format($service_total_amount->sale_price, 2);
+                            $invoice_commission->commission = $getUserCommission;
+                            $invoice_commission->commission_amount = number_format($subServiceCommission, 2);
+                            $invoice_commission->created_at = date("Y-m-d H:i:s");
+                            $invoice_commission->save();
+
+                            $invoice_commission_total_amount += $subServiceCommission;
+                        }
+                    }
+                    //update the invoice
+                    Invoice::where('id', $invoice->id)->update([
+                        'commission_amount' => number_format($invoice_commission_total_amount, 2),
+                        'grand_total' => number_format($total_amount->sale_price - $invoice_commission_total_amount, 2)
+                    ]);
+
+                    Log::info("invoice created for $userInfo->username");
+                } else {
+                    Log::info("Invoices already exists for the user $user");
+                }
                
 //				  //check user already have invoice
-//                        $checkRetailerInvoice = Invoice::where('month', $exploded_month[1])
-//                            ->where('year', $exploded_month[0])
-//                            ->where('user_id', $user)
-//                            ->where('service', 'calling-card')
-//                            ->first();
-//                        if (!$checkRetailerInvoice) {
-//								$callingCardOrders = User::select([
-//									\DB::raw('sum(orders.order_amount) AS sale_price')
-//								])
-//									->join('orders', 'orders.user_id', '=', 'users.id')
-//									->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
-//								  ->where('orders.is_parent_order', 1)
-//									->where('orders.service_id', "=", 7)
-//									->where('users.id', "=", $user)->first();
-//								if ($callingCardOrders && $callingCardOrders->sale_price != null) {
-//									$last_invoice_no = Invoice::where('month', $exploded_month[1])
-//										->where('year', $exploded_month[0])
-//										->select('count')->orderBy('id', "DESC")->first();
-//									$last_invoice = $last_invoice_no->count + 1;
-//									$invoice = new Invoice();
-//									$invoice->user_id = $user;
-//									$invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-//									$invoice->date = date("Y-m-d H:i:s");
-//									$invoice->month = $exploded_month[1];
-//									$invoice->year = $exploded_month[0];
-//									$invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
-//									$invoice->period_start = $startDateMonth;
-//									$invoice->period_end = $endDateMonth;
-//									$invoice->total_amount = $callingCardOrders->sale_price;
-//									$invoice->commission_amount = 0;
-//								   $invoice->grand_total = $callingCardOrders->sale_price;
-//									$invoice->service = 'calling-card';
-//									$invoice->count = $last_invoice;
-//									$invoice->created_at = date("Y-m-d H:i:s");
-//									$invoice->save();
-//								}
-//							}
+                        $checkRetailerInvoice = Invoice::where('month', $exploded_month[1])
+                            ->where('year', $exploded_month[0])
+                            ->where('user_id', $user)
+                            ->where('service', 'calling-card')
+                            ->first();
+                        if (!$checkRetailerInvoice) {
+								$callingCardOrders = User::select([
+									\DB::raw('sum(orders.order_amount) AS sale_price')
+								])
+									->join('orders', 'orders.user_id', '=', 'users.id')
+									->whereBetween('orders.date', [$startDateMonth, $endDateMonth])
+								  ->where('orders.is_parent_order', 1)
+									->where('orders.service_id', "=", 7)
+									->where('users.id', "=", $user)->first();
+								if ($callingCardOrders && $callingCardOrders->sale_price != null) {
+									$last_invoice_no = Invoice::where('month', $exploded_month[1])
+										->where('year', $exploded_month[0])
+										->select('count')->orderBy('id', "DESC")->first();
+									$last_invoice = $last_invoice_no->count + 1;
+									$invoice = new Invoice();
+									$invoice->user_id = $user;
+									$invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
+									$invoice->date = date("Y-m-d H:i:s");
+									$invoice->month = $exploded_month[1];
+									$invoice->year = $exploded_month[0];
+									$invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
+									$invoice->period_start = $startDateMonth;
+									$invoice->period_end = $endDateMonth;
+									$invoice->total_amount = $callingCardOrders->sale_price;
+									$invoice->commission_amount = 0;
+								   $invoice->grand_total = $callingCardOrders->sale_price;
+									$invoice->service = 'calling-card';
+									$invoice->count = $last_invoice;
+									$invoice->created_at = date("Y-m-d H:i:s");
+									$invoice->save();
+								}
+							}
 
 //                        // Check if the payment invoice already exists for the user for this period
 //                        $checkPaymentInvoice = Invoice::where('month', $exploded_month[1])
@@ -648,63 +648,63 @@ class InvoiceController extends Controller
 //                            Log::info("Payment invoice already exists for user $user");
 //                        }
                         // Check if the payment invoice already exists for the user for this period
-                        $checkPaymentInvoice = Invoice::where('month', $exploded_month[1])
-                            ->where('year', $exploded_month[0])
-                            ->where('user_id', $user)
-                            ->where('service', 'each_payment')
-                            ->first();
-                        if (!$checkPaymentInvoice) {
-
-                            // Fetch individual payments for this user in the specified date range
-                            $payments = \DB::table('payments')
-                                ->where('user_id', $user)
-                                //->where('description', 'not like', '%Refunded Amount of this%')
-                                ->whereBetween('date', [$startDateMonth, $endDateMonth])
-                                ->get();
-
-
-                            foreach ($payments as $payment) {
-                                // Check if an invoice for this specific payment already exists
-                                $existingInvoice = Invoice::where('payment_id', $payment->id)->first();
-								if (strpos($payment->description,'Refunded')  === false) {
-									if (!$existingInvoice) {
-                                    // Get the last invoice number
-                                    $last_invoice_no = Invoice::where('month', $exploded_month[1])
-                                        ->where('year', $exploded_month[0])
-                                        ->select('count')->orderBy('id', "DESC")->first();
-
-                                    $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
-
-                                    // Create new invoice for each payment
-                                    $invoice = new Invoice();
-                                    $invoice->user_id = $user;
-                                    $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
-                                    $invoice->date = $payment->date;
-                                    $invoice->month = $exploded_month[1];
-                                    $invoice->year = $exploded_month[0];
-                                    $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
-                                    $invoice->period_start = $startDateMonth;
-                                    $invoice->period_end = $endDateMonth;
-                                    $invoice->total_amount = $payment->amount; // Invoice for each individual payment
-                                    $invoice->commission_amount = 0;  // Assuming no commission on payments
-                                    $invoice->grand_total = $payment->amount;
-                                    $invoice->service = 'each_payment'; // Label this invoice as a payment invoice
-                                    $invoice->count = $last_invoice;
-                                    $invoice->payment_id = $payment->id; // Link the invoice to the payment
-                                    $invoice->created_at = date("Y-m-d H:i:s");
-                                    $invoice->save();
-
-                                    Log::info("Payment invoice created for user $user for payment id: $payment->id");
-                                } else {
-                                    Log::info("Payment invoice already exists for user $user for payment id: $payment->id");
-                                }
-								}else{
-									
-								}
-                            }
-                        } else {
-                            Log::info("Payment invoice already exists for user $user for the period.");
-                        }
+//                        $checkPaymentInvoice = Invoice::where('month', $exploded_month[1])
+//                            ->where('year', $exploded_month[0])
+//                            ->where('user_id', $user)
+//                            ->where('service', 'each_payment')
+//                            ->first();
+//                        if (!$checkPaymentInvoice) {
+//
+//                            // Fetch individual payments for this user in the specified date range
+//                            $payments = \DB::table('payments')
+//                                ->where('user_id', $user)
+//                                //->where('description', 'not like', '%Refunded Amount of this%')
+//                                ->whereBetween('date', [$startDateMonth, $endDateMonth])
+//                                ->get();
+//
+//
+//                            foreach ($payments as $payment) {
+//                                // Check if an invoice for this specific payment already exists
+//                                $existingInvoice = Invoice::where('payment_id', $payment->id)->first();
+//								if (strpos($payment->description,'Refunded')  === false) {
+//									if (!$existingInvoice) {
+//                                    // Get the last invoice number
+//                                    $last_invoice_no = Invoice::where('month', $exploded_month[1])
+//                                        ->where('year', $exploded_month[0])
+//                                        ->select('count')->orderBy('id', "DESC")->first();
+//
+//                                    $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
+//
+//                                    // Create new invoice for each payment
+//                                    $invoice = new Invoice();
+//                                    $invoice->user_id = $user;
+//                                    $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
+//                                    $invoice->date = $payment->date;
+//                                    $invoice->month = $exploded_month[1];
+//                                    $invoice->year = $exploded_month[0];
+//                                    $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
+//                                    $invoice->period_start = $startDateMonth;
+//                                    $invoice->period_end = $endDateMonth;
+//                                    $invoice->total_amount = $payment->amount; // Invoice for each individual payment
+//                                    $invoice->commission_amount = 0;  // Assuming no commission on payments
+//                                    $invoice->grand_total = $payment->amount;
+//                                    $invoice->service = 'each_payment'; // Label this invoice as a payment invoice
+//                                    $invoice->count = $last_invoice;
+//                                    $invoice->payment_id = $payment->id; // Link the invoice to the payment
+//                                    $invoice->created_at = date("Y-m-d H:i:s");
+//                                    $invoice->save();
+//
+//                                    Log::info("Payment invoice created for user $user for payment id: $payment->id");
+//                                } else {
+//                                    Log::info("Payment invoice already exists for user $user for payment id: $payment->id");
+//                                }
+//								}else{
+//
+//								}
+//                            }
+//                        } else {
+//                            Log::info("Payment invoice already exists for user $user for the period.");
+//                        }
             }
         }
         return back()->with([
