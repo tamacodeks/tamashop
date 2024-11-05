@@ -13,6 +13,7 @@ use App\Models\CallingCardPin;
 use App\Models\Commission;
 use App\Models\Country;
 use App\Models\CreditLimit;
+use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\RateTable;
 use App\Models\RateTableGroup;
@@ -483,6 +484,8 @@ class UserController extends Controller
                     'received_by' => auth()->user()->id
                 ]);
                 $payment = Payment::find($payment_id);
+                $invoice = $this->generateInvoiceForPayment($payment_id, $user_id, date('Y-m-01 00:00:00'), date('Y-m-t 23:59:59'));
+
 //                event(new PaymentReceived($payment));
                 // Check if the "same_amount_manager" checkbox is checked
                 if ($request->has('same_amount_manager')) {
@@ -518,6 +521,7 @@ class UserController extends Controller
                             'received_by' => auth()->user()->id
                         ]);
                         $manager_payment = Payment::find($manager_payment_id);
+                        $invoice = $this->generateInvoiceForPayment($manager_payment_id,  $manager->id, date('Y-m-01 00:00:00'), date('Y-m-t 23:59:59'));
                     }
                 }
 
@@ -744,7 +748,51 @@ class UserController extends Controller
                 ->with('message_type', 'warning');
         }
     }
+    public function generateInvoiceForPayment($payment_id, $user, $startDateMonth, $endDateMonth) {
+        // Find the payment record
+        $payment = Payment::find($payment_id);
 
+        if (!$payment) {
+            throw new \Exception("Payment not found.");
+        }
+
+        // Generate the last invoice count for the current month and year
+        $currentMonth = date('m');
+        $currentYear = date('Y');
+        $last_invoice_no = Invoice::where('month', $currentMonth)
+            ->where('year', $currentYear)
+            ->select('count')
+            ->orderBy('id', "DESC")
+            ->first();
+
+        $last_invoice = isset($last_invoice_no) && $last_invoice_no->count != 0 ? $last_invoice_no->count + 1 : 1;
+
+        // Explode the month and year for the invoice reference
+        $exploded_month = explode("-", date('Y-m', strtotime($payment->date)));
+
+        // Create a new invoice instance
+        $invoice = new Invoice();
+        $invoice->user_id = $user;
+        $invoice->invoice_ref = "INV" . $exploded_month[0] . $exploded_month[1] . "000" . $last_invoice;
+        $invoice->date = $payment->date;
+        $invoice->month = $exploded_month[1];
+        $invoice->year = $exploded_month[0];
+        $invoice->period = str_replace("00:00:00", "", $startDateMonth) . " au " . str_replace("23:59:59", "", $endDateMonth);
+        $invoice->period_start = $startDateMonth;
+        $invoice->period_end = $endDateMonth;
+        $invoice->total_amount = $payment->amount; // Invoice for each individual payment
+        $invoice->commission_amount = 0; // Assuming no commission on payments
+        $invoice->grand_total = $payment->amount;
+        $invoice->service = 'each_payment'; // Label this invoice as a payment invoice
+        $invoice->count = $last_invoice;
+        $invoice->payment_id = $payment->id; // Link the invoice to the payment
+        $invoice->created_at = date("Y-m-d H:i:s");
+
+        // Save the invoice
+        $invoice->save();
+
+        return $invoice;
+    }
     /**
      * View User Profile
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
