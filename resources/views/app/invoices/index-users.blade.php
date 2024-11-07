@@ -60,8 +60,8 @@
                 <div class="panel" style="margin-top: -20px">
                     <div class="panel-body">
                         <ul class="nav nav-tabs" role="tablist">
-                            <li @if($singleornot == 0) class="active" @endif ><a href="{{ url('invoices') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Invoice</a></li>
                             <li @if($singleornot == 1) class="active" @endif><a href="{{ url('payment_invoice') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">payments</a></li>
+                            <li @if($singleornot == 0) class="active" @endif ><a href="{{ url('invoices') }}{{ request()->has('period') ? '?period=' . request('period') : '' }}">Invoice</a></li>
                         </ul>
                         <table class="table table-bordered table-striped">
                             <thead>

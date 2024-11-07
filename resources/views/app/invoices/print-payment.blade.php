@@ -124,7 +124,7 @@
         <tbody>
         <tr>
             <td>
-                <strong>{{ $invoice->first_name }} {{ $invoice->last_name }}</strong><br>
+                <strong>{{ $invoice->username }}</strong><br>
                 {!! nl2br($invoice->address) !!}<br>
                 France<br>
                 <strong>Customer ID:</strong> {{ $invoice->cust_id }}<br>
