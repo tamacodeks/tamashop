@@ -182,8 +182,8 @@
             $invoiceDate = \Illuminate\Support\Carbon::parse($invoice->year . "-" . $invoice->month)->startOfMonth()->addMonth()->toDateString();
             ?>
             <td style="width: 30%; text-align: right;">
-                <strong>{{ isset($invoice) ? $invoice->first_name ." ".$invoice->last_name : "" }}</strong>
-                <br>{!! $invoice->address !!}
+                <strong>{{ $invoice->username }}</strong><br>
+                {!! nl2br($invoice->address) !!}<br>
                 <br>France
                 <br>Customer ID: {{ $invoice->cust_id }}
                 <br>TVA intracom: {{ $invoice->tva_no }}
