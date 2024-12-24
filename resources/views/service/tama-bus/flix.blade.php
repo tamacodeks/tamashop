@@ -46,8 +46,6 @@
 
             // Validate City From
             if (cityFrom === "") {
-
-                alert('asd');
                 $("#errorCityFrom").html(trans('flixbus.from')); // Multilingual string for error
                 isValid = false;
             }
@@ -306,7 +304,10 @@
                 }
             });
 
-            var passengers = [0, 0, 0];
+            var passengers = [1, 0, 0]; // Set default value for adults to 1
+            $('#adult').val(passengers[0]); // Ensure the adult input is set to 1
+
+            // On popover click, update inputs with current passenger counts
             $('.popover-markup>.trigger').click(function (e) {
                 e.stopPropagation();
                 $(".popover-content input").each(function (i) {
@@ -314,26 +315,29 @@
                 });
             });
 
+            // Hide popover on outside click
             $(document).click(function (e) {
                 if ($(e.target).is('.demise')) {
                     $('.popover-markup>.trigger').popover('hide');
                 }
             });
 
+            // Save passenger values on popover hide
             $popover.on('hide.bs.popover', function () {
                 $(".popover-content input").each(function (i) {
                     passengers[i] = $(this).val();
                 });
             });
 
+            // Handle spinner increment/decrement
             $(document).on('click', '.number-spinner a', function () {
                 var btn = $(this),
                     input = btn.closest('.number-spinner').find('input'),
-                    oldValue = input.val().trim(),
+                    oldValue = parseInt(input.val().trim()),
                     forSpinner = btn.attr('data-choser');
                 var adults = 0, children = 0, bikes = 0, appendString = '';
 
-                if (btn.attr('data-dir') == 'up') {
+                if (btn.attr('data-dir') === 'up') {
                     if (oldValue < input.attr('max')) {
                         oldValue++;
                     }
@@ -345,9 +349,9 @@
                 input.val(oldValue);
                 $.localStorage.set(forSpinner, oldValue);
 
-                adults = $.localStorage.get('adult');
-                children = $.localStorage.get('child');
-                bikes = $.localStorage.get('bikes');
+                adults = $.localStorage.get('adult') || 1; // Default adult to 1
+                children = $.localStorage.get('child') || 0;
+                bikes = $.localStorage.get('bikes') || 0;
 
                 if (adults) appendString += " Adults: " + adults + ", ";
                 if (children) appendString += " Children: " + children + ", ";
@@ -358,7 +362,17 @@
                 $("#child").val(children);
                 $("#bikes").val(bikes);
             });
+
+            // Set default values on page load
+            $(document).ready(function () {
+                $.localStorage.set('adult', 1); // Set default adult value to 1
+                $.localStorage.set('child', 0);
+                $.localStorage.set('bikes', 0);
+
+                $('#passengers').val(" Adults: 1");
+            });
         });
+
 
         // Timer settings
         let time = 600; // 600 seconds (10 minutes)
@@ -376,7 +390,7 @@
         if (time <= 0) {
             clearInterval(countdown);
             alert('Your session has expired.');
-            window.location.href = '{{ url("bus") }}'; // Redirect to an expiration page
+            window.location.href = '{{ secure_url("bus") }}'; // Redirect to an expiration page
         } else {
             // Decrement the time
             time--;

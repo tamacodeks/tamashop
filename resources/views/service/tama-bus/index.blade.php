@@ -174,8 +174,8 @@
                                                             <input type="email" class="booking-input" placeholder="Email" name="email" id="email">
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label><h4 style="color: #ff0000;">Phone Number - Add Country Code</h4></label>
-                                                            <input type="text" class="booking-input" placeholder="Phone Number" name="phone_number" id="phone_number" value="+">
+                                                            <label style="color: #ff0000;">Phone Number - Add Country Code</label>
+                                                            <input type="text" class="booking-input" placeholder="Phone Number" name="phone_number" id="phone_number" value="+33">
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12"><hr></div>
@@ -301,7 +301,18 @@
                 });
             });
         </script>
-
+<script>
+    // JavaScript to prevent deleting the country code
+    document.getElementById('phone_number').addEventListener('input', function(event) {
+        var countryCode = "+33";
+        var inputValue = this.value;
+        
+        if (!inputValue.startsWith(countryCode)) {
+            this.value = countryCode;
+            this.setSelectionRange(countryCode.length, countryCode.length);
+        }
+    });
+</script>
         <script src="{{ secure_asset('js/bus.js') }}"></script>
 
 @endsection

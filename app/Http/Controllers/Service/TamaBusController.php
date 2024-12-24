@@ -647,106 +647,106 @@ class TamaBusController extends Controller
 
         $transID = "TT".date("y") . strtoupper(date('M')) . date('d') . date('His').Rand(111,999);
         try {
-        \DB::beginTransaction();
-        $tt_txn_id = TRANSACTION_PREFIX . ServiceHelper::genTransID(5);
-        $response = $this->client->request('POST', 'flix-bus/add_passenger_details_flix', [
-            'headers' => [
-                'Accept' => 'application/json',
-                'Authorization' => "Bearer " . API_TOKEN
-            ],
-            'form_params' => $params
-        ]);
+            \DB::beginTransaction();
+            $tt_txn_id = TRANSACTION_PREFIX . ServiceHelper::genTransID(5);
+            $response = $this->client->request('POST', 'flix-bus/add_passenger_details_flix', [
+                'headers' => [
+                    'Accept' => 'application/json',
+                    'Authorization' => "Bearer " . API_TOKEN
+                ],
+                'form_params' => $params
+            ]);
 //            //response from Flix demat
-        if($response->getStatusCode() == 200){
+            if($response->getStatusCode() == 200){
 //                //Data From Api response
-            $print_ticket = json_decode((string)$response->getBody(), true);
+                $print_ticket = json_decode((string)$response->getBody(), true);
 
-            // Log the ticket information
-            Log::info("FlixBus", $print_ticket);
-            // Assuming you want to work with the first element of the array
-            $print_ticket1 = $print_ticket['print_ticket']; // Access the first (and only) element of the array
-
-
-            // Check and set the transaction reference
-            $txn_ref = isset($print_ticket['txn_ref']) ? $print_ticket['txn_ref'] : $tt_txn_id;
-
-            // Construct the print ticket link (using the values from the print_ticket array)
-            $print_ticket_link = 'flix-bus/download/'.$print_ticket1[0].','.$print_ticket1[1];
-
-            // Create order comment and description
-            $order_comment = $user_info->username . " Flix bus for " . $euro_amount . ". Print Ticket Link is " . $print_ticket1[0];
-            $order_desc = $order_comment;
-
-            // Separate instruction and link from the print_ticket array
-            $ins = $print_ticket1[0]; // Instruction (ticket number)
-            $link = $print_ticket1[1]; // Link (ticket reference)
-        }
-        //make transaction
-        $trans_id = ServiceHelper::sync_transaction($user_info->id, $created_at, 'debit', $order_amount, $current_balance, $after_order_balance, $order_desc);
-        //Insert order
-        $order_id = ServiceHelper::save_order('',$created_at, $user_info->id, $this->service_id, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$sale_margin,$order_amount,$order_amount,$order_amount,NULL,0,0);
+                // Log the ticket information
+                Log::info("FlixBus", $print_ticket);
+                // Assuming you want to work with the first element of the array
+                $print_ticket1 = $print_ticket['print_ticket']; // Access the first (and only) element of the array
 
 
-        //insert order items
-        $order_item_id = ServiceHelper::save_orders_items($order_id, $mobile_number, $euro_amount, $mobile_operator, $ins, $link, $created_at,$user_info->id);
-        //update the order item id to order
-        Order::where('id',$order_id)->update([
-            'order_item_id' => $order_item_id
-        ]);
-        $parent_user = User::find($user_info->parent_id);
-        if (!empty($user_info->parent_id) && $parent_user && $parent_user->group_id != 2) {
+                // Check and set the transaction reference
+                $txn_ref = isset($print_ticket['txn_ref']) ? $print_ticket['txn_ref'] : $tt_txn_id;
 
-            $parent_user_commission = ServiceHelper::get_service_commission($parent_user->id, $this->service_id);
-            $parent_current_balance = AppHelper::getBalance($parent_user->id, $parent_user->currency, false);
-            $parent_actual_commission = $parent_user_commission - $user_service_commission;
-            $buying_price_parent = ServiceHelper::calculate_commission($euro_amount, $parent_user_commission);
+                // Construct the print ticket link (using the values from the print_ticket array)
+                $print_ticket_link = 'flix-bus/download/'.$print_ticket1[0].','.$print_ticket1[1];
 
-            $order_amount_parent = ServiceHelper::calculate_commission($euro_amount, $parent_actual_commission);
-            $parent_sale_margin = ServiceHelper::calculate_sale_margin($order_amount, $buying_price_parent);
-            $parent_after_order_balance = number_format((float)$parent_current_balance - $buying_price_parent, 2, '.', '');
+                // Create order comment and description
+                $order_comment = $user_info->username . " Flix bus for " . $euro_amount . ". Print Ticket Link is " . $print_ticket1[0];
+                $order_desc = $order_comment;
 
-            //make transaction for parent
-            $parent_trans_id = ServiceHelper::sync_transaction($parent_user->id, $created_at, 'debit', $buying_price_parent, $parent_current_balance, $parent_after_order_balance, $order_desc);
-
-            //parent order insertion
-            $parent_order_id = ServiceHelper::save_order($order_desc,$created_at, $user_info->id, $this->service_id, '7', $parent_trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$parent_sale_margin,$order_amount,$buying_price_parent,$order_amount,$order_item_id,1,0);
+                // Separate instruction and link from the print_ticket array
+                $ins = $print_ticket1[0]; // Instruction (ticket number)
+                $link = $print_ticket1[1]; // Link (ticket reference)
+            }
+            //make transaction
+            $trans_id = ServiceHelper::sync_transaction($user_info->id, $created_at, 'debit', $order_amount, $current_balance, $after_order_balance, $order_desc);
+            //Insert order
+            $order_id = ServiceHelper::save_order('',$created_at, $user_info->id, $this->service_id, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$sale_margin,$order_amount,$order_amount,$order_amount,NULL,0,0);
 
 
-            $app_commission = optional(AppCommission::where('service_id', $this->service_id)->first())->commission;
-            $app_actual_commission = $app_commission - $parent_user_commission;
-            $buying_price_app = ServiceHelper::calculate_commission($euro_amount, $app_commission);
-            $order_amount_app = ServiceHelper::calculate_commission($euro_amount, $app_actual_commission);
-            $app_sale_margin = ServiceHelper::calculate_sale_margin($buying_price_parent, $buying_price_app);
-            Log::info("commissions", [
-                'app commission '=> $app_commission,
-                'user service commission' => $user_service_commission,
-                'buying_price_app' => $buying_price_app,
-                'order_amount_app' => $order_amount_app,
-                'app_sale_margin' => $app_sale_margin,
+            //insert order items
+            $order_item_id = ServiceHelper::save_orders_items($order_id, $mobile_number, $euro_amount, $mobile_operator, $ins, $link, $created_at,$user_info->id);
+            //update the order item id to order
+            Order::where('id',$order_id)->update([
+                'order_item_id' => $order_item_id
             ]);
-            ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, $this->service_id, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$app_sale_margin,$buying_price_parent,$buying_price_app,$buying_price_parent,$order_item_id,1,0);
-        } else {
-            //use the app commission to update order buying_price
-            $app_commission = optional(AppCommission::where('service_id', $this->service_id)->first())->commission;
-            $app_actual_commission = $app_commission - $user_service_commission;
-            $buying_price_app = ServiceHelper::calculate_commission($euro_amount, $app_commission);
-            $order_amount_app = ServiceHelper::calculate_commission($euro_amount, $app_actual_commission);
-            $app_sale_margin = ServiceHelper::calculate_sale_margin($euro_amount, $order_amount_app);
-            Log::info("commissions", [
-                'app commission '=> $app_commission,
-                'user service commission' => $user_service_commission,
-                'buying_price_app' => $buying_price_app,
-                'order_amount_app' => $order_amount_app,
-                'app_sale_margin' => $app_sale_margin,
-            ]);
-            ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, $this->service_id, '7', $trans_id, $txn_ref, '',$user_info->currency,$euro_amount,$app_sale_margin, $order_amount,$buying_price_app, $order_amount,$order_item_id,1,0);
+            $parent_user = User::find($user_info->parent_id);
+            if (!empty($user_info->parent_id) && $parent_user && $parent_user->group_id != 2) {
 
-        }
-        \DB::commit();
-        AppHelper::logger('success', 'Flix Bus Order #' . $order_id, $order_desc);
-        return redirect('transactions')
-            ->with('message', 'download now')
-            ->with('message_type', 'success');
+                $parent_user_commission = ServiceHelper::get_service_commission($parent_user->id, $this->service_id);
+                $parent_current_balance = AppHelper::getBalance($parent_user->id, $parent_user->currency, false);
+                $parent_actual_commission = $parent_user_commission - $user_service_commission;
+                $buying_price_parent = ServiceHelper::calculate_commission($euro_amount, $parent_user_commission);
+
+                $order_amount_parent = ServiceHelper::calculate_commission($euro_amount, $parent_actual_commission);
+                $parent_sale_margin = ServiceHelper::calculate_sale_margin($order_amount, $buying_price_parent);
+                $parent_after_order_balance = number_format((float)$parent_current_balance - $buying_price_parent, 2, '.', '');
+
+                //make transaction for parent
+                $parent_trans_id = ServiceHelper::sync_transaction($parent_user->id, $created_at, 'debit', $buying_price_parent, $parent_current_balance, $parent_after_order_balance, $order_desc);
+
+                //parent order insertion
+                $parent_order_id = ServiceHelper::save_order($order_desc,$created_at, $user_info->id, $this->service_id, '7', $parent_trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$parent_sale_margin,$order_amount,$buying_price_parent,$order_amount,$order_item_id,1,0);
+
+
+                $app_commission = optional(AppCommission::where('service_id', $this->service_id)->first())->commission;
+                $app_actual_commission = $app_commission - $parent_user_commission;
+                $buying_price_app = ServiceHelper::calculate_commission($euro_amount, $app_commission);
+                $order_amount_app = ServiceHelper::calculate_commission($euro_amount, $app_actual_commission);
+                $app_sale_margin = ServiceHelper::calculate_sale_margin($buying_price_parent, $buying_price_app);
+                Log::info("commissions", [
+                    'app commission '=> $app_commission,
+                    'user service commission' => $user_service_commission,
+                    'buying_price_app' => $buying_price_app,
+                    'order_amount_app' => $order_amount_app,
+                    'app_sale_margin' => $app_sale_margin,
+                ]);
+                ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, $this->service_id, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$app_sale_margin,$buying_price_parent,$buying_price_app,$buying_price_parent,$order_item_id,1,0);
+            } else {
+                //use the app commission to update order buying_price
+                $app_commission = optional(AppCommission::where('service_id', $this->service_id)->first())->commission;
+                $app_actual_commission = $app_commission - $user_service_commission;
+                $buying_price_app = ServiceHelper::calculate_commission($euro_amount, $app_commission);
+                $order_amount_app = ServiceHelper::calculate_commission($euro_amount, $app_actual_commission);
+                $app_sale_margin = ServiceHelper::calculate_sale_margin($euro_amount, $order_amount_app);
+                Log::info("commissions", [
+                    'app commission '=> $app_commission,
+                    'user service commission' => $user_service_commission,
+                    'buying_price_app' => $buying_price_app,
+                    'order_amount_app' => $order_amount_app,
+                    'app_sale_margin' => $app_sale_margin,
+                ]);
+                ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, $this->service_id, '7', $trans_id, $txn_ref, '',$user_info->currency,$euro_amount,$app_sale_margin, $order_amount,$buying_price_app, $order_amount,$order_item_id,1,0);
+
+            }
+            \DB::commit();
+            AppHelper::logger('success', 'Flix Bus Order #' . $order_id, $order_desc);
+            return redirect('transactions')
+                ->with('message', 'download now')
+                ->with('message_type', 'success');
         }
         catch (\Exception $e) {
             \DB::rollback();
@@ -861,7 +861,7 @@ class TamaBusController extends Controller
 
     public function bla_bus_confirm(Request $request)
     {
-        $this->service_id = 10;
+        $this->service_id = 9;
         $validator = Validator::make($request->all(), [
             "firstname.*" => "required",
             "lastname.*" => "required",
@@ -953,7 +953,7 @@ class TamaBusController extends Controller
         $user_info = User::find(auth()->user()->id);
         $check_limit = AppHelper::get_daily_limit(auth()->user()->id,auth()->user()->currency,true);
         $euro_amount = str_replace(',', '', number_format($request->input('total_price'),2));
-        $user_service_commission = ServiceHelper::get_service_commission($user_info->id, $this->service_id);//service_id may change
+        $user_service_commission = ServiceHelper::get_service_commission($user_info->id, 9);//service_id may change
         $current_balance = AppHelper::getBalance($user_info->id, $user_info->currency, false);
         $order_amount = ServiceHelper::calculate_commission($euro_amount, $user_service_commission);
         $user_credit_limit = AppHelper::get_credit_limit($user_info->id);
@@ -985,7 +985,7 @@ class TamaBusController extends Controller
             }
         }
 
-        if (ServiceHelper::parent_rule_check($user_info->parent_id, $euro_amount,$this->service_id)) {
+        if (ServiceHelper::parent_rule_check($user_info->parent_id, $euro_amount, 9)) {
             //parent does not have enough money or credit limit
             //order will be failed
             AppHelper::logger('warning', 'Parent Rule Failed', $user_info->username . ' parent does not have enough balance or credit limit to confirm Flix bus order', $request->all());
@@ -1058,7 +1058,7 @@ class TamaBusController extends Controller
             //make transaction
             $trans_id = ServiceHelper::sync_transaction($user_info->id, $created_at, 'debit', $order_amount, $current_balance, $after_order_balance, $order_desc);
             //Insert order
-            $order_id = ServiceHelper::save_order('',$created_at, $user_info->id, $this->service_id, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$sale_margin,$order_amount,$order_amount,$order_amount,NULL,0,0);
+            $order_id = ServiceHelper::save_order('',$created_at, $user_info->id, 9, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$sale_margin,$order_amount,$order_amount,$order_amount,NULL,0,0);
 
 
             //insert order items
@@ -1071,7 +1071,7 @@ class TamaBusController extends Controller
             $parent_user = User::find($user_info->parent_id);
             if (!empty($user_info->parent_id) && $parent_user && $parent_user->group_id != 2) {
 
-                $parent_user_commission = ServiceHelper::get_service_commission($parent_user->id, $this->service_id);
+                $parent_user_commission = ServiceHelper::get_service_commission($parent_user->id, 9);
                 $parent_current_balance = AppHelper::getBalance($parent_user->id, $parent_user->currency, false);
                 $parent_actual_commission = $parent_user_commission - $user_service_commission;
                 $buying_price_parent = ServiceHelper::calculate_commission($euro_amount, $parent_user_commission);
@@ -1084,10 +1084,10 @@ class TamaBusController extends Controller
                 $parent_trans_id = ServiceHelper::sync_transaction($parent_user->id, $created_at, 'debit', $buying_price_parent, $parent_current_balance, $parent_after_order_balance, $order_desc);
 
                 //parent order insertion
-                $parent_order_id = ServiceHelper::save_order($order_desc,$created_at, $user_info->id, $this->service_id, '7', $parent_trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$parent_sale_margin,$order_amount,$buying_price_parent,$order_amount,$order_item_id,1,0);
+                $parent_order_id = ServiceHelper::save_order($order_desc,$created_at, $user_info->id, 9, '7', $parent_trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$parent_sale_margin,$order_amount,$buying_price_parent,$order_amount,$order_item_id,1,0);
 
 
-                $app_commission = optional(AppCommission::where('service_id', $this->service_id)->first())->commission;
+                $app_commission = optional(AppCommission::where('service_id', 9)->first())->commission;
                 $app_actual_commission = $app_commission - $parent_user_commission;
                 $buying_price_app = ServiceHelper::calculate_commission($euro_amount, $app_commission);
                 $order_amount_app = ServiceHelper::calculate_commission($euro_amount, $app_actual_commission);
@@ -1099,10 +1099,10 @@ class TamaBusController extends Controller
                     'order_amount_app' => $order_amount_app,
                     'app_sale_margin' => $app_sale_margin,
                 ]);
-                ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, $this->service_id, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$app_sale_margin,$buying_price_parent,$buying_price_app,$buying_price_parent,$order_item_id,1,0);
+                ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, 9, '7', $trans_id, $txn_ref, $order_desc,$user_info->currency,$euro_amount,$app_sale_margin,$buying_price_parent,$buying_price_app,$buying_price_parent,$order_item_id,1,0);
             } else {
                 //use the app commission to update order buying_price
-                $app_commission = optional(AppCommission::where('service_id', $this->service_id)->first())->commission;
+                $app_commission = optional(AppCommission::where('service_id', 9)->first())->commission;
                 $app_actual_commission = $app_commission - $user_service_commission;
                 $buying_price_app = ServiceHelper::calculate_commission($euro_amount, $app_commission);
                 $order_amount_app = ServiceHelper::calculate_commission($euro_amount, $app_actual_commission);
@@ -1114,7 +1114,7 @@ class TamaBusController extends Controller
                     'order_amount_app' => $order_amount_app,
                     'app_sale_margin' => $app_sale_margin,
                 ]);
-                ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, $this->service_id, '7', $trans_id, $txn_ref, '',$user_info->currency,$euro_amount,$app_sale_margin, $order_amount,$buying_price_app, $order_amount,$order_item_id,1,0);
+                ServiceHelper::save_order($order_desc,$created_at, $parent_user->id, 9, '7', $trans_id, $txn_ref, '',$user_info->currency,$euro_amount,$app_sale_margin, $order_amount,$buying_price_app, $order_amount,$order_item_id,1,0);
 
             }
             \DB::commit();
