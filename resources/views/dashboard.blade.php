@@ -18,7 +18,7 @@
         }
         .flix-bus-logo {
             height: 58px;
-            width: 212px;
+            width: 200px;
         }
         .france-logo{
             height: 99px;
@@ -209,13 +209,13 @@
                                                 <div class="panel-heading">
                                                     <div class="row">
                                                         <div class="col-xs-12">
-                                                            <a href="{{ url('flix-bus') }}">
+                                                            <a href="{{ url('bus') }}">
                                                                 <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
                                                             </a>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <a href="{{ url('flix-bus') }}"
+                                                <a href="{{ url('bus') }}"
                                                    class="a-footer">
                                                     <div class="panel-footer dashboard-panel-footer">
                                                         <span class="pull-left">{{ trans('common.click_here') }}</span>

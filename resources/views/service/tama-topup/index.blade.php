@@ -68,7 +68,7 @@
                                     <div class="panel-heading">
                                         <div class="row">
                                             <div class="col-xs-12">
-                                                <a href="{{ secure_url('flix-bus') }}">
+                                                <a href="{{ secure_url('bus') }}">
                                                     <img class="flix-bus-logo" src="{{ secure_asset('images/logo-big.png') }}">
                                                 </a>
                                             </div>

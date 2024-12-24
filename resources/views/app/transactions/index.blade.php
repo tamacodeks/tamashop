@@ -204,8 +204,22 @@
                         "searchable": false,
                         "orderable":false,
                         "render": function (data, type, row) {
-                            if (data == '9') {
-                                return '<a href="flix-bus/download/'+row.instructions+','+row.link+'" target="_blank">Download</a>';
+                            if (data == '9') { // Check if data is '9'
+                                if (row.txn_id.substring(0, 3) === 'TXN') { // Check if txn_id starts with 'TXN'
+                                    // Return the custom download link with both instructions and link
+                                    return '<a href="flix-bus/download/' + row.instructions + ',' + row.link + '" target="_blank">Download</a>';
+                                } else {
+                                    // Return a normal download link if txn_id does not start with 'TXN'
+                                    return '<a href="' + row.link + '" target="_blank">Download</a>';
+                                }
+                            }else if (data == '10') { // Check if data is '9'
+                                if (row.txn_id.substring(0, 3) === 'TXN') { // Check if txn_id starts with 'TXN'
+                                    // Return the custom download link with both instructions and link
+                                    return '<a href="flix-bus/download/' + row.instructions + ',' + row.link + '" target="_blank">Download</a>';
+                                } else {
+                                    // Return a normal download link if txn_id does not start with 'TXN'
+                                    return '<a href="' + row.link + '" target="_blank">Download</a>';
+                                }
                             }else if(data == '2') {
                                 if(row.order_status_name == 'Refunded'){
                                     return 'Rembourser';

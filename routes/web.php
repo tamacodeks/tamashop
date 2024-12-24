@@ -129,8 +129,11 @@ Route::group(['middleware' => ['balanceupdate','logout_device','totp']],function
     });
 		//invoices
         Route::get('invoices', 'App\InvoiceController@index');
+        Route::get('payment_invoice', 'App\InvoiceController@fetchPayments');
+        Route::get('payments/download/{id}', 'App\InvoiceController@downloadPayment');
         Route::get('invoices/download/{id}/{service}', 'App\InvoiceController@downloadInvoice');
         Route::get('invoices/view/{id}/{service}', 'App\InvoiceController@viewInvoice');
+        Route::get('invoices/viewed/{id}/{service}', 'App\InvoiceController@checkInvoice');
         Route::get('invoices/render/{id}/{service}', 'App\InvoiceController@renderInvoice');
         Route::post('invoices/email/{id}/{service}', 'App\InvoiceController@emailInvoice');
 //    });
@@ -249,11 +252,19 @@ Route::group(['middleware' => ['balanceupdate','logout_device','totp']],function
         Route::get('send-tama/{country_id}/{category_id?}', 'Service\SendTamaController@view_products');
         Route::post('send-tama/confirm/order', 'Service\SendTamaController@confirm_order');
         //tama bus
-        Route::get("flix-bus","Service\TamaBusController@index");
+//        Route::get("flix-bus","Service\TamaBusController@index");
         Route::get("flix-bus/{operation}","Service\TamaBusController@search");
         Route::post("flix-bus/create_reservations","Service\TamaBusController@create_reservations");
         Route::post("flix-bus/add_passengers_details","Service\TamaBusController@add_passenger_details");
         Route::get("flix-bus/download/{link}","Service\TamaBusController@download");
+
+        Route::get("bus","Service\TamaBusController@both");
+        Route::post("flix-bus/search","Service\TamaBusController@search_bus");
+        Route::post("flix-bus/create_reservations_bus","Service\TamaBusController@create_reservations_bus");
+        Route::post("flix-bus/confirm","Service\TamaBusController@confirm");
+
+        Route::post("flix-bus/create_reservation_blabus","Service\TamaBusController@create_reservation_blabus");
+        Route::post("flix-bus/bla/confirm","Service\TamaBusController@bla_bus_confirm");
         //send tama
 //    Route::get('send-tama','Service\SendTamaController@index');
 //    Route::get('send-tama/{country_id}','Service\SendTamaController@view_products');
