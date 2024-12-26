@@ -163,7 +163,17 @@ class OrderController extends Controller
                     });
                 }
                 if (!empty($request->input('service_id'))) {
-                    $query->whereIn('services.id',$request->input('service_id'));
+                    $serviceIds = $request->input('service_id'); // Get the service IDs as an array
+                    $query->where(function ($q) use ($serviceIds) {
+                        if (is_array($serviceIds) && in_array('111', $serviceIds)) {
+                            $q->orWhere('order_items.tt_operator', 'blabla');
+                        }
+
+                        if (is_array($serviceIds) && in_array('112', $serviceIds)) {
+                            $q->orWhere('order_items.tt_operator', 'flixbus');
+                        }
+                        $q->orWhereIn('services.id', $serviceIds);
+                    });
                 }
                 if (!empty($request->input('from_date')) && !empty($request->input('to_date'))) {
                     $from_date = $request->input('from_date').' 00:00:00';

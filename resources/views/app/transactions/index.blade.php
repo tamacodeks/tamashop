@@ -17,18 +17,19 @@
                         <form method="POST" id="search-form" class="form-inline" role="form">
                             <div class="form-group">
                                 <label for="service_id">{{ trans('common.filter_lbl_service') }}</label>
-                                <select name="service_id" id="service_id" class="select-picker" multiple data-actions-box="true">
+                                <select name="service_id[]" id="service_id" class="select-picker" multiple data-actions-box="true">
                                     @foreach($services as $service)
-                                        @if($service->name != 'Topup')
+                                        {{-- Skip 'Topup' and 'Flix Bus' services --}}
+                                        @if($service->name != 'Topup' && $service->name != 'Flix Bus')
+                                            {{-- Display as 'TopUp' for 'Tama Topup', otherwise show the service name --}}
                                             <option value="{{ $service->id }}">
-                                                @if($service->name == 'Tama Topup')
-                                                    TopUp
-                                                @else
-                                                    {{ $service->name }}
-                                                @endif
+                                                {{ $service->name == 'Tama Topup' ? 'TopUp' : $service->name }}
                                             </option>
                                         @endif
                                     @endforeach
+
+                                    <option value="112">FlixBus</option>
+                                    <option value="111">Blabus</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -184,16 +185,43 @@
                         name: 'service_name',
                         searchable: false,
                         orderable: false,
-                        render: function(data, type, row) {
-                            if (data != 'Topup') {
-                                return (data == 'Tama Topup') ? 'TopUp' : data;
+                        render: function (data, type, row) {
+                            if (data !== 'Topup') {
+                                if (row.tt_operator === 'blabla') {
+                                    // If tt_operator is 'blabus', return 'Bla Bus'
+                                    return 'Bla Bus';
+                                } else {
+                                    // Otherwise, handle 'Tama Topup' or return the service name
+                                    return (data === 'Tama Topup') ? 'TopUp' : data;
+                                }
                             } else {
+                                // Return empty string for 'Topup'
                                 return '';
                             }
                         }
                     },
                     {data: 'txn_id', name: 'txn_id',orderable:false},
-                    {data: 'product_name', name: 'product_name',orderable:false,searchable:false},
+                    {
+                        data: 'product_name',
+                        name: 'product_name',
+                        orderable: false,
+                        searchable: false,
+                        render: function (data, type, row) {
+                            if (row.product_name && row.tt_operator === 'blabla') {
+                                // Extract the price and currency from the product_name string
+                                const parts = row.product_name.split(' ');
+                                const priceWithCurrency = parts.slice(1).join(' '); // Get everything after the first word
+                                // Replace name with "Bla Bus" and keep the price and currency
+                                return `<span title="${row.product_name}">Bla ${priceWithCurrency}</span>`;
+                            } else if (row.product_name) {
+                                // Return the original product_name if no replacement is needed
+                                return `<span title="${row.product_name}">${row.product_name}</span>`;
+                            } else {
+                                // Fallback for missing product_name
+                                return '';
+                            }
+                        }
+                    },
                     {data: 'public_price', name: 'public_price',orderable:false,searchable:false, className: "sum" },
                         @if(in_array(auth()->user()->group_id,[1,2,3]))
                     {data: 'buying_price', name: 'buying_price',orderable:false,searchable:false, className: "sum" },
