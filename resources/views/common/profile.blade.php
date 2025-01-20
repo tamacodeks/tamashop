@@ -142,23 +142,36 @@
                         <div class="form-group">
                             <label class="control-label col-md-4" for="email">{{ trans('common.lbl_email') }}</label>
                             <div class="col-md-8">
-                                <input class="form-control" type="email" name="email" id="email" value="{{ auth()->user()->email }}">
+                                <input
+                                        class="form-control"
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        value="{{ auth()->user()->email }}"
+                                        @if(auth()->user()->group_id == 4) readonly @endif>
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-4" for="mobile">{{ trans('users.lbl_mobile_no') }}</label>
                             <div class="col-md-8">
+                                <input
+                                        class="form-control"
+                                        type="text"
+                                        name="mobile"
+                                        id="mobile"
+                                        value="+{{ auth()->user()->mobile }}"
+                                        @if(auth()->user()->group_id == 4) readonly @endif>
                                 @if(auth()->user()->group_id == 4)
-                                    +{{ auth()->user()->mobile }}
                                     <span class="help-text text-info">({{ trans('users.mobile_help_block') }})</span>
-
                                 @else
-                                    <input class="form-control" type="text" name="mobile" id="mobile" value="+{{ auth()->user()->mobile }}">
-                                    <span id="error-msg"
-                                          class="text-danger help-block  hide">{{ trans('users.error_mobile_no') }}</span>
+                                    <span id="error-msg" class="text-danger help-block d-none">
+                {{ trans('users.error_mobile_no') }}
+            </span>
                                 @endif
                             </div>
                         </div>
+
                         <div class="form-group">
                             <label class="control-label col-md-4" for="password">{{ trans('users.lbl_password') }}</label>
                             <div class="col-md-8">
