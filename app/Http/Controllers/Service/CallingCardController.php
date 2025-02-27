@@ -14,6 +14,7 @@ use App\Models\CallingCardPin;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\PinHistory;
+use App\Models\Service;
 use App\Models\TelecomProvider;
 use App\Models\TelecomProviderConfig;
 use App\Models\SeriveProvider;
@@ -36,6 +37,7 @@ class CallingCardController extends Controller
     private $log_title;
     private $decipher;
     private $balance;
+    private $service_id;
     function __construct()
     {
         parent::__construct();
@@ -45,6 +47,18 @@ class CallingCardController extends Controller
         $this->balance = $balance->new_balance;
         if($balance->new_balance < 500){
             Log::emergency(APP_NAME." Low Balance Alert ". $balance->new_balance);
+        }
+        $this->service_id = 7;
+
+        // Check if the current URL contains "calling-card"
+        if (request()->is('calling-cards*')) {
+            $service_available = Service::where('id', $this->service_id)->first();
+            // Check if service is unavailable
+            if (!$service_available || $service_available->status == 0) {
+                return redirect('calling-cards')
+                    ->with('message',trans('common.access_violation'))
+                    ->with('message_type','warning');
+            }
         }
     }
 
