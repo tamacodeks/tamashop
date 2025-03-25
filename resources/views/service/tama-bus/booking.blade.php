@@ -108,7 +108,7 @@
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <label for="firstname">{{ trans('service.first_name') }}}</label>
+                                                <label for="firstname">{{ trans('service.first_name') }}</label>
                                                 <input type="text" class="form-control" id="firstname" name="firstname[]" value="{{ $passenger['first_name'] ?? '' }}">
                                             </div>
                                             <div class="col-md-6">
@@ -139,7 +139,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label for="phone">{{ trans('service.phone') }}</label>
-                                            <input type="text" class="form-control" id="phone" name="phone_number[]" value="+33" maxlength="15">
+                                            <input type="text" class="form-control phone-number" id="phone" name="phone_number[]" value="+33" maxlength="12">
+                                            <span class="phone-error" style="color: red; display: none;">{{ trans('users.error_mobile_no') }}.</span>
                                         </div>
                                     </div>
                                     <h5 class="section-subtitle">{{ trans('service.passport_proof') }}</h5>

@@ -8,6 +8,8 @@
     <link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" rel="stylesheet">
     <link href="{{ secure_asset('vendor/date-picker/jquery-ui.css') }}" rel="stylesheet">
     <link href="{{ secure_asset('css/topup.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@17/build/css/intlTelInput.css" />
+    <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@17/build/js/intlTelInput.min.js"></script>
         @include('service.tama-bus.search')
         @include('service.tama-bus.bus')
         @include('service.tama-bus.booking')
@@ -397,4 +399,86 @@
         }
         }, 1000);
     </script>
+    <script>
+        $(document).ready(function () {
+            var $inputs = $(".phone-number");
+            var $submitBtn = $("#bookflixbus");
+            var dialCode = "+33";
+
+            // Disable button initially
+            $submitBtn.prop("disabled", true);
+
+            const validateAllPhones = () => {
+                let allValid = true;
+
+                $inputs.each(function () {
+                    const $input = $(this);
+                    const iti = window.intlTelInputGlobals.getInstance(this);
+                    const $errorMsg = $input.closest('.col-md-6').find(".phone-error");
+
+                    if ($.trim($input.val())) {
+                        if (iti.isValidNumber()) {
+                            $errorMsg.hide();
+                        } else {
+                            $errorMsg.show();
+                            allValid = false;
+                        }
+                    } else {
+                        $errorMsg.hide(); // or show an error if empty is invalid
+                        allValid = false;
+                    }
+                });
+
+                $submitBtn.prop("disabled", !allValid);
+            };
+
+            $inputs.each(function () {
+                const $input = $(this);
+                const $errorMsg = $input.closest('.col-md-6').find(".phone-error");
+
+                const iti = window.intlTelInput(this, {
+                    initialCountry: "fr",
+                    onlyCountries: ["fr"],
+                    nationalMode: false,
+                    separateDialCode: true,
+                    utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@17/build/js/utils.js",
+                    autoPlaceholder: "aggressive"
+                });
+
+                const forcePrefix = () => {
+                    let currentVal = $input.val();
+                    if (!currentVal.startsWith(dialCode)) {
+                        // Remove non-digit prefix and replace with +33
+                        const digits = currentVal.replace(/[^0-9]/g, '');
+                        $input.val(dialCode + digits.slice(dialCode.length));
+                    }
+                };
+
+                const validatePhone = () => {
+                    forcePrefix();
+                    validateAllPhones();
+                };
+
+                // Prevent deleting or modifying prefix
+                $input.on("keydown", function (e) {
+                    if (
+                        this.selectionStart < dialCode.length &&
+                        (e.key === "Backspace" || e.key === "Delete" || e.key.length === 1)
+                    ) {
+                        e.preventDefault();
+                    }
+                });
+
+                $input.on("input keyup paste focus blur", function () {
+                    forcePrefix();
+                    validatePhone();
+                });
+
+                // Force prefix on load
+                forcePrefix();
+            });
+        });
+    </script>
+
+
 @endsection

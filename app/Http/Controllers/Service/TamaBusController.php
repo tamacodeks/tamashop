@@ -590,9 +590,10 @@ class TamaBusController extends Controller
         $params["from_name"] = $request->from_name;
         $params["to_name"] = $request->to_name;
         $params["total_price"] =$request->total_price;
+        $params["price"] =$request->price;
         $user_info = User::find(auth()->user()->id);
         $check_limit = AppHelper::get_daily_limit(auth()->user()->id,auth()->user()->currency,true);
-        $euro_amount = str_replace(',', '', $request->input('total_price'));
+        $euro_amount = str_replace(',', '', $request->input('price'));
         $user_service_commission = ServiceHelper::get_service_commission($user_info->id, $this->service_id);//service_id may change
         $current_balance = AppHelper::getBalance($user_info->id, $user_info->currency, false);
         $order_amount = ServiceHelper::calculate_commission($euro_amount, $user_service_commission);
