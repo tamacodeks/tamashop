@@ -817,10 +817,21 @@ function buildGridReloadlyprovider(response) {
         data_name.push(value.name);
         data_logo.push(value.logo);
     });
+    var linkHtml = '';
+    if (countryCode == 223) {
+        linkHtml = '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'1495\',\'223\',\'MLI\',\'1495\',\'Orange Mali\',\'Mali\',\'Data &amp; Bundle\')">';
+    } else if (countryCode == 221) {
+        linkHtml = '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'1494\',\'221\',\'SEN\',\'1494\',\'Orange Senegal\',\'Senegal\',\'Data &amp; Bundle\')">';
+    }  else if (countryCode == 91) {
+    linkHtml = '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'1371\',\'91\',\'IND\',\'1371\',\'Airtel India\',\'India\',\'Data &amp; Bundle\')">';
+    }
+    else {
+        linkHtml = '<a href="javascript:void(0);" onclick="fetchreloadlyData(\'' + countryIso + '\')">';
+    }
     $('#changeplan')
         .html('\n' +
-            '                                                <li class="provider col-md-6">\n' +
-            '                                                    <a href="javascript:void(0);" onclick="fetchreloadlyData(\''+countryIso+'\')">\n' +
+            '                                                <li class="provider col-md-6">\n'  +
+            linkHtml +
             '                     <div class="panel panel-default provider-bundle">\n' +
             '                                                            <div class="logo">\n' +
             '<img src="'+ data_logo +'">\n' +
