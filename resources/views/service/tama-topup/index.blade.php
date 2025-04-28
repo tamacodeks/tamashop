@@ -405,5 +405,6 @@
 
         });
     </script>
-    <script src="{{ secure_asset('js/topup.js?v=3') }}" type="text/javascript"></script>
+    <script src="{{ secure_asset('js/topup.js') }}?v={{ rand(10,99) }}" type="text/javascript"></script>
+
 @endsection
