@@ -98,6 +98,17 @@ class TamaTopupController extends Controller
         ];
         return view('service.tama-topup.ding.index',$this->data);
     }
+    function transfer_plans(Request $request){
+        $to_replace = "(+".$request->countryCode.")";
+        $mobileNumber = str_replace("+", "", $request->input('accountNumber'));
+         $this->data = [
+                'page_title' => ucfirst(trans('view'))." ".trans('service.plans')." ".$request->mobile,
+                'mobile_number' => $mobileNumber,
+                'countryCode' => $request->countryCode,
+                'countryIso' => $request->countryCode
+            ];
+            return view('service.tama-topup.plans',$this->data);
+    }
     function plans(Request $request)
     {
         $mobileNumber = str_replace("+", "", $request->input('mobile'));

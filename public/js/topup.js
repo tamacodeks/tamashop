@@ -818,12 +818,11 @@ function buildGridReloadlyprovider(response) {
         data_logo.push(value.logo);
     });
     var linkHtml = '';
+    var transferPlanUrl = api_base_url+'/tama-topup/plan_ts?accountNumber=' + encodeURIComponent(mobileNumber) + '&countryCode=' + encodeURIComponent(countryCode) + '&countryIsos=' + encodeURIComponent(countryIso);
+
+
     if (countryCode == 223) {
-        linkHtml = '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'1495\',\'223\',\'MLI\',\'1495\',\'Orange Mali\',\'Mali\',\'Data &amp; Bundle\')">';
-    } else if (countryCode == 221) {
-        linkHtml = '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'1494\',\'221\',\'SEN\',\'1494\',\'Orange Senegal\',\'Senegal\',\'Data &amp; Bundle\')">';
-    }  else if (countryCode == 91) {
-    linkHtml = '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'1371\',\'91\',\'IND\',\'1371\',\'Airtel India\',\'India\',\'Data &amp; Bundle\')">';
+        linkHtml = '<a href="' + transferPlanUrl + '">';
     }
     else {
         linkHtml = '<a href="javascript:void(0);" onclick="fetchreloadlyData(\'' + countryIso + '\')">';
@@ -1179,11 +1178,12 @@ function gettransferservice(ajaxUrl) {
  * @param providers
  */
 function TwoProducts(providers) {
-    var products =['Airtime','Data & Bundle'];
-    // console.log(providers);
-    var mobileNumber, countryCode,providerLength;
-    mobileNumber = $("#mobile").val();
-    countryCode = $("#countryCode").val();
+    var products = ['Airtime', 'Data & Bundle'];
+    var mobileNumber = $("#mobile").val();
+    var countryCode = $("#countryCode").val();
+
+    $('#twoproducts').empty(); // Clear previous entries if any
+
     $.each(products, function (key, product) {
         $.each(providers, function (key, value) {
             var flag = value.provider_code;
@@ -1204,6 +1204,14 @@ function TwoProducts(providers) {
     if(providers.length === 1)
     {
         $("#twoproducts .provider a div.panel").css("border", "1px solid");
+    }
+    if (countryCode == 221 || countryCode == 223 || countryCode == 91) {
+        // Automatically trigger click on both products
+        setTimeout(function () {
+            $("#twoproducts .provider a").each(function () {
+                this.click();
+            });
+        }, 100); // Delay to ensure DOM is fully updated
     }
 }
 /**

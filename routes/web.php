@@ -275,6 +275,7 @@ Route::group(['middleware' => ['balanceupdate','logout_device','totp']],function
         Route::get('tama-topup', 'Service\TamaTopupController@index');
         Route::get('tama-topup/plans', 'Service\TamaTopupController@plans');
         Route::get('tama-topup/plan_s','Service\TamaTopupController@ding_plans');
+        Route::get('tama-topup/plan_ts','Service\TamaTopupController@transfer_plans');
         Route::post('tama-topup/confirm/topup', 'Service\TamaTopupController@confirm_topup');
         Route::get('tama-topup/print/receipt/{order_id}', 'Service\TamaTopupController@printReceipt');
         Route::get('tama-topup/ding', 'Service\TamaTopupController@dingTopup');
