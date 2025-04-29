@@ -821,7 +821,7 @@ function buildGridReloadlyprovider(response) {
     var transferPlanUrl = api_base_url+'/tama-topup/plan_ts?accountNumber=' + encodeURIComponent(mobileNumber) + '&countryCode=' + encodeURIComponent(countryCode) + '&countryIsos=' + encodeURIComponent(countryIso);
 
 
-    if (countryCode == 223) {
+    if (countryCode == 223 || 221) {
         linkHtml = '<a href="' + transferPlanUrl + '">';
     }
     else {
@@ -1184,7 +1184,7 @@ function TwoProducts(providers) {
 
     $('#twoproducts').empty(); // Clear previous entries
 
-    var hideAirtimeCountries = [221, 223, 91]; // Countries where Airtime should be hidden
+    var hideAirtimeCountries = [221, 223]; // Countries where Airtime should be hidden
     var shouldHideAirtime = hideAirtimeCountries.includes(parseInt(countryCode));
 
     // Set column class based on country
