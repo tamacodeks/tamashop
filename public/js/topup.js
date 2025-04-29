@@ -1182,36 +1182,47 @@ function TwoProducts(providers) {
     var mobileNumber = $("#mobile").val();
     var countryCode = $("#countryCode").val();
 
-    $('#twoproducts').empty(); // Clear previous entries if any
+    $('#twoproducts').empty(); // Clear previous entries
+
+    var hideAirtimeCountries = [221, 223, 91]; // Countries where Airtime should be hidden
+    var shouldHideAirtime = hideAirtimeCountries.includes(parseInt(countryCode));
+
+    // Set column class based on country
+    var colClass = shouldHideAirtime ? 'col-md-12' : 'col-md-6';
 
     $.each(products, function (key, product) {
+        // Skip Airtime only if country is in hide list
+        if (shouldHideAirtime && product === 'Airtime') {
+            return; // Skip adding Airtime
+        }
+
         $.each(providers, function (key, value) {
             var flag = value.provider_code;
-            $('#twoproducts')
-                .append('\n' +
-                    '                                                <li class="provider col-md-6">\n' +
-                    '                                                    <a href="javascript:void(0);" onclick="fetchTransferProducts(\''+value.provider_code+'\',\''+countryCode+'\',\''+value.country_iso+'\',\''+value.provider_code+'\',\''+value.name+'\',\''+value.country+'\',\''+product+'\')">\n' +
-                    '                                                        <div class="panel panel-default provider-'+value.provider_code+'-c">\n' +
-                    '                                                            <div class="logo">\n' +
-                    '<img src="https://operator-logo.dtone.com/logo-' + flag + '-1.jpg">\n' +
-                    '                                                            </div>\n' +
-                    '                                                            <div class="title">' + product + '</div>\n' +
-                    '                                                        </div>\n' +
-                    '                                                    </a>\n' +
-                    '                                                </li>');
+
+            $('#twoproducts').append(
+                '<li class="provider ' + colClass + '">' +
+                '<a href="javascript:void(0);" onclick="fetchTransferProducts(\'' + value.provider_code + '\',\'' + countryCode + '\',\'' + value.country_iso + '\',\'' + value.provider_code + '\',\'' + value.name + '\',\'' + value.country + '\',\'' + product + '\')">' +
+                '<div class="panel panel-default provider-' + value.provider_code + '-c">' +
+                '<div class="logo">' +
+                '<img src="https://operator-logo.dtone.com/logo-' + flag + '-1.jpg">' +
+                '</div>' +
+                '<div class="title">' + product + '</div>' +
+                '</div>' +
+                '</a>' +
+                '</li>'
+            );
         });
     });
-    if(providers.length === 1)
-    {
+
+    if (providers.length === 1) {
         $("#twoproducts .provider a div.panel").css("border", "1px solid");
-    }
-    if (countryCode == 221 || countryCode == 223 || countryCode == 91) {
-        // Automatically trigger click on both products
-        setTimeout(function () {
-            $("#twoproducts .provider a").each(function () {
-                this.click();
-            });
-        }, 100); // Delay to ensure DOM is fully updated
+
+        if (shouldHideAirtime) {
+            // Automatically trigger click only for countries 221, 223, 91
+            setTimeout(function () {
+                $("#twoproducts .provider a").first().click();
+            }, 10);
+        }
     }
 }
 /**
