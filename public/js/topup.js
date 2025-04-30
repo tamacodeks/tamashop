@@ -821,10 +821,9 @@ function buildGridReloadlyprovider(response) {
     var transferPlanUrl = api_base_url+'/tama-topup/plan_ts?accountNumber=' + encodeURIComponent(mobileNumber) + '&countryCode=' + encodeURIComponent(countryCode) + '&countryIsos=' + encodeURIComponent(countryIso);
 
 
-    if (countryCode == 223 || 221) {
+    if ([221, 223 ,225].includes(parseInt(countryCode))) {
         linkHtml = '<a href="' + transferPlanUrl + '">';
-    }
-    else {
+    } else {
         linkHtml = '<a href="javascript:void(0);" onclick="fetchreloadlyData(\'' + countryIso + '\')">';
     }
     $('#changeplan')
