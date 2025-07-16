@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Chat;
+namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
@@ -8,7 +8,6 @@ use App\Models\ChatRoom;
 use App\Models\Message;
 use App\Models\Receiver;
 use App\Events\PublicMessageEvent;
-use App\Http\Controllers\Controller;
 use App\Events\RoomEvents;
 
 class PublicChatController extends Controller

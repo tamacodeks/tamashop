@@ -343,7 +343,7 @@ class UserController extends Controller
             if(auth()->user()->group_id == 1){
                 $parent_id = null;
             }else{
-                $parent_id = $request->group_id == 2 ? null : (!empty($request->parent_id) ? $request->parent_id : auth()->user()->id);
+                $parent_id = $request->group_id == 2 ? null : !empty($request->parent_id) ? $request->parent_id :  auth()->user()->id;
             }
             if ($request->id != '') {
                 $manager = User::where('id', $request->id)->first();

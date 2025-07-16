@@ -11,14 +11,14 @@ use App\Models\UserGroup;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Cache;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Spatie\MediaLibrary\Models\Media;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
 
 class User extends Authenticatable implements HasMedia
 {
     use Notifiable;
-    use InteractsWithMedia;
+    use HasMediaTrait;
     public $singleFile = true;
 
     /**
@@ -77,7 +77,7 @@ class User extends Authenticatable implements HasMedia
     }
 
 
-    public function registerMediaCollections(): void
+    public function registerMediaCollections()
     {
         $this
             ->addMediaCollection('avatar')
