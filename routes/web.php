@@ -11,8 +11,12 @@
 */
 
 //\Debugbar::disable();
+
+use App\Http\Controllers\Auth\LoginController;
 use app\Library\ApiHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 Route::get('working' , function(){
     return view('auth.working');
