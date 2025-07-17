@@ -1,0 +1,110 @@
+<?php
+/**
+ * Created by Decipher Lab.
+ * User: Prabakar
+ * Date: 07-Feb-18
+ * Time: 2:56 PM
+ */
+return array(
+  'country' => "Country",
+  'name' => "Name",
+  'description' => "Description",
+  'access_number' => "Access Number",
+  'buying_price' => "Buying Price",
+  'status' => "Status",
+  'action' => "Action",
+  'provider_name' => "Provider Name",
+  'image' => "Image",
+  'face_value' => "Face value",
+
+
+   /**
+    * Buttons
+    */
+   "btn_add_new_pin" => "Add New Pin",
+   "btn_overall_report" => "Overall report",
+   "btn_search" => "Search",
+   "btn_add_new_card" => "Add New Card",
+   "btn_upload_pins" => "Upload Pins",
+   "btn_uploading_pins" => "Uploading Pins",
+   "btn_update_retailers" => "Update Retailers",
+   "btn_update_card_info" => "Update Card Info",
+   "btn_ok" => "Ok",
+   "btn_add_price_list" => "Add new price list",
+   "btn_print_pin" => "Print Pin",
+   "btn_print_pin_again" => "Print pin again",
+   "btn_back_to_home" => "Back to Home",
+   "btn_act_printing" => "Printing...",
+
+
+    /**
+     * Placeholder
+     */
+    'placeholder_mys' => "Please enter something to search...",
+
+    /**
+     * Labels
+     */
+    'lbl_country' => "Country",
+    'lbl_query' => "Query",
+    'lbl_card_name' => "Card Name",
+    'lbl_card_desc' => "Description",
+    'lbl_comment1' => "Command 1",
+    'lbl_comment2' => "Command 2",
+    'lbl_validity' => "Validity",
+    'lbl_access_number' => "Access number",
+    'lbl_buying_price' => "Buying Price",
+    'lbl_choose_excel' => "Choose Excel",
+    'lbl_status' => "Status",
+    'lbl_ask_update' => "Do you want to update card info?",
+    'lbl_manage_retailers' => "Manage Retailers",
+    'lbl_upload_pins' => "Upload pins",
+    'lbl_click_to_view' => "Click to view",
+    'lbl_choose_retailers' => "Choose retailers",
+    'lbl_select_all' => "Select all",
+    'lbl_deselect_all' => "Deselect all",
+    'lbl_avail_retailers' => "Available Retailers",
+    'lbl_selected_retailers' => "Selected Retailers",
+    'lbl_ask_new_pin_upload' => "Do you want to upload new pins?",
+    'lbl_rate_tables' => "Price Lists",
+    'lbl_choose_rate_group' => "Choose Rate Group",
+    'lbl_rate_table_card_name' => "Card name",
+    'lbl_rate_table_desc' => "Description",
+    'lbl_rate_table_bp' => "Buying Price",
+    'lbl_rate_table_sp' => "Sales Price",
+    'lbl_rate_table_margin' => "Margin",
+    'lbl_rate_table_price_list_name' => "Price list name",
+    'lbl_rate_table_price_choose_exits' => "Choose existing price lists to copy",
+    'lbl_rate_table_price_default' => "Is default?",
+    'lbl_view_all_price_lists' => "View all price lists",
+    'lbl_rate_group_name' => "Rate Group Name",
+    'lbl_print_code_secret' => "Code Secret",
+    'lbl_print_client' => "Client",
+
+
+
+//    error messages
+    'err_country_id' => "Please choose country!",
+    'err_card_name' => "Please choose card name!",
+    'err_card_desc' => "Please fill the card description!",
+    'err_buying_price' => "Buying price must be lower than face value ",
+    'err_access_number' => "Please fill the access number field!",
+    'err_excel_file' => "Please choose the valid excel file!",
+    'err_card_exists' => "Cannot add this card, already exists!",
+    'err_myservice_not_found' => "Cannot find the card you selected!",
+    'err_card_exist_pins' => "Old pins found, cannot upload new pins!",
+    'err_rate_table_not_exists' => "No Rate Table found!, Please create one rate table to proceed!",
+    'err_rate_table_name_req' => "Price list name required",
+    'err_sale_price_err' => "Sale price must be lesser or equal to",
+    'err_no_cards' => "No cards available!",
+    'err_no_rate_table' => "Please contact your administrator with error code 1001!",
+    'err_no_rate_table_myservice' => "Please contact your administrator with error code 1002!",
+    'err_no_rate_table_sale_price' => "Please contact your administrator with error code 1003!",
+    'err_no_balance' => "Your account does not have a sufficient balance to buy this product!",
+
+//    messages
+    'msg_new_pin_success' => "New pin was added!",
+    'msg_new_pins_success' => "New pins was added!",
+    'msg_new_pin_update_success' => "Pin details was updated!",
+    'msg_price_lists_up_success' => "Price lists info updated!",
+);
