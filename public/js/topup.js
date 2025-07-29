@@ -1365,78 +1365,72 @@ function buildListTransferProducts(products) {
         buildloopTransfer(value);
     });
 }
-function escapeJSString(str) {
-    return (str || '')
-        .replace(/\\/g, '\\\\')      // escape backslashes
-        .replace(/'/g, '\\\'')       // escape single quotes
-        .replace(/\n/g, '\\n')       // escape newlines
-        .replace(/\r/g, '');         // remove carriage returns
-}
-
 function buildloopTransfer(value) {
-    // Fallbacks for null/empty values
-    var description = escapeJSString(value.description || '');
-    var display = escapeJSString(value.display_text || value.name || '');
-    var name = escapeJSString(value.name || '');
-    var providerCode = escapeJSString(value.provider_code || '');
-    var validity = escapeJSString(value.validity || '');
-    var receiveValue = escapeJSString(value.ReceiveValue || '');
-    var sendValue = escapeJSString(value.SendValue || '');
-    var sendCurrencyIso = escapeJSString(value.sendCurrencyIso || '');
-    var receiveCurrencyIso = escapeJSString(value.receiveCurrencyIso || '');
-    var operatorId = escapeJSString(value.operator_id || '');
-    var operatorName = escapeJSString(value.operator_name || '');
-    var country = escapeJSString(value.country || '');
-    var tags = escapeJSString(value.tags || '');
+    const name = value.name || '';
+    const providerCode = value.provider_code || '';
+    const validity = value.validity || '';
+    const display = value.display_text || name;
+    const description = value.description || '';
+    const receiveValue = value.ReceiveValue || '';
+    const sendValue = value.SendValue || '';
+    const sendCurrencyIso = value.sendCurrencyIso || '';
+    const receiveCurrencyIso = value.receiveCurrencyIso || '';
+    const operatorId = value.operator_id || '';
+    const operatorName = value.operator_name || '';
+    const country = value.country || '';
+    const tags = value.tags || '';
 
-    // Build the HTML and append
-    $("#productLists").append(
-        '<li class="denomination">' +
-        '  <a href="javascript:void(0);" class="li-a" onclick="clickProductLists(this,\'' +
-        name + '\',\'' +
-        providerCode + '\',\'' +
-        validity + '\',\'' +
-        display + '\',\'' +
-        description + '\',\'' +
-        receiveValue + '\',\'' +
-        sendValue + '\',\'' +
-        sendCurrencyIso + '\',\'' +
-        receiveCurrencyIso + '\',\'' +
-        operatorId + '\',\'' +
-        operatorName + '\',\'' +
-        country + '\')">' +
-        '    <div class="panel panel-default panel-data activatable-item">' +
-        '      <div class="data">' +
-        '        <div class="price">' +
-        '          <h3>€' + sendValue + '</h3>' +
-        '        </div>' +
-        '        <div class="receive-amount">' +
-        '          <span class="strong-mobile">' + display + '</span>' +
-        '        </div>' +
-        '        <div class="validity">' +
-        '          <div>' + validity + '</div>' +
-        '          <button class="btn btn-primary">' + tags + '</button>' +
-        '          <div></div>' +
-        '        </div>' +
-        '        <div class="more-info-toggle open">' +
-        '          <i class="fa fa-chevron-right"></i>' +
-        '        </div>' +
-        '        <div class="more-info" style="display: none;">' +
-        '          <p>' +
-        '            <span>(' + name + ')</span>' +
-        '            <span>' + description + '</span>' +
-        '          </p>' +
-        '        </div>' +
-        '        <div class="clearfix"></div>' +
-        '      </div>' +
-        '      <div class="active-icon">' +
-        '        <i class="fa fa-check"></i>' +
-        '      </div>' +
-        '    </div>' +
-        '  </a>' +
-        '</li>'
-    );
+    const html = `
+        <li class="denomination">
+            <a href="javascript:void(0);" class="li-a"
+                data-name="${encodeURIComponent(name)}"
+                data-provider="${encodeURIComponent(providerCode)}"
+                data-validity="${encodeURIComponent(validity)}"
+                data-display="${encodeURIComponent(display)}"
+                data-description="${encodeURIComponent(description)}"
+                data-receive="${encodeURIComponent(receiveValue)}"
+                data-send="${encodeURIComponent(sendValue)}"
+                data-send-currency="${encodeURIComponent(sendCurrencyIso)}"
+                data-receive-currency="${encodeURIComponent(receiveCurrencyIso)}"
+                data-operator-id="${encodeURIComponent(operatorId)}"
+                data-operator-name="${encodeURIComponent(operatorName)}"
+                data-country="${encodeURIComponent(country)}"
+            >
+                <div class="panel panel-default panel-data activatable-item">
+                    <div class="data">
+                        <div class="price">
+                            <h3>€${sendValue}</h3>
+                        </div>
+                        <div class="receive-amount">
+                            <span class="strong-mobile">${display}</span>
+                        </div>
+                        <div class="validity">
+                            <div>${validity}</div>
+                            <button class="btn btn-primary">${tags}</button>
+                            <div></div>
+                        </div>
+                        <div class="more-info-toggle open">
+                            <i class="fa fa-chevron-right"></i>
+                        </div>
+                        <div class="more-info" style="display: none;">
+                            <p>
+                                <span>(${name})</span>
+                                <span>${description}</span>
+                            </p>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="active-icon">
+                        <i class="fa fa-check"></i>
+                    </div>
+                </div>
+            </a>
+        </li>
+    `;
+
+    $('#productLists').append(html);
 }
+
 function clickProductLists(el,name, skuCode,validity,display_text,description,ReceiveValue,SendValue,sendCurrencyIso,receiveCurrencyIso,operator_id,operator_name,country) {
     // console.log(operator_id,operator_name,country);
     $('.product-lists li.active').removeClass('active');
