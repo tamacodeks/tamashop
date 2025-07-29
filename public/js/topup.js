@@ -3,10 +3,9 @@
  * @param className
  */
 function toggleAnime(className) {
-    if(className == "hide")
-    {
+    if (className == "hide") {
         $("#detectAnime").addClass('hide');
-    }else{
+    } else {
         $("#detectAnime").removeClass('hide');
     }
 }
@@ -18,8 +17,7 @@ function toggleAnime(className) {
 function toggleGridProviders(className) {
     $("#summaryDiv").addClass('hide');
     $("#gridProviderDiv").addClass('hide');
-    if(className != "hide")
-    {
+    if (className != "hide") {
         $("#gridProviderDiv").removeClass('hide');
     }
     $("#gridProviderList")
@@ -35,22 +33,18 @@ function toggleGridProviders(className) {
  * @param divType
  * @param className
  */
-function toggleProductsDiv(divType,className) {
+function toggleProductsDiv(divType, className) {
     $(".div-grid-products").addClass('hide');
     $(".div-list-products").addClass('hide');
     $("#divRangeAmount").addClass('hide');
-    if(divType == "list")
-    {
-        if(className != "hide")
-        {
+    if (divType == "list") {
+        if (className != "hide") {
             $('#productLists').find('li').remove();
             $(".div-list-products").removeClass('hide');
         }
     }
-    if(divType == "grid")
-    {
-        if(className != "hide")
-        {
+    if (divType == "grid") {
+        if (className != "hide") {
             $('#gridproductLists').find('li').remove();
             $(".div-grid-products").removeClass('hide');
         }
@@ -65,8 +59,7 @@ function toggleRangeAmountDiv(className) {
     $(".div-grid-products").addClass('hide');
     $(".div-list-products").addClass('hide');
     $("#divRangeAmount").addClass('hide');
-    if(className != "hide")
-    {
+    if (className != "hide") {
         $("#divRangeAmount").removeClass('hide');
     }
 }
@@ -75,7 +68,7 @@ function toggleRangeAmountDiv(className) {
  * Filter ul list product by name or description
  */
 function filterPriceList() {
-    var input, filter, ul, li, a, i,b;
+    var input, filter, ul, li, a, i, b;
     input = document.getElementById("productSearch");
     filter = input.value.toUpperCase();
     ul = document.getElementById("productLists");
@@ -100,7 +93,7 @@ function filterPriceList() {
  * @param providers
  */
 function buildGridProviders(providers) {
-    var mobileNumber, countryCode,providerLength;
+    var mobileNumber, countryCode, providerLength;
     mobileNumber = $("#mobile").val();
     countryCode = $("#countryCode").val();
     $.each(providers, function (key, value) {
@@ -108,8 +101,8 @@ function buildGridProviders(providers) {
         $('#gridProviderList')
             .append('\n' +
                 '                                                <li class="provider col-md-6">\n' +
-                '                                                    <a href="javascript:void(0);" onclick="fetchProducts(\''+value.country_iso+'\',\''+countryCode+'\',\''+value.country_iso+'\',\''+value.provider_code+'\',\''+value.name+'\',\''+value.country+'\')">\n' +
-                '                                                        <div class="panel panel-default provider-'+value.provider_code.toLowerCase()+'">\n' +
+                '                                                    <a href="javascript:void(0);" onclick="fetchProducts(\'' + value.country_iso + '\',\'' + countryCode + '\',\'' + value.country_iso + '\',\'' + value.provider_code + '\',\'' + value.name + '\',\'' + value.country + '\')">\n' +
+                '                                                        <div class="panel panel-default provider-' + value.provider_code.toLowerCase() + '">\n' +
                 '                                                            <div class="logo">\n' +
                 '<img src="https://imagerepo.ding.com/logo/' + flag + '.svg">\n' +
                 '                                                            </div>\n' +
@@ -118,8 +111,7 @@ function buildGridProviders(providers) {
                 '                                                    </a>\n' +
                 '                                                </li>');
     });
-    if(providers.length === 1)
-    {
+    if (providers.length === 1) {
         $("#gridProviderList .provider a div.panel").css("border", "1px solid");
     }
 }
@@ -137,8 +129,7 @@ function getProviders(ajaxUrl) {
             toggleAnime('hide');
             toggleGridProviders('show');
             buildGridProviders(response.data);
-            if(response.data.length === 1)
-            {
+            if (response.data.length === 1) {
                 //call fetchProducts
                 // console.log(response.data[0].name)
                 // console.log(response.data[0].country)
@@ -173,7 +164,7 @@ function getProvidersprepay(ajaxUrl) {
             toggleGridProviders('show');
             var values = response.data[0].provider_code;
             console.log(values);
-            if(values){
+            if (values) {
                 buildGridPrepayprovider(response.data);
             }
             else {
@@ -185,8 +176,7 @@ function getProvidersprepay(ajaxUrl) {
                 window.location.href = api_base_url + "/tama-topup/plan_s?accountNumber=" + mobileNumber + "&countryCode=" + countryCode + "&countryIsos=" + countryIso;
             }
 
-            if(response.data.length === 1)
-            {
+            if (response.data.length === 1) {
                 //call fetchProducts
                 //console.log(response.data[0].name)
                 //console.log(response.data[0].country)
@@ -206,7 +196,7 @@ function getProvidersprepay(ajaxUrl) {
 
 function buildGridPrepayprovider(response) {
 
-    var mobileNumber, countryCode,providerLength;
+    var mobileNumber, countryCode, providerLength;
     mobileNumber = $("#mobile").val();
     countryCode = $("#countryCode").val();
     // console.log(countryCode);
@@ -215,9 +205,9 @@ function buildGridPrepayprovider(response) {
         $('#gridProviderList')
             .append('\n' +
                 '                                                <li class="provider col-md-6">\n' +
-                '                                                    <a href="javascript:void(0);" onclick="fetchProducts1(\''+value.country_iso+'\',\''+countryCode+'\',\''+value.country_iso+'\',\''+value.provider_code+'\',\''+value.name+'\',\''+value.country+'\')">\n' +
+                '                                                    <a href="javascript:void(0);" onclick="fetchProducts1(\'' + value.country_iso + '\',\'' + countryCode + '\',\'' + value.country_iso + '\',\'' + value.provider_code + '\',\'' + value.name + '\',\'' + value.country + '\')">\n' +
                 '                                                        <div class="panel panel-default provider' +
-                '-'+value.provider_code+'">\n' +
+                '-' + value.provider_code + '">\n' +
                 '                                                            <div class="logo">\n' +
                 '<img src="https://www.tamademat.com/images/' + value.name + '.svg">\n' +
                 '                                                            </div>\n' +
@@ -226,22 +216,21 @@ function buildGridPrepayprovider(response) {
                 '                                                    </a>\n' +
                 '                                                </li>');
     });
-    if(response.length === 1)
-    {
+    if (response.length === 1) {
         $("#gridProviderList .provider a div.panel").css("border", "1px solid");
     }
 }
 
-function fetchProducts1(countryIso,countryCode, region, providerCode,providerName,providerCountry) {
+function fetchProducts1(countryIso, countryCode, region, providerCode, providerName, providerCountry) {
     $("#loadingProducts").toggle();
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
-    $(".provider-"+providerCode.toLowerCase()).css("border", "1px solid");
+    toggleProductsDiv("", '');
+    $(".provider-" + providerCode.toLowerCase()).css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     var mobileNumber;
     mobileNumber = $("#mobile").val();
     $.ajax({
-        url: api_base_url+"/tama-topup/fetchprepay/products?countryIso="+countryIso+"&countryCode="+countryCode+"&region="+region+"&providerCode="+providerCode+"&accountNumber="+mobileNumber,
+        url: api_base_url + "/tama-topup/fetchprepay/products?countryIso=" + countryIso + "&countryCode=" + countryCode + "&region=" + region + "&providerCode=" + providerCode + "&accountNumber=" + mobileNumber,
 
         method: 'GET',
         success: function (response) {
@@ -250,30 +239,28 @@ function fetchProducts1(countryIso,countryCode, region, providerCode,providerNam
             //update provider name and country
             $("#_hid_provider_name").val(providerName);
             $("#_hid_provider_country").val(providerCountry);
-            if(response.data.denomination_style == "list" && response.data.is_denominated == true)
-            {
+            if (response.data.denomination_style == "list" && response.data.is_denominated == true) {
                 //list style
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 console.log('list');
                 buildGridPrepayProducts(response.data.products);
-            }else if(response.data.denomination_style == "grid" && response.data.is_denominated == true)
-            {
+            } else if (response.data.denomination_style == "grid" && response.data.is_denominated == true) {
                 //grid style
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'show');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'show');
                 console.log('grid');
                 var products = response.data.products;
-                var data = products.sort(function(a, b){return a.maxSendValue - b.maxSendValue});
+                var data = products.sort(function (a, b) { return a.maxSendValue - b.maxSendValue });
                 buildGridPrepayProducts(data);
-            }else{
+            } else {
                 console.log(response.data.products);
                 //range input show+
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'hide');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'hide');
                 toggleRangeAmountDiv('show');
-                var amount_between,minVal,maxVal;
-                amount_between = between_trans+" "+response.data.products[0].minSendValue+" - "+response.data.products[0].maxSendValue;
+                var amount_between, minVal, maxVal;
+                amount_between = between_trans + " " + response.data.products[0].minSendValue + " - " + response.data.products[0].maxSendValue;
                 minVal = response.data.products[0].minSendValue;
                 maxVal = response.data.products[0].maxSendValue;
                 $("#SkuCode").val(response.data.products[0].sku_code);
@@ -295,9 +282,9 @@ function fetchProducts1(countryIso,countryCode, region, providerCode,providerNam
                 var validator = $form.validate();
                 /*use internal code of a plugin to clear the field*/
                 if (validator.settings.unhighlight) {
-                    validator.settings.unhighlight.call( validator, $that[0], validator.settings.errorClass, validator.settings.validClass );
+                    validator.settings.unhighlight.call(validator, $that[0], validator.settings.errorClass, validator.settings.validClass);
                 }
-                validator.hideThese( validator.errorsFor( $that[0] ) );
+                validator.hideThese(validator.errorsFor($that[0]));
             }
             $("#summaryDiv").removeClass('hide');
         },
@@ -316,16 +303,16 @@ function fetchProducts1(countryIso,countryCode, region, providerCode,providerNam
 function buildGridPrepayProducts(products) {
     $.each(products, function (key, value) {
         $("#gridproductLists").append(' <li class="denominated-product product-type-topup">\n' +
-            '                                                <a href="javascript:void(0);" onclick="gridPrepayClickLists(this,\''+value.sku_code+'\',\''+value.maxSendValue+'\',\''+value.sendValueOriginal+'\',\''+value.display_text+'\',\''+value.country+'\',\''+value.country+'\')">\n' +
+            '                                                <a href="javascript:void(0);" onclick="gridPrepayClickLists(this,\'' + value.sku_code + '\',\'' + value.maxSendValue + '\',\'' + value.sendValueOriginal + '\',\'' + value.display_text + '\',\'' + value.country + '\',\'' + value.country + '\')">\n' +
             '                                                    <div class="panel panel-default panel-data activatable-item">\n' +
             '                                                        <div class="data">\n' +
             '                                                            <div class="price">\n' +
-            '                                                                <h3>'+value.maxSendValue+'</h3>\n' +
+            '                                                                <h3>' + value.maxSendValue + '</h3>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="receive-amount">\n' +
-            '                                                                <span>'+value.sendCurrencyIso+'</span>\n' +
-            '                                                                <span class="strong-mobile">'+value.display_text+'</span>\n' +
-            '                                                                <span class="light-mobile">'+ will_be_received +'</span>\n' +
+            '                                                                <span>' + value.sendCurrencyIso + '</span>\n' +
+            '                                                                <span class="strong-mobile">' + value.display_text + '</span>\n' +
+            '                                                                <span class="light-mobile">' + will_be_received + '</span>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="clearfix"></div>\n' +
             '                                                        </div>\n' +
@@ -337,7 +324,7 @@ function buildGridPrepayProducts(products) {
             '                                            </li>');
     });
 }
-function gridPrepayClickLists(el, skuCode,sentAmount,SendValueOriginal,LocalCurrency,Country) {
+function gridPrepayClickLists(el, skuCode, sentAmount, SendValueOriginal, LocalCurrency, Country) {
     $('#gridproductLists li.active').removeClass('active');
     $('#gridproductLists li').find('.more-info').hide();
     $(el).parents('li').addClass('active');
@@ -360,7 +347,7 @@ function buildGridPrepayproduct(response) {
             '                                                            </div>\n' +
             '                                                            <div class="receive-amount">\n' +
             '                                                                <span class="strong-mobile">' + value.faceValue + '</span>\n' +
-            '                                                                <span class="light-mobile">'+ value.faceValue +'</span>\n' +
+            '                                                                <span class="light-mobile">' + value.faceValue + '</span>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="validity">\n' +
             '                                                                <div>' + value.faceValue + '</div>\n' +
@@ -395,7 +382,7 @@ function buildGridPrepayproduct(response) {
  * @param el
  * @param skuCode
  */
-function clickLists(el, skuCode,euro,euro_formatted,dest,dest_formatted,commission,sentAmount,SendValueOriginal,sentCurrencyIso,UatNumber) {
+function clickLists(el, skuCode, euro, euro_formatted, dest, dest_formatted, commission, sentAmount, SendValueOriginal, sentCurrencyIso, UatNumber) {
     // console.log('sendOrginalValue',SendValueOriginal);
     $('.product-lists li.active').removeClass('active');
     $('.product-lists li').find('.more-info').hide();
@@ -418,7 +405,7 @@ function clickLists(el, skuCode,euro,euro_formatted,dest,dest_formatted,commissi
  * @param el
  * @param skuCode
  */
-function gridClickLists(el, skuCode,euro,euro_formatted,dest,dest_formatted,commission,sentAmount,SendValueOriginal,sentCurrencyIso,UatNumber) {
+function gridClickLists(el, skuCode, euro, euro_formatted, dest, dest_formatted, commission, sentAmount, SendValueOriginal, sentCurrencyIso, UatNumber) {
     $('#gridproductLists li.active').removeClass('active');
     $('#gridproductLists li').find('.more-info').hide();
     $(el).parents('li').addClass('active');
@@ -452,7 +439,7 @@ function buildListProducts(products) {
             '                                                            </div>\n' +
             '                                                            <div class="receive-amount">\n' +
             '                                                                <span class="strong-mobile">' + value.display_text + '</span>\n' +
-            '                                                                <span class="light-mobile">'+ will_be_received +'</span>\n' +
+            '                                                                <span class="light-mobile">' + will_be_received + '</span>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="validity">\n' +
             '                                                                <div>' + value.validity + '</div>\n' +
@@ -488,15 +475,15 @@ function buildListProducts(products) {
 function buildGridProducts(products) {
     $.each(products, function (key, value) {
         $("#gridproductLists").append(' <li class="denominated-product product-type-topup">\n' +
-            '                                                <a href="javascript:void(0);" onclick="gridClickLists(this,\''+value.sku_code+'\',\''+value.maxSendValue+'\',\''+value.maxSendAmountFormatted+'\',\''+value.maxReceiveValue+'\',\''+value.maxReceiveAmountFormatted+'\',\''+value.commission_rate+'\',\''+value.minSendValue+'\',\''+value.sendValueOriginal+'\',\''+value.sendCurrencyIso+'\',\''+value.uat_number+'\')">\n' +
+            '                                                <a href="javascript:void(0);" onclick="gridClickLists(this,\'' + value.sku_code + '\',\'' + value.maxSendValue + '\',\'' + value.maxSendAmountFormatted + '\',\'' + value.maxReceiveValue + '\',\'' + value.maxReceiveAmountFormatted + '\',\'' + value.commission_rate + '\',\'' + value.minSendValue + '\',\'' + value.sendValueOriginal + '\',\'' + value.sendCurrencyIso + '\',\'' + value.uat_number + '\')">\n' +
             '                                                    <div class="panel panel-default panel-data activatable-item">\n' +
             '                                                        <div class="data">\n' +
             '                                                            <div class="price">\n' +
-            '                                                                <h3>'+value.maxSendAmountFormatted+'</h3>\n' +
+            '                                                                <h3>' + value.maxSendAmountFormatted + '</h3>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="receive-amount">\n' +
-            '                                                                <span class="strong-mobile">'+value.display_text+'</span>\n' +
-            '                                                                <span class="light-mobile">'+ will_be_received +'</span>\n' +
+            '                                                                <span class="strong-mobile">' + value.display_text + '</span>\n' +
+            '                                                                <span class="light-mobile">' + will_be_received + '</span>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="clearfix"></div>\n' +
             '                                                        </div>\n' +
@@ -516,16 +503,16 @@ function buildGridProducts(products) {
  * @param region
  * @param providerCode
  */
-function fetchProducts(countryIso,countryCode, region, providerCode,providerName,providerCountry) {
+function fetchProducts(countryIso, countryCode, region, providerCode, providerName, providerCountry) {
     $("#loadingProducts").toggle();
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
-    $(".provider-"+providerCode.toLowerCase()).css("border", "1px solid");
+    toggleProductsDiv("", '');
+    $(".provider-" + providerCode.toLowerCase()).css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     var mobileNumber;
     mobileNumber = $("#mobile").val();
     $.ajax({
-        url: api_base_url+"/tama-topup/fetch/products?countryIso="+countryIso+"&countryCode="+countryCode+"&region="+region+"&providerCode="+providerCode+"&accountNumber="+mobileNumber,
+        url: api_base_url + "/tama-topup/fetch/products?countryIso=" + countryIso + "&countryCode=" + countryCode + "&region=" + region + "&providerCode=" + providerCode + "&accountNumber=" + mobileNumber,
         method: 'GET',
         success: function (response) {
             $("#loadingProducts").toggle();
@@ -533,25 +520,23 @@ function fetchProducts(countryIso,countryCode, region, providerCode,providerName
             //update provider name and country
             $("#_hid_provider_name").val(providerName);
             $("#_hid_provider_country").val(providerCountry);
-            if(response.data.denomination_style == "list" && response.data.is_denominated == true)
-            {
+            if (response.data.denomination_style == "list" && response.data.is_denominated == true) {
                 //list style
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 buildListProducts(response.data.products);
-            }else if(response.data.denomination_style == "grid" && response.data.is_denominated == true)
-            {
+            } else if (response.data.denomination_style == "grid" && response.data.is_denominated == true) {
                 //grid style
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'show');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'show');
                 buildGridProducts(response.data.products);
-            }else{
+            } else {
                 //range input show
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'hide');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'hide');
                 toggleRangeAmountDiv('show');
-                var amount_between,minVal,maxVal;
-                amount_between = between_trans+" "+response.data.products[0].minSendAmountFormatted+" - "+response.data.products[0].maxSendAmountFormatted;
+                var amount_between, minVal, maxVal;
+                amount_between = between_trans + " " + response.data.products[0].minSendAmountFormatted + " - " + response.data.products[0].maxSendAmountFormatted;
                 minVal = response.data.products[0].minSendValue;
                 maxVal = response.data.products[0].maxSendValue;
                 $("#SkuCode").val(response.data.products[0].sku_code);
@@ -573,9 +558,9 @@ function fetchProducts(countryIso,countryCode, region, providerCode,providerName
                 var validator = $form.validate();
                 /*use internal code of a plugin to clear the field*/
                 if (validator.settings.unhighlight) {
-                    validator.settings.unhighlight.call( validator, $that[0], validator.settings.errorClass, validator.settings.validClass );
+                    validator.settings.unhighlight.call(validator, $that[0], validator.settings.errorClass, validator.settings.validClass);
                 }
-                validator.hideThese( validator.errorsFor( $that[0] ) );
+                validator.hideThese(validator.errorsFor($that[0]));
             }
             $("#summaryDiv").removeClass('hide');
         },
@@ -595,13 +580,13 @@ function fetchProducts(countryIso,countryCode, region, providerCode,providerName
  * Fetch Estimated price
  * @param sendAmount
  */
-function getEstimatePrice(sendAmount,providerCode) {
+function getEstimatePrice(sendAmount, providerCode) {
     $("#amountReceivedDiv").hide();
     $.ajax({
-        url: api_base_url+"/tama-topup/fetch/estimate?sendAmount="+sendAmount+"&skuCode="+$("#SkuCode").val()+"&countryCode="+$("#countryCode").val()+"&providerCode="+providerCode,
+        url: api_base_url + "/tama-topup/fetch/estimate?sendAmount=" + sendAmount + "&skuCode=" + $("#SkuCode").val() + "&countryCode=" + $("#countryCode").val() + "&providerCode=" + providerCode,
         method: 'GET',
         success: function (response) {
-            console.log('estimated price fetched ',response);
+            console.log('estimated price fetched ', response);
             /*get your element and containing validated form*/
             $("#amountReceivedDiv").show();
             //  console.log(response.data.withTax);
@@ -609,7 +594,7 @@ function getEstimatePrice(sendAmount,providerCode) {
             // {
             $("#amountReceived").html(response.data.formattedAmount);
             $("#ifTaxApplicable").show();
-            $("#taxName").html(" "+response.data.taxName+"( "+response.data.receiveValueformattedAmount+" net)");
+            $("#taxName").html(" " + response.data.taxName + "( " + response.data.receiveValueformattedAmount + " net)");
             // }else{
             //     $("#ifTaxApplicable").hide();
             //     $("#taxName").html('');
@@ -618,7 +603,7 @@ function getEstimatePrice(sendAmount,providerCode) {
             setTimeout(function () {
                 $("#range_amount").removeClass('loading');
                 $("#reviewOrderBtn").removeAttr('disabled');
-            },1000);
+            }, 1000);
             $("#SendValue").val(response.data.sentAmount);
             $("#SendValueOriginal").val(response.data.sendValueOriginal);
             $("#range_amount").val(response.data.sentAmount);
@@ -641,18 +626,18 @@ function getEstimatePrice(sendAmount,providerCode) {
 }
 //calling card set api
 
-function fetchCallingProducts(countryIso,countryCode, region, providerCode,providerName,providerCountry) {
+function fetchCallingProducts(countryIso, countryCode, region, providerCode, providerName, providerCountry) {
     $("#gridproductLists").removeClass('hide');
     $("#gridproductLists1").removeClass('hide');
     $("#show_form").hide();
     $("#show_providers").addClass('hide');
     $("#loadingProducts").toggle();
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
-    $(".provider-"+providerCode.toLowerCase()).css("border", "1px solid");
+    toggleProductsDiv("", '');
+    $(".provider-" + providerCode.toLowerCase()).css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     $.ajax({
-        url: api_base_url+"/tama-topup-france/fetch/products?countryIso="+countryIso+"&countryCode="+countryCode+"&region="+region+"&providerCode="+providerCode,
+        url: api_base_url + "/tama-topup-france/fetch/products?countryIso=" + countryIso + "&countryCode=" + countryCode + "&region=" + region + "&providerCode=" + providerCode,
         method: 'GET',
         success: function (response) {
             scrollingElement = (document.scrollingElement || document.body)
@@ -665,8 +650,8 @@ function fetchCallingProducts(countryIso,countryCode, region, providerCode,provi
             // update provider name and country
             $("#_hid_provider_name").val(providerName);
             $("#_hid_provider_country").val(providerCountry);
-            toggleProductsDiv("list",'hide');
-            toggleProductsDiv("grid",'show');
+            toggleProductsDiv("list", 'hide');
+            toggleProductsDiv("grid", 'show');
             buildGridCalling(response.products);
 
             $("#summaryDiv").removeClass('hide');
@@ -685,21 +670,21 @@ function fetchCallingProducts(countryIso,countryCode, region, providerCode,provi
 
 function buildGridCalling(products) {
     $.each(products, function (key, value) {
-        var encodedString =   value.provider_code;
+        var encodedString = value.provider_code;
         var send_value = value.maxSendValue;
-        if(value.region_code == 'GB'){
+        if (value.region_code == 'GB') {
             // var send_value = value.sendValueOriginal;
             var send_value = value.maxSendValue;
         }
         $("#gridproductLists").append(' <li class="denominated-product product_height product-type-topup">\n' +
-            '                                                <a href="javascript:void(0);"  onclick="gridCallingLists(this,\''+value.sku_code+'\',\''+value.maxSendValue+'\',\''+value.maxSendAmountFormatted+'\',\''+value.maxReceiveValue+'\',\''+ value.maxReceiveAmountFormatted +'\',\''+value.commission_rate+'\',\''+value.maxSendValue+'\',\''+value.sendValueOriginal+'\',\''+value.sendCurrencyIso+'\',\''+value.uat_number+'\',\''+encodedString+'\')">\n' +
+            '                                                <a href="javascript:void(0);"  onclick="gridCallingLists(this,\'' + value.sku_code + '\',\'' + value.maxSendValue + '\',\'' + value.maxSendAmountFormatted + '\',\'' + value.maxReceiveValue + '\',\'' + value.maxReceiveAmountFormatted + '\',\'' + value.commission_rate + '\',\'' + value.maxSendValue + '\',\'' + value.sendValueOriginal + '\',\'' + value.sendCurrencyIso + '\',\'' + value.uat_number + '\',\'' + encodedString + '\')">\n' +
             '                                                    <div class="panel panel-default panel-data activatable-item">\n' +
             '                                                        <div class="data">\n' +
             '                                                            <div class="price">\n' +
-            '                                                                <h3>'+send_value+'</h3>\n' +
+            '                                                                <h3>' + send_value + '</h3>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="receive-amount">\n' +
-            '                                                                <span class="strong-mobile">'+value.display_text+'</span>\n' +
+            '                                                                <span class="strong-mobile">' + value.display_text + '</span>\n' +
             '                                   </div>\n' +
             '                                                            <div class="clearfix"></div>\n' +
             '                                                        </div>\n' +
@@ -713,7 +698,7 @@ function buildGridCalling(products) {
 }
 
 
-function gridCallingLists(el, skuCode,euro,euro_formatted,dest,dest_formatted,commission,sentAmount,SendValueOriginal,sentCurrencyIso,UatNumber,provider_code) {
+function gridCallingLists(el, skuCode, euro, euro_formatted, dest, dest_formatted, commission, sentAmount, SendValueOriginal, sentCurrencyIso, UatNumber, provider_code) {
     scrollingElement = (document.scrollingElement || document.body)
     $(scrollingElement).animate({
         scrollTop: document.body.scrollHeight
@@ -751,26 +736,25 @@ function getProvidersreloadly(ajaxUrl) {
             console.log(response);
             toggleAnime('hide');
             toggleGridProviders('show');
-            if(response.status == 500){
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+            if (response.status == 500) {
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 buildNoReloadlyRes();
-            }else{
-                if(response.success == 'failed'){
-                    toggleProductsDiv("grid",'hide');
-                    toggleProductsDiv("list",'show');
+            } else {
+                if (response.success == 'failed') {
+                    toggleProductsDiv("grid", 'hide');
+                    toggleProductsDiv("list", 'show');
                     buildNoResponse();
-                }else{
+                } else {
                     var values = response.data[0].provider_code;
-                    if(values){
+                    if (values) {
                         buildGridReloadlyprovider(response.data);
                     }
                     else {
                         window.location.href = api_base_url + "/tama-topup/plan_s?accountNumber=" + mobileNumber + "&countryCode=" + countryCode + "&countryIsos=" + countryIso;
                     }
 
-                    if(response.data.length === 1)
-                    {
+                    if (response.data.length === 1) {
                         $("#gridProviderList li:first-child a").click();
                     }
                 }
@@ -788,7 +772,7 @@ function getProvidersreloadly(ajaxUrl) {
 }
 function buildGridReloadlyprovider(response) {
 
-    var mobileNumber, countryCode,providerLength;
+    var mobileNumber, countryCode, providerLength;
     mobileNumber = $("#mobile").val();
     countryCode = $("#countryCode").val();
     countryIso = $("#countryIso").val();
@@ -796,17 +780,17 @@ function buildGridReloadlyprovider(response) {
     var data_name = [];
     var data_logo = [];
     $.each(response, function (key, value) {
-        if(value.country == "Côte d'Ivoire"){
-            var con ='Ivory Coast';
-        }else{
+        if (value.country == "Côte d'Ivoire") {
+            var con = 'Ivory Coast';
+        } else {
             var con = value.country;
         }
         $('#gridProviderList')
             .append('\n' +
                 '                                                <li class="provider col-md-6">\n' +
-                '                                                    <a href="javascript:void(0);" onclick="fetchreloadlyProducts(\''+value.country_iso+'\',\''+countryCode+'\',\''+value.country_iso+'\',\''+value.provider_code+'\',\''+value.name+'\',\''+con+'\')">\n' +
+                '                                                    <a href="javascript:void(0);" onclick="fetchreloadlyProducts(\'' + value.country_iso + '\',\'' + countryCode + '\',\'' + value.country_iso + '\',\'' + value.provider_code + '\',\'' + value.name + '\',\'' + con + '\')">\n' +
                 '                                                        <div class="panel panel-default provider' +
-                '-'+value.provider_code+'">\n' +
+                '-' + value.provider_code + '">\n' +
                 '                                                            <div class="logo">\n' +
                 '<img src="' + value.logo + '">\n' +
                 '                                                            </div>\n' +
@@ -818,28 +802,27 @@ function buildGridReloadlyprovider(response) {
         data_logo.push(value.logo);
     });
     var linkHtml = '';
-    var transferPlanUrl = api_base_url+'/tama-topup/plan_ts?accountNumber=' + encodeURIComponent(mobileNumber) + '&countryCode=' + encodeURIComponent(countryCode) + '&countryIsos=' + encodeURIComponent(countryIso);
+    var transferPlanUrl = api_base_url + '/tama-topup/plan_ts?accountNumber=' + encodeURIComponent(mobileNumber) + '&countryCode=' + encodeURIComponent(countryCode) + '&countryIsos=' + encodeURIComponent(countryIso);
 
 
-    if ([221, 223 ,225].includes(parseInt(countryCode))) {
+    if ([221, 223, 225].includes(parseInt(countryCode))) {
         linkHtml = '<a href="' + transferPlanUrl + '">';
     } else {
         linkHtml = '<a href="javascript:void(0);" onclick="fetchreloadlyData(\'' + countryIso + '\')">';
     }
     $('#changeplan')
         .html('\n' +
-            '                                                <li class="provider col-md-6">\n'  +
+            '                                                <li class="provider col-md-6">\n' +
             linkHtml +
             '                     <div class="panel panel-default provider-bundle">\n' +
             '                                                            <div class="logo">\n' +
-            '<img src="'+ data_logo +'">\n' +
+            '<img src="' + data_logo + '">\n' +
             '                                                            </div>\n' +
-            '                                                            <div class="title">'+ data_name +' Data</div>\n' +
+            '                                                            <div class="title">' + data_name + ' Data</div>\n' +
             '                                                        </div>\n' +
             '                                                    </a>\n' +
             '                                                </li>');
-    if(response.length === 1)
-    {
+    if (response.length === 1) {
         $("#gridProviderList .provider a div.panel").css("border", "1px solid");
     }
 }
@@ -848,13 +831,13 @@ function fetchreloadlyData(countryCode) {
     toggleAnime('show');
     $("#gridProviderDiv").addClass('hide');
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
+    toggleProductsDiv("", '');
     $(".provider-bundle").css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     var mobileNumber;
     mobileNumber = $("#mobile").val();
     $.ajax({
-        url: api_base_url+"/tama-topup/fetchreloadly/data?countryCode="+countryCode,
+        url: api_base_url + "/tama-topup/fetchreloadly/data?countryCode=" + countryCode,
         method: 'GET',
         success: function (response) {
             console.log(response);
@@ -862,8 +845,7 @@ function fetchreloadlyData(countryCode) {
             toggleGridProviders('show');
             buildGridReloadlyproviderdata(response.data);
 
-            if(response.data.length === 1)
-            {
+            if (response.data.length === 1) {
                 $("#gridProviderList li:first-child a").click();
             }
         },
@@ -880,24 +862,24 @@ function fetchreloadlyData(countryCode) {
 }
 
 function buildGridReloadlyproviderdata(response) {
-    var mobileNumber, countryCode,providerLength;
+    var mobileNumber, countryCode, providerLength;
     mobileNumber = $("#mobile").val();
     countryCode = $("#countryCode").val();
     countryIso = $("#countryIso").val();
     $('#changeplan').hide();
     // console.log(response);
     $.each(response, function (key, value) {
-        if(value.country == "Côte d'Ivoire"){
-            var con ='Ivory Coast';
-        }else{
+        if (value.country == "Côte d'Ivoire") {
+            var con = 'Ivory Coast';
+        } else {
             var con = value.country;
         }
         $('#gridProviderList')
             .append('\n' +
                 '                                                <li class="provider col-md-6">\n' +
-                '                                                    <a href="javascript:void(0);" onclick="fetchreloadlyProductsbyId(\''+value.country_iso+'\',\''+countryCode+'\',\''+value.country_iso+'\',\''+value.provider_code+'\',\''+value.name+'\',\''+con+'\')">\n' +
+                '                                                    <a href="javascript:void(0);" onclick="fetchreloadlyProductsbyId(\'' + value.country_iso + '\',\'' + countryCode + '\',\'' + value.country_iso + '\',\'' + value.provider_code + '\',\'' + value.name + '\',\'' + con + '\')">\n' +
                 '                                                        <div class="panel panel-default provider' +
-                '-'+value.provider_code+'">\n' +
+                '-' + value.provider_code + '">\n' +
                 '                                                            <div class="logo">\n' +
                 '<img src="' + value.logo + '">\n' +
                 '                                                            </div>\n' +
@@ -907,21 +889,20 @@ function buildGridReloadlyproviderdata(response) {
                 '                                                </li>');
     });
 
-    if(response.length === 1)
-    {
+    if (response.length === 1) {
         $("#gridProviderList .provider a div.panel").css("border", "1px solid");
     }
 }
-function fetchreloadlyProductsbyId(countryIso,countryCode, region, providerCode,providerName,providerCountry) {
+function fetchreloadlyProductsbyId(countryIso, countryCode, region, providerCode, providerName, providerCountry) {
     $("#loadingProducts").toggle();
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
-    $(".provider-"+providerCode.toLowerCase()).css("border", "1px solid");
+    toggleProductsDiv("", '');
+    $(".provider-" + providerCode.toLowerCase()).css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     var mobileNumber;
     mobileNumber = $("#mobile").val();
     $.ajax({
-        url: api_base_url+"/tama-topup/fetchreloadly/productsID?operator_id="+providerCode,
+        url: api_base_url + "/tama-topup/fetchreloadly/productsID?operator_id=" + providerCode,
         method: 'GET',
         success: function (response) {
             $("#loadingProducts").toggle();
@@ -929,20 +910,19 @@ function fetchreloadlyProductsbyId(countryIso,countryCode, region, providerCode,
             //update provider name and country
             $("#_hid_provider_name").val(providerName);
             $("#_hid_provider_country").val(providerCountry);
-            if(response.is_denominated == true)
-            {
+            if (response.is_denominated == true) {
                 //list style
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 buildReloadlyListProducts(response.products);
-            }else{
+            } else {
                 //range input show
                 // console.log(response.products[0]);
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'hide');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'hide');
                 toggleRangeAmountDiv('show');
-                var amount_between,minVal,maxVal;
-                amount_between = between_trans+" "+response.products[0].minSendValue+" - "+response.products[0].maxSendValue;
+                var amount_between, minVal, maxVal;
+                amount_between = between_trans + " " + response.products[0].minSendValue + " - " + response.products[0].maxSendValue;
                 minVal = response.products[0].minSendValue;
                 maxVal = response.products[0].maxSendValue;
                 $("#SkuCode").val(response.products[0].provider_code);
@@ -965,9 +945,9 @@ function fetchreloadlyProductsbyId(countryIso,countryCode, region, providerCode,
                 var validator = $form.validate();
                 /*use internal code of a plugin to clear the field*/
                 if (validator.settings.unhighlight) {
-                    validator.settings.unhighlight.call( validator, $that[0], validator.settings.errorClass, validator.settings.validClass );
+                    validator.settings.unhighlight.call(validator, $that[0], validator.settings.errorClass, validator.settings.validClass);
                 }
-                validator.hideThese( validator.errorsFor( $that[0] ) );
+                validator.hideThese(validator.errorsFor($that[0]));
             }
             $("#summaryDiv").removeClass('hide');
         },
@@ -982,16 +962,16 @@ function fetchreloadlyProductsbyId(countryIso,countryCode, region, providerCode,
         }
     });
 }
-function fetchreloadlyProducts(countryIso,countryCode, region, providerCode,providerName,providerCountry) {
+function fetchreloadlyProducts(countryIso, countryCode, region, providerCode, providerName, providerCountry) {
     $("#loadingProducts").toggle();
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
-    $(".provider-"+providerCode.toLowerCase()).css("border", "1px solid");
+    toggleProductsDiv("", '');
+    $(".provider-" + providerCode.toLowerCase()).css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     var mobileNumber;
     mobileNumber = $("#mobile").val();
     $.ajax({
-        url: api_base_url+"/tama-topup/fetchreloadly/products?accountNumber="+mobileNumber+"&countryCode="+countryCode+"&countryIsos="+countryIso,
+        url: api_base_url + "/tama-topup/fetchreloadly/products?accountNumber=" + mobileNumber + "&countryCode=" + countryCode + "&countryIsos=" + countryIso,
         method: 'GET',
         success: function (response) {
             $("#loadingProducts").toggle();
@@ -999,20 +979,19 @@ function fetchreloadlyProducts(countryIso,countryCode, region, providerCode,prov
             //update provider name and country
             $("#_hid_provider_name").val(providerName);
             $("#_hid_provider_country").val(providerCountry);
-            if(response.is_denominated == true)
-            {
+            if (response.is_denominated == true) {
                 //list style
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 buildReloadlyListProducts(response.products);
-            }else{
+            } else {
                 //range input show
                 console.log(response.products[0]);
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'hide');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'hide');
                 toggleRangeAmountDiv('show');
-                var amount_between,minVal,maxVal;
-                amount_between = between_trans+" "+response.products[0].minSendValue+" - "+response.products[0].maxSendValue;
+                var amount_between, minVal, maxVal;
+                amount_between = between_trans + " " + response.products[0].minSendValue + " - " + response.products[0].maxSendValue;
                 minVal = response.products[0].minSendValue;
                 maxVal = response.products[0].maxSendValue;
                 $("#SkuCode").val(response.products[0].provider_code);
@@ -1035,9 +1014,9 @@ function fetchreloadlyProducts(countryIso,countryCode, region, providerCode,prov
                 var validator = $form.validate();
                 /*use internal code of a plugin to clear the field*/
                 if (validator.settings.unhighlight) {
-                    validator.settings.unhighlight.call( validator, $that[0], validator.settings.errorClass, validator.settings.validClass );
+                    validator.settings.unhighlight.call(validator, $that[0], validator.settings.errorClass, validator.settings.validClass);
                 }
-                validator.hideThese( validator.errorsFor( $that[0] ) );
+                validator.hideThese(validator.errorsFor($that[0]));
             }
             $("#summaryDiv").removeClass('hide');
         },
@@ -1063,12 +1042,12 @@ function buildReloadlyListProducts(products) {
             '                                                        <div class="data">\n' +
             '                                                            <div class="price">\n' +
             '                                                                <!-- ko ifnot: isDomesticProduct -->\n' +
-            '                                                          <h3 >' +value.sendCurrencyIso+ +value.minSendValue + '</h3>\n' +
+            '                                                          <h3 >' + value.sendCurrencyIso + +value.minSendValue + '</h3>\n' +
             '                                                                <!-- /ko -->\n' +
             '                                                            </div>\n' +
             '                                                            <div class="receive-amount">\n' +
-            '                                                                <span class="strong-mobile">'+value.RecivedCurrencyIso+ text + '</span>\n' +
-            '                                                                <span class="light-mobile">'+ will_be_received +'</span>\n' +
+            '                                                                <span class="strong-mobile">' + value.RecivedCurrencyIso + text + '</span>\n' +
+            '                                                                <span class="light-mobile">' + will_be_received + '</span>\n' +
             '                                                            </div>\n' +
             '                                                            <div class="validity">\n' +
             '                                                                <div>' + value.validity + '</div>\n' +
@@ -1097,7 +1076,7 @@ function buildReloadlyListProducts(products) {
     });
 }
 
-function gridReloadlyClickLists(el, operatorId,SendValue,local_value,Commission,sendValueOriginal,kk) {
+function gridReloadlyClickLists(el, operatorId, SendValue, local_value, Commission, sendValueOriginal, kk) {
     $('.product-lists li.active').removeClass('active');
     $('.product-lists li').find('.more-info').hide();
     $(el).parents('li').addClass('active');
@@ -1109,7 +1088,7 @@ function gridReloadlyClickLists(el, operatorId,SendValue,local_value,Commission,
     $("#Country_fixed").val(kk);
     $("#denomination").val('fixed');
 }
-function buildNoResponse(){
+function buildNoResponse() {
     $("#productLists").append('<li class="denomination">\n' +
         '                                                <a href="javascript:void(0);" >\n' +
         '                                                    <div class="panel panel-default panel-data activatable-item">\n' +
@@ -1124,7 +1103,7 @@ function buildNoResponse(){
         '                                                </a>\n' +
         '                                            </li>');
 }
-function buildNoReloadlyRes(){
+function buildNoReloadlyRes() {
     $("#productLists").append('<li class="denomination">\n' +
         '                                                <a href="javascript:void(0);" >\n' +
         '                                                    <div class="panel panel-default panel-data activatable-item">\n' +
@@ -1156,8 +1135,7 @@ function gettransferservice(ajaxUrl) {
             toggleAnime('hide');
             toggleGridProviders('show');
             buildGridTransferProviders(response.data);
-            if(response.data.length === 1)
-            {
+            if (response.data.length === 1) {
                 // $("#gridProviderList li:first-child a").click();
                 TwoProducts(response.data);
             }
@@ -1230,7 +1208,7 @@ function TwoProducts(providers) {
  */
 function buildGridTransferProviders(providers) {
     // console.log(providers);
-    var mobileNumber, countryCode,providerLength;
+    var mobileNumber, countryCode, providerLength;
     mobileNumber = $("#mobile").val();
     countryCode = $("#countryCode").val();
     $.each(providers, function (key, value) {
@@ -1239,7 +1217,7 @@ function buildGridTransferProviders(providers) {
             .append('\n' +
                 '                                                <li class="provider col-md-6">\n' +
                 '                                                    <a href="javascript:void(0);">\n' +
-                '                                                        <div class="panel panel-default provider-'+value.provider_code+'-c">\n' +
+                '                                                        <div class="panel panel-default provider-' + value.provider_code + '-c">\n' +
                 '                                                            <div class="logo">\n' +
                 '<img src="https://operator-logo.dtone.com/logo-' + flag + '-1.jpg">\n' +
                 '                                                            </div>\n' +
@@ -1248,26 +1226,25 @@ function buildGridTransferProviders(providers) {
                 '                                                    </a>\n' +
                 '                                                </li>');
     });
-    if(providers.length === 1)
-    {
+    if (providers.length === 1) {
         $("#gridProviderList .provider a div.panel").css("border", "1px solid");
     }
 }
 
-function fetchTransferProducts(providercode,country_id, country_iso, country,mobileNumber,countryCode,product) {
+function fetchTransferProducts(providercode, country_id, country_iso, country, mobileNumber, countryCode, product) {
     $("#loadingProducts").toggle();
     $("#gridProviderList .provider a div.panel").css("border", "none");
-    toggleProductsDiv("",'');
-    $(".provider-"+providercode+"-c").css("border", "1px solid");
+    toggleProductsDiv("", '');
+    $(".provider-" + providercode + "-c").css("border", "1px solid");
     $("#summaryDiv").addClass('hide');
     var mobileNumber;
-    var link = "/tama-topup/fetchtransfer/products?&country_iso_code="+country_iso+"&operator_id="+providercode+"&accountNumber="+mobileNumber+"&type=FIXED_VALUE_RECHARGE";
-    if(product == 'Airtime'){
-        var link = "/tama-topup/fetchtransfer/products?&country_iso_code="+country_iso+"&operator_id="+providercode+"&accountNumber="+mobileNumber+"&type=RANGED_VALUE_RECHARGE";
+    var link = "/tama-topup/fetchtransfer/products?&country_iso_code=" + country_iso + "&operator_id=" + providercode + "&accountNumber=" + mobileNumber + "&type=FIXED_VALUE_RECHARGE";
+    if (product == 'Airtime') {
+        var link = "/tama-topup/fetchtransfer/products?&country_iso_code=" + country_iso + "&operator_id=" + providercode + "&accountNumber=" + mobileNumber + "&type=RANGED_VALUE_RECHARGE";
     }
     mobileNumber = $("#mobile").val();
     $.ajax({
-        url: api_base_url+link,
+        url: api_base_url + link,
         method: 'GET',
         success: function (response) {
             console.log(response);
@@ -1277,32 +1254,29 @@ function fetchTransferProducts(providercode,country_id, country_iso, country,mob
             $("#loadingProducts").toggle();
             // $("#_hid_provider_name").val(providerName);
             // $("#_hid_provider_country").val(providerCountry);
-            if(response.data.denomination_style == "list" && response.data.is_denominated == true)
-            {
+            if (response.data.denomination_style == "list" && response.data.is_denominated == true) {
                 //list style
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 buildListTransferProducts(response.data.products);
-            }else if(response.data.denomination_style == "false" && response.data.is_denominated == false )
-            {
-                toggleProductsDiv("grid",'hide');
-                toggleProductsDiv("list",'show');
+            } else if (response.data.denomination_style == "false" && response.data.is_denominated == false) {
+                toggleProductsDiv("grid", 'hide');
+                toggleProductsDiv("list", 'show');
                 buildNoResponse();
-            }else if(response.data.denomination_style == "grid" && response.data.is_denominated == true)
-            {
+            } else if (response.data.denomination_style == "grid" && response.data.is_denominated == true) {
                 //grid style
-                toggleProductsDiv("list",'hide');
-                toggleProductsDiv("grid",'show');
+                toggleProductsDiv("list", 'hide');
+                toggleProductsDiv("grid", 'show');
                 buildListTransferProducts(response.data.products);
-            }else{
-                if(product == "Airtime"){
+            } else {
+                if (product == "Airtime") {
                     //range input show
                     var pro = response.data.products[0];
-                    toggleProductsDiv("list",'hide');
-                    toggleProductsDiv("grid",'hide');
+                    toggleProductsDiv("list", 'hide');
+                    toggleProductsDiv("grid", 'hide');
                     toggleRangeAmountDiv('show');
-                    var amount_between,minVal,maxVal;
-                    amount_between = between_trans+" "+(pro.minSendValue).toFixed(2)+" - "+Number((pro.maxSendValue)).toFixed(2);
+                    var amount_between, minVal, maxVal;
+                    amount_between = between_trans + " " + (pro.minSendValue).toFixed(2) + " - " + Number((pro.maxSendValue)).toFixed(2);
                     minVal = pro.minSendValue;
                     maxVal = pro.maxSendValue;
                     $("#skuCode").val(pro.provider_code);
@@ -1336,11 +1310,11 @@ function fetchTransferProducts(providercode,country_id, country_iso, country,mob
                     var validator = $form.validate();
                     /*use internal code of a plugin to clear the field*/
                     if (validator.settings.unhighlight) {
-                        validator.settings.unhighlight.call( validator, $that[0], validator.settings.errorClass, validator.settings.validClass );
+                        validator.settings.unhighlight.call(validator, $that[0], validator.settings.errorClass, validator.settings.validClass);
                     }
-                }else{
-                    toggleProductsDiv("grid",'hide');
-                    toggleProductsDiv("list",'show');
+                } else {
+                    toggleProductsDiv("grid", 'hide');
+                    toggleProductsDiv("list", 'show');
                     buildNoResponse();
                 }
             }
@@ -1361,77 +1335,83 @@ function fetchTransferProducts(providercode,country_id, country_iso, country,mob
 function buildListTransferProducts(products) {
 
     $("#productLists").empty();
-    $.each(products, function (key, value){
+    $.each(products, function (key, value) {
         buildloopTransfer(value);
     });
 }
-function buildloopTransfer(value) {
-    const name = value.name || '';
-    const providerCode = value.provider_code || '';
-    const validity = value.validity || '';
-    const display = value.display_text || name;
-    const description = value.description || '';
-    const receiveValue = value.ReceiveValue || '';
-    const sendValue = value.SendValue || '';
-    const sendCurrencyIso = value.sendCurrencyIso || '';
-    const receiveCurrencyIso = value.receiveCurrencyIso || '';
-    const operatorId = value.operator_id || '';
-    const operatorName = value.operator_name || '';
-    const country = value.country || '';
-    const tags = value.tags || '';
-
-    const html = `
-        <li class="denomination">
-            <a href="javascript:void(0);" class="li-a"
-                data-name="${encodeURIComponent(name)}"
-                data-provider="${encodeURIComponent(providerCode)}"
-                data-validity="${encodeURIComponent(validity)}"
-                data-display="${encodeURIComponent(display)}"
-                data-description="${encodeURIComponent(description)}"
-                data-receive="${encodeURIComponent(receiveValue)}"
-                data-send="${encodeURIComponent(sendValue)}"
-                data-send-currency="${encodeURIComponent(sendCurrencyIso)}"
-                data-receive-currency="${encodeURIComponent(receiveCurrencyIso)}"
-                data-operator-id="${encodeURIComponent(operatorId)}"
-                data-operator-name="${encodeURIComponent(operatorName)}"
-                data-country="${encodeURIComponent(country)}"
-            >
-                <div class="panel panel-default panel-data activatable-item">
-                    <div class="data">
-                        <div class="price">
-                            <h3>€${sendValue}</h3>
-                        </div>
-                        <div class="receive-amount">
-                            <span class="strong-mobile">${display}</span>
-                        </div>
-                        <div class="validity">
-                            <div>${validity}</div>
-                            <button class="btn btn-primary">${tags}</button>
-                            <div></div>
-                        </div>
-                        <div class="more-info-toggle open">
-                            <i class="fa fa-chevron-right"></i>
-                        </div>
-                        <div class="more-info" style="display: none;">
-                            <p>
-                                <span>(${name})</span>
-                                <span>${description}</span>
-                            </p>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="active-icon">
-                        <i class="fa fa-check"></i>
-                    </div>
-                </div>
-            </a>
-        </li>
-    `;
-
-    $('#productLists').append(html);
+function escapeJSString(str) {
+    return (str || '')
+        .replace(/\\/g, '\\\\')      // Escape backslashes
+        .replace(/'/g, '\\\'')       // Escape single quotes
+        .replace(/\n/g, '\\n')       // Escape newlines
+        .replace(/\r/g, '');         // Remove carriage returns
 }
 
-function clickProductLists(el,name, skuCode,validity,display_text,description,ReceiveValue,SendValue,sendCurrencyIso,receiveCurrencyIso,operator_id,operator_name,country) {
+function buildloopTransfer(value) {
+    // Fallbacks for null/empty values
+    var description = escapeJSString(value.description || '');
+    var display = escapeJSString(value.display_text || value.name || '');
+    var name = escapeJSString(value.name || '');
+    var providerCode = escapeJSString(value.provider_code || '');
+    var validity = escapeJSString(value.validity || '');
+    var receiveValue = escapeJSString(value.ReceiveValue || '');
+    var sendValue = escapeJSString(value.SendValue || '');
+    var sendCurrencyIso = escapeJSString(value.sendCurrencyIso || '');
+    var receiveCurrencyIso = escapeJSString(value.receiveCurrencyIso || '');
+    var operatorId = escapeJSString(value.operator_id || '');
+    var operatorName = escapeJSString(value.operator_name || '');
+    var country = escapeJSString(value.country || '');
+    var tags = escapeJSString(value.tags || '');
+
+    // Build the HTML and append
+    $("#productLists").append(
+        '<li class="denomination">' +
+        '  <a href="javascript:void(0);" class="li-a" onclick="clickProductLists(this,\'' +
+        name + '\',\'' +
+        providerCode + '\',\'' +
+        validity + '\',\'' +
+        display + '\',\'' +
+        description + '\',\'' +
+        receiveValue + '\',\'' +
+        sendValue + '\',\'' +
+        sendCurrencyIso + '\',\'' +
+        receiveCurrencyIso + '\',\'' +
+        operatorId + '\',\'' +
+        operatorName + '\',\'' +
+        country + '\')">' +
+        '    <div class="panel panel-default panel-data activatable-item">' +
+        '      <div class="data">' +
+        '        <div class="price">' +
+        '          <h3>€' + sendValue + '</h3>' +
+        '        </div>' +
+        '        <div class="receive-amount">' +
+        '          <span class="strong-mobile">' + display + '</span>' +
+        '        </div>' +
+        '        <div class="validity">' +
+        '          <div>' + validity + '</div>' +
+        '          <button class="btn btn-primary">' + tags + '</button>' +
+        '          <div></div>' +
+        '        </div>' +
+        '        <div class="more-info-toggle open">' +
+        '          <i class="fa fa-chevron-right"></i>' +
+        '        </div>' +
+        '        <div class="more-info" style="display: none;">' +
+        '          <p>' +
+        '            <span>(' + name + ')</span>' +
+        '            <span>' + description + '</span>' +
+        '          </p>' +
+        '        </div>' +
+        '        <div class="clearfix"></div>' +
+        '      </div>' +
+        '      <div class="active-icon">' +
+        '        <i class="fa fa-check"></i>' +
+        '      </div>' +
+        '    </div>' +
+        '  </a>' +
+        '</li>'
+    );
+}
+function clickProductLists(el, name, skuCode, validity, display_text, description, ReceiveValue, SendValue, sendCurrencyIso, receiveCurrencyIso, operator_id, operator_name, country) {
     // console.log(operator_id,operator_name,country);
     $('.product-lists li.active').removeClass('active');
     $('.product-lists li').find('.more-info').hide();
