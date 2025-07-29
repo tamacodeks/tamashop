@@ -1340,12 +1340,14 @@ function buildListTransferProducts(products) {
     });
 }
 function escapeJSString(str) {
-    return (str || '')
-        .replace(/\\/g, '\\\\')      // Escape backslashes
-        .replace(/'/g, '\\\'')       // Escape single quotes
-        .replace(/\n/g, '\\n')       // Escape newlines
-        .replace(/\r/g, '');         // Remove carriage returns
+    str = (str === undefined || str === null) ? '' : String(str);
+    return str
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, '\\\'')
+        .replace(/\n/g, '\\n')
+        .replace(/\r/g, '');
 }
+
 
 function buildloopTransfer(value) {
     // Fallbacks for null/empty values
