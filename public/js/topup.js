@@ -1365,56 +1365,78 @@ function buildListTransferProducts(products) {
         buildloopTransfer(value);
     });
 }
-function buildloopTransfer(value){
-    var display = value.display_text;
-    var description = value.description;
-    if(value.description == null){
-        var description = '';
-    }
-    if(value.display_text == ''){
-        var display = value.name;
-
-    }
-    $("#productLists").append('<li class="denomination">\n' +
-        '                                                <a href="javascript:void(0);" class="li-a" onclick="clickProductLists(this,\'' + value.name + '\',\'' + value.provider_code + '\',\'' + value.validity + '\',\'' + value.display_text + '\',\'' + value.description + '\',\'' + value.ReceiveValue + '\',\'' + value.SendValue  + '\',\'' + value.sendCurrencyIso + '\',\'' + value.receiveCurrencyIso + '\',\'' + value.operator_id  + '\',\'' + value.operator_name + '\',\'' + value.country + '\')">\n' +
-        '                                                    <div class="panel panel-default panel-data activatable-item">\n' +
-        '                                                        <div class="data">\n' +
-        '                                                            <div class="price">\n' +
-        '                                                                <!-- ko ifnot: isDomesticProduct -->\n' +
-        '                                                                <h3 >€' + value.SendValue + '</h3>\n' +
-        '                                                                <!-- /ko -->\n' +
-        '                                                            </div>\n' +
-        '                                                            <div class="receive-amount">\n' +
-        '                                                                <span class="strong-mobile">' + display + '</span>\n' +
-        '                                                            </div>\n' +
-        '                                                            <div class="validity">\n' +
-        '                                                                <div>' + value.validity + '</div>\n' +
-        '                                                                <button class="btn btn-primary">' + value.tags + '</button>\n' +
-        '                                                                <div></div>\n' +
-        '                                                            </div>\n' +
-        '                                                            <!-- ko if: hasDescription -->\n' +
-        '                                                            <div class="more-info-toggle open">\n' +
-        '                                                                <i class="fa fa-chevron-right"></i>\n' +
-        '                                                            </div>\n' +
-        '                                                            <!-- /ko -->\n' +
-        '                                                            <div class="more-info" style="display: none;">\n' +
-        '                                                                <p>\n' +
-        '                                                                <span >(' + value.name + ')</span>\n' +
-        '                                                                    <span >' + description + '</span>\n' +
-        '                                                                </p>\n' +
-        '                                                                <p></p>\n' +
-        '                                                            </div>\n' +
-        '                                                            <div class="clearfix"></div>\n' +
-        '                                                            <!-- /ko -->\n' +
-        '                                                        </div>\n' +
-        '                                                        <div class="active-icon">\n' +
-        '                                                            <i class="fa fa-check"></i>\n' +
-        '                                                        </div>\n' +
-        '                                                    </div>\n' +
-        '                                                </a>\n' +
-        '                                            </li>');
+function escapeJSString(str) {
+    return (str || '')
+        .replace(/\\/g, '\\\\')      // escape backslashes
+        .replace(/'/g, '\\\'')       // escape single quotes
+        .replace(/\n/g, '\\n')       // escape newlines
+        .replace(/\r/g, '');         // remove carriage returns
 }
 
+function buildloopTransfer(value) {
+    // Fallbacks for null/empty values
+    var description = escapeJSString(value.description || '');
+    var display = escapeJSString(value.display_text || value.name || '');
+    var name = escapeJSString(value.name || '');
+    var providerCode = escapeJSString(value.provider_code || '');
+    var validity = escapeJSString(value.validity || '');
+    var receiveValue = escapeJSString(value.ReceiveValue || '');
+    var sendValue = escapeJSString(value.SendValue || '');
+    var sendCurrencyIso = escapeJSString(value.sendCurrencyIso || '');
+    var receiveCurrencyIso = escapeJSString(value.receiveCurrencyIso || '');
+    var operatorId = escapeJSString(value.operator_id || '');
+    var operatorName = escapeJSString(value.operator_name || '');
+    var country = escapeJSString(value.country || '');
+    var tags = escapeJSString(value.tags || '');
+
+    // Build the HTML and append
+    $("#productLists").append(
+        '<li class="denomination">' +
+        '  <a href="javascript:void(0);" class="li-a" onclick="clickProductLists(this,\'' +
+        name + '\',\'' +
+        providerCode + '\',\'' +
+        validity + '\',\'' +
+        display + '\',\'' +
+        description + '\',\'' +
+        receiveValue + '\',\'' +
+        sendValue + '\',\'' +
+        sendCurrencyIso + '\',\'' +
+        receiveCurrencyIso + '\',\'' +
+        operatorId + '\',\'' +
+        operatorName + '\',\'' +
+        country + '\')">' +
+        '    <div class="panel panel-default panel-data activatable-item">' +
+        '      <div class="data">' +
+        '        <div class="price">' +
+        '          <h3>€' + sendValue + '</h3>' +
+        '        </div>' +
+        '        <div class="receive-amount">' +
+        '          <span class="strong-mobile">' + display + '</span>' +
+        '        </div>' +
+        '        <div class="validity">' +
+        '          <div>' + validity + '</div>' +
+        '          <button class="btn btn-primary">' + tags + '</button>' +
+        '          <div></div>' +
+        '        </div>' +
+        '        <div class="more-info-toggle open">' +
+        '          <i class="fa fa-chevron-right"></i>' +
+        '        </div>' +
+        '        <div class="more-info" style="display: none;">' +
+        '          <p>' +
+        '            <span>(' + name + ')</span>' +
+        '            <span>' + description + '</span>' +
+        '          </p>' +
+        '        </div>' +
+        '        <div class="clearfix"></div>' +
+        '      </div>' +
+        '      <div class="active-icon">' +
+        '        <i class="fa fa-check"></i>' +
+        '      </div>' +
+        '    </div>' +
+        '  </a>' +
+        '</li>'
+    );
+}
 function clickProductLists(el,name, skuCode,validity,display_text,description,ReceiveValue,SendValue,sendCurrencyIso,receiveCurrencyIso,operator_id,operator_name,country) {
     // console.log(operator_id,operator_name,country);
     $('.product-lists li.active').removeClass('active');
