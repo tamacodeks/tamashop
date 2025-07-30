@@ -20,16 +20,22 @@
                 <div class="card-header"><i class="fa fa-fw fa-flag"></i> @lang('Levels')</div>
                 <div class="list-group list-group-flush log-menu">
                     @foreach($log->menu() as $levelKey => $item)
-                        @if ($item['count'] === 0)
-                            <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
-                                <span class="level-name">{!! $item['icon'] !!} {{ $item['name'] }}</span>
-                                <span class="badge empty">{{ $item['count'] }}</span>
-                            </a>
+                        @if (is_array($item) && isset($item['count'], $item['icon'], $item['name'], $item['url']))
+                            @if ($item['count'] === 0)
+                                <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center disabled">
+                                    <span class="level-name">{!! $item['icon'] !!} {{ $item['name'] }}</span>
+                                    <span class="badge empty">{{ $item['count'] }}</span>
+                                </a>
+                            @else
+                                <a href="{{ $item['url'] }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center level-{{ $levelKey }}{{ $level === $levelKey ? ' active' : '' }}">
+                                    <span class="level-name">{!! $item['icon'] !!} {{ $item['name'] }}</span>
+                                    <span class="badge badge-level-{{ $levelKey }}">{{ $item['count'] }}</span>
+                                </a>
+                            @endif
                         @else
-                            <a href="{{ $item['url'] }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center level-{{ $levelKey }}{{ $level === $levelKey ? ' active' : ''}}">
-                                <span class="level-name">{!! $item['icon'] !!} {{ $item['name'] }}</span>
-                                <span class="badge badge-level-{{ $levelKey }}">{{ $item['count'] }}</span>
-                            </a>
+                            <div class="list-group-item text-danger small">
+                                ⚠️ Invalid log menu item for level "{{ $levelKey }}"
+                            </div>
                         @endif
                     @endforeach
                 </div>
